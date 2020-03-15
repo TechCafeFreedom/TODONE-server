@@ -406,7 +406,7 @@ paths:
     post:
       tags:
         - 'label'
-      summary: 'add label on a todo'
+      summary: 'add a label on a todo'
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
@@ -452,201 +452,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-
-  # /account:
-  #   get:
-  #     tags:
-  #       - 'old'
-  #     summary: 'get user response'
-  #     description: 'アクセストークンからユーザ情報を取得'
-  #     parameters:
-  #       - $ref: '#/components/parameters/AccessToken'
-  #     responses:
-  #       '200':
-  #         description: 'return user info by idp info'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/GetUserResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #   put:
-  #     tags:
-  #       - 'old'
-  #     summary: 'update user info'
-  #     description: 'update user name and/or thumbnail'
-  #     parameters:
-  #       - $ref: '#/components/parameters/AccessToken'
-  #     requestBody:
-  #       $ref: '#/components/requestBodies/UpdateUser'
-  #     responses:
-  #       '200':
-  #         description: 'return updated user info'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/GetUserResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  # /projects:
-  #   # TODO: これだとプロジェクトの全件取得感が出る。。。
-  #   # request userの参加プロジェクト！っていうpath作ったほうがいいかも
-  #   get:
-  #     tags:
-  #       - 'old'
-  #     summary: 'get projects that a request_user joins'
-  #     description: ''
-  #     parameters:
-  #       - $ref: '#/components/parameters/AccessToken'
-  #     responses:
-  #       '200':
-  #         description: 'return projects that a request user joins'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: 'array'
-  #               items:
-  #                 $ref: '#/components/schemas/GetProjectResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #   post:
-  #     tags:
-  #       - 'old'
-  #     summary: 'create project'
-  #     description: ''
-  #     parameters: 
-  #       - $ref: '#/components/parameters/AccessToken'
-  #     requestBody:
-  #       $ref: '#/components/requestBodies/UpdateProject'
-        
-  #     responses:
-  #       '200':
-  #         description: 'return new project'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/GetProjectResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  # /projects/{project_id}:
-  #   put:
-  #     tags: 
-  #       - 'old'
-  #     summary: 'update project'
-  #     description: '本人orプロジェクトのオーナーである必要?'
-  #     parameters: 
-  #       - $ref: '#/components/parameters/AccessToken'
-  #       - name: 'project_id'
-  #         in: 'path'
-  #         required: true
-  #         schema:
-  #           type: 'string'
-  #     responses:
-  #       '200':
-  #         description: 'return updated project'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/GetProjectResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #   delete:
-  #     tags:
-  #       - 'old'
-  #     summary: 'delete project'
-  #     description: ''
-  #     parameters: 
-  #       - $ref: '#/components/parameters/AccessToken'
-  #       - name: 'project_id'
-  #         in: 'path'
-  #         required: true
-  #         schema:
-  #           type: 'string'
-  #     responses:
-  #       '204':
-  #         $ref: '#/components/responses/NoContent'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  # # TODO: ここのpath、ながいか？project_idを別の場所に載っけてもいいかも？
-  # /projects/{project_id}/todos:
-  #   get:
-  #     tags:
-  #       - 'old'
-  #     summary: 'get todos in a project'
-  #     description: ''
-  #     parameters: 
-  #       - $ref: '#/components/parameters/AccessToken'
-  #       - name: 'project_id'
-  #         in: 'path'
-  #         required: true
-  #         schema:
-  #           type: 'string'
-  #     responses:
-  #       '200':
-  #         description: 'return array of todos'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: 'array'
-  #               items:
-  #                 $ref: '#/components/schemas/GetTodoResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-  #   post:
-  #     tags: 
-  #       - 'old'
-  #     summary: 'create new todo'
-  #     description: ''
-  #     parameters: 
-  #       - $ref: '#/components/parameters/AccessToken'
-  #       - name: 'project_id'
-  #         in: 'path'
-  #         required: true
-  #         schema:
-  #           type: 'string'
-  #     requestBody:
-  #       $ref: '#/components/requestBodies/UpdateTodo'
-  #     responses:
-  #       '200':
-  #         description: 'return new todo'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/GetTodoResponse'
-  #   # TODO: put
-  #   # TODO; delete
-  # # TODO: add Label
-  # # TODO: remove Label
-  # # TODO: label crud
 
 components:
   schemas:
@@ -770,10 +575,10 @@ components:
           type: 'string'
   parameters:
     AccessToken:
-      name: 'x-token'
-      # TODO: どこに載せるか...?
+      name: 'token'
       in: 'header'
       required: true
+      description: 'this token on Authorization Header'
       schema:
         $ref: '#/components/schemas/AccessToken'
     ProjectID:
@@ -795,54 +600,53 @@ components:
       schema:
         type: 'string'
   requestBodies:
-    # TODO: ちゃんと作って
     UpdateUser:
-      description: 'request body'
+      description: 'a requestBody when making a create-user or update-user request'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateUserRequest'
     UpdateProject:
-      description: 'request body'
+      description: 'a requestBody when making a create-project or update-project request'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateProjectRequest'
     UpdateTodo:
-      description: 'request body'
+      description: 'a requestBody when making a create-todo or update-todo request'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateTodoRequest'
     UpdateLabel:
-      description: 'request body'
+      description: 'a requestBody when making a create-label or update-label request'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateLabelRequest'
   responses:
     NoContent:
-      description: 'no content'
+      description: 'success response. statusCode: 204'
     BadRequest:
-      description: 'bad request. status code: 400'
+      description: 'client error. statusCode: 400'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
-      description: 'unauthorized error'
+      description: 'unauthorized error. statusCode: 401'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     Conflict:
-      description: 'conflict error. status code: 409'
+      description: 'conflict error. statusCode: 409. when unique values have duplidates, this error return.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     InternalServerError:
-      description: 'internal server error'
+      description: 'internal server error. statusCode: 500'
       content:
         application/json:
           schema:
