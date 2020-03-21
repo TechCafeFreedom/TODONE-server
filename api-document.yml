@@ -11,6 +11,8 @@ tags:
     description: 'project'
   - name: 'todo'
     description: 'todo'
+  - name: 'label'
+    description: 'label'
 
 paths:
   # account ----------
