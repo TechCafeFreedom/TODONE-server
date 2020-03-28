@@ -1,6 +1,13 @@
 help: ## 使い方
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+dbgen: ## sqlboilerによるコード自動生成
+	# sqlboilerのインストール
+	GO111MODULE=off go get -u github.com/volatiletech/sqlboiler
+
+	# DDL定義を元にコードを自動生成
+	sqlboiler mysql -o db/mysql/models --wipe
+
 lint: ## lintの実行
 	# golangci-lintのインストール
 	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
