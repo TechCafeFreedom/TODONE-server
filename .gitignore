@@ -1,1 +1,10 @@
-./sqlboiler.toml
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# idea
+*.idea
+
+# sqlboiler
+sqlboiler.toml
