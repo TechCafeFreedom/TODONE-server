@@ -29,7 +29,7 @@ func (s *service) Login(email, password string) (*model.User, error) {
 }
 
 func (s *service) GetUser(id string) ([]*model.User, error) {
-	return s.userRepository.SelectByUserId(id)
+	return s.userRepository.SelectByUserID(id)
 }
 
 func (s *service) CreateNewUser(id, userID, name, thumbnail, email, password string) error {

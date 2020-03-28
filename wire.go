@@ -3,7 +3,7 @@
 package main
 
 import (
-	"todone/pkg/api/handler"
+	"todone/pkg/api/handler/user"
 	userSvc "todone/pkg/domain/service/user"
 	userRepo "todone/pkg/infrastructure/mysql/user"
 
@@ -11,8 +11,8 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
-func InitUserAPI(db boil.ContextExecutor) handler.UserHandler {
-	wire.Build(userRepo.NewUserRepoImpl, userSvc.NewUserService, handler.NewUserHandler)
+func InitUserAPI(db boil.ContextExecutor) user.Server {
+	wire.Build(userRepo.NewUserRepoImpl, userSvc.NewUserService, user.NewUserHandler)
 
-	return handler.UserHandler{}
+	return user.Server{}
 }

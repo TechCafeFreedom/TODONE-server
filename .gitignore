@@ -8,3 +8,9 @@
 
 # sqlboiler
 sqlboiler.toml
+
+# env
+.env
+
+# binary
+/binary

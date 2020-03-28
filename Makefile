@@ -1,6 +1,30 @@
 help: ## 使い方
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+lint: ## lintの実行
+	# golangci-lintのインストール
+	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+
+	# pkg配下をチェック。設定は .golangci.yml に記載
+	golangci-lint run pkg/...
+
+fmt: ## fmtの実行
+	# goimportsのインストール
+	GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
+
+	# fmt,goimportsの実行
+	gofmt -s -w pkg/
+	goimports -w pkg/
+
+fmt-lint: fmt lint ## fmtとlintの実行
+
+wiregen: ## wire_gen.goの生成
+	# google/wireのインストール
+	GO111MODULE=off go get -u github.com/google/wire
+
+	# wire genの実行
+	wire gen
+
 run: ## APIをビルドせずに立ち上げるコマンド
 	go run main.go wire_gen.go
 

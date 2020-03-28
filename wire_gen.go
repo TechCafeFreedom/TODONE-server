@@ -7,16 +7,16 @@ package main
 
 import (
 	"github.com/volatiletech/sqlboiler/boil"
-	"todone/pkg/api/handler"
-	user2 "todone/pkg/domain/service/user"
-	"todone/pkg/infrastructure/mysql/user"
+	"todone/pkg/api/handler/user"
+	user3 "todone/pkg/domain/service/user"
+	user2 "todone/pkg/infrastructure/mysql/user"
 )
 
 // Injectors from wire.go:
 
-func InitUserAPI(db boil.ContextExecutor) handler.UserHandler {
-	repository := user.NewUserRepoImpl(db)
-	service := user2.NewUserService(repository)
-	userHandler := handler.NewUserHandler(service)
-	return userHandler
+func InitUserAPI(db boil.ContextExecutor) user.Server {
+	repository := user2.NewUserRepoImpl(db)
+	service := user3.NewUserService(repository)
+	server := user.NewUserHandler(service)
+	return server
 }

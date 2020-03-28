@@ -11,12 +11,12 @@ import (
 )
 
 type userRepositoryImpliment struct {
-	DB boil.ContextExecutor
+	db boil.ContextExecutor
 }
 
-func NewUserRepoImpl(DB boil.ContextExecutor) user.Repository {
+func NewUserRepoImpl(db boil.ContextExecutor) user.Repository {
 	return &userRepositoryImpliment{
-		DB: DB,
+		db: db,
 	}
 }
 
@@ -35,12 +35,12 @@ func (p *userRepositoryImpliment) Login(email, password string) (*model.User, er
 	return users[0], nil
 }
 
-func (p *userRepositoryImpliment) SelectByUserId(id string) ([]*model.User, error) {
+func (p *userRepositoryImpliment) SelectByUserID(id string) ([]*model.User, error) {
 	// ユーザ取得機能
 	queries := []qm.QueryMod{
 		qm.Where(model.UserColumns.UserID+"=?", id),
 	}
-	users, err := model.Users(queries...).All(context.Background(), p.DB)
+	users, err := model.Users(queries...).All(context.Background(), p.db)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (p *userRepositoryImpliment) SelectByUserId(id string) ([]*model.User, erro
 
 func (p *userRepositoryImpliment) InsertUser(user *model.User) error {
 	// ユーザ作成機能
-	if err := user.Insert(context.Background(), p.DB, boil.Infer()); err != nil {
+	if err := user.Insert(context.Background(), p.db, boil.Infer()); err != nil {
 		return err
 	}
 
@@ -59,7 +59,7 @@ func (p *userRepositoryImpliment) InsertUser(user *model.User) error {
 
 func (p *userRepositoryImpliment) SelectAll() ([]*model.User, error) {
 	queries := []qm.QueryMod{}
-	users, err := model.Users(queries...).All(context.Background(), p.DB)
+	users, err := model.Users(queries...).All(context.Background(), p.db)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (p *userRepositoryImpliment) SelectByEmail(email string) ([]*model.User, er
 	queries := []qm.QueryMod{
 		qm.Where(model.UserColumns.Email+"=?", email),
 	}
-	users, err := model.Users(queries...).All(context.Background(), p.DB)
+	users, err := model.Users(queries...).All(context.Background(), p.db)
 	if err != nil {
 		return nil, err
 	}

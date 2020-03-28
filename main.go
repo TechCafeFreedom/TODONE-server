@@ -6,11 +6,17 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	dbInstance := mysql.CreateSQLInstance()
 	defer dbInstance.Close()
+
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
 
 	userAPI := InitUserAPI(dbInstance)
 

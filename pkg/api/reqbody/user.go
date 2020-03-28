@@ -1,4 +1,4 @@
-package requestBody
+package reqbody
 
 type UserLogin struct {
 	Email    string `json:"email"`

@@ -14,6 +14,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/wire v0.3.0
 	github.com/jinzhu/gorm v1.9.12
+	github.com/joho/godotenv v1.3.0
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/oxequa/interact v0.0.0-20171114182912-f8fb5795b5d7 // indirect
 	github.com/oxequa/realize v2.0.2+incompatible // indirect

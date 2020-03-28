@@ -14,7 +14,7 @@ const (
 	rs6LetterIdxMax  = 63 / rs6LetterIdxBits
 )
 
-func CreateUserId(n int) string {
+func CreateUserID(n int) string {
 	id := make([]byte, n)
 	cache, remain := randSrc.Int63(), rs6LetterIdxMax
 

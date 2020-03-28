@@ -1,10 +1,10 @@
-package handler
+package user
 
 import (
 	"net/http"
 	"os"
 	"time"
-	"todone/pkg/api/requestBody"
+	"todone/pkg/api/reqbody"
 	"todone/pkg/domain/service/user"
 	"todone/pkg/utility"
 
@@ -13,36 +13,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserHandler struct {
+type Server struct {
 	UserService user.Service
 }
 
-func NewUserHandler(service user.Service) UserHandler {
-	return UserHandler{UserService: service}
+func NewUserHandler(service user.Service) Server {
+	return Server{UserService: service}
 }
 
-func (handler *UserHandler) Login(context *gin.Context) (interface{}, error) {
-	var reqBody requestBody.UserLogin
+func (handler *Server) Login(context *gin.Context) (interface{}, error) {
+	var reqBody reqbody.UserLogin
 
 	err := context.BindJSON(&reqBody)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	user, err := handler.UserService.Login(reqBody.Email, reqBody.Password)
+	loginedUser, err := handler.UserService.Login(reqBody.Email, reqBody.Password)
 	if err != nil {
 		return nil, err
-	} else if user == nil {
+	} else if loginedUser == nil {
 		return nil, ginJwt.ErrFailedAuthentication
 	}
 
-	return user, nil
+	return loginedUser, nil
 }
 
-func (handler *UserHandler) GetUser(context *gin.Context) {
+func (handler *Server) GetUser(context *gin.Context) {
 	claims := ginJwt.ExtractClaims(context)
 	id, ok := claims["id"].(string)
-	if ok == false {
+	if !ok {
 		context.Error(ginJwt.ErrForbidden)
 	}
 
@@ -54,15 +54,15 @@ func (handler *UserHandler) GetUser(context *gin.Context) {
 	context.JSON(200, user)
 }
 
-func (handler *UserHandler) CreateNewUser(context *gin.Context) {
-	var reqBody requestBody.UserCreate
+func (handler *Server) CreateNewUser(context *gin.Context) {
+	var reqBody reqbody.UserCreate
 
 	err := context.BindJSON(&reqBody)
 	if err != nil {
 		context.Error(err)
 	}
 
-	id := utility.CreateUserId(255)
+	id := utility.CreateUserID(255)
 
 	err = handler.UserService.CreateNewUser(id, "userID", reqBody.Name, reqBody.Thumbnail, reqBody.Email, reqBody.Password)
 	if err != nil {
@@ -83,7 +83,7 @@ func (handler *UserHandler) CreateNewUser(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"token": tokenStr})
 }
 
-func (handler *UserHandler) GetAllUsers(context *gin.Context) {
+func (handler *Server) GetAllUsers(context *gin.Context) {
 	users, err := handler.UserService.SelectAll()
 	if err != nil {
 		context.Error(err)

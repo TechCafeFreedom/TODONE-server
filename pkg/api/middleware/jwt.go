@@ -4,13 +4,13 @@ import (
 	"os"
 	"time"
 	model "todone/db/mysql/models"
-	"todone/pkg/api/handler"
+	"todone/pkg/api/handler/user"
 
-	"github.com/appleboy/gin-jwt/v2"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
-func CreateJwtInstance(userHandler handler.UserHandler) (*jwt.GinJWTMiddleware, error) {
+func CreateJwtInstance(userHandler user.Server) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "todone zone",
 		Key:         []byte(os.Getenv("JWT_KEY")),
