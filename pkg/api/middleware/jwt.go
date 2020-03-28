@@ -3,11 +3,11 @@ package middleware
 import (
 	"os"
 	"time"
+	model "todone/db/mysql/models"
 	"todone/pkg/api/handler"
 
 	"github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/sekky0905/nuxt-vue-go-chat/server/domain/model"
 )
 
 func CreateJwtInstance(userHandler handler.UserHandler) (*jwt.GinJWTMiddleware, error) {
@@ -20,7 +20,7 @@ func CreateJwtInstance(userHandler handler.UserHandler) (*jwt.GinJWTMiddleware, 
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*model.User); ok {
 				return jwt.MapClaims{
-					"id": v.Id,
+					"id": v.ID,
 				}
 			}
 			return jwt.MapClaims{}
@@ -28,17 +28,13 @@ func CreateJwtInstance(userHandler handler.UserHandler) (*jwt.GinJWTMiddleware, 
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &model.User{
-				Id: claims["id"].(string),
+				ID: claims["id"].(string),
 			}
 		},
 		Authenticator: userHandler.Login,
 		Authorizator: func(data interface{}, c *gin.Context) bool {
 			_, ok := data.(*model.User)
-			if ok {
-				return true
-			}
-
-			return false
+			return ok
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{

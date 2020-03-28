@@ -35,11 +35,6 @@ func (p *userRepositoryImpliment) Login(email, password string) (*model.User, er
 	return users[0], nil
 }
 
-func (p *userRepositoryImpliment) UpdateImg(s3Url string) error {
-	// s3Urlをユーザのimgカラムに挿入・更新
-	return nil
-}
-
 func (p *userRepositoryImpliment) SelectByUserId(id string) ([]*model.User, error) {
 	// ユーザ取得機能
 	queries := []qm.QueryMod{
