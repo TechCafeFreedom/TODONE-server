@@ -14,7 +14,7 @@ type userRepositoryImpliment struct {
 	db boil.ContextExecutor
 }
 
-func NewUserRepoImpl(db boil.ContextExecutor) user.Repository {
+func New(db boil.ContextExecutor) user.Repository {
 	return &userRepositoryImpliment{
 		db: db,
 	}

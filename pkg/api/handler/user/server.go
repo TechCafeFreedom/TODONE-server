@@ -2,23 +2,19 @@ package user
 
 import (
 	"net/http"
-	"os"
-	"time"
 	"todone/pkg/api/reqbody"
-	"todone/pkg/domain/service/user"
-	"todone/pkg/utility"
+	userinteractor "todone/pkg/api/usecase/user"
 
 	ginJwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	UserService user.Service
+	userInteractor userinteractor.Interactor
 }
 
-func NewUserHandler(service user.Service) Server {
-	return Server{UserService: service}
+func New(userInteractor userinteractor.Interactor) Server {
+	return Server{userInteractor: userInteractor}
 }
 
 func (handler *Server) Login(context *gin.Context) (interface{}, error) {
@@ -29,7 +25,7 @@ func (handler *Server) Login(context *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	loginedUser, err := handler.UserService.Login(reqBody.Email, reqBody.Password)
+	loginedUser, err := handler.userInteractor.Login(reqBody.Email, reqBody.Password)
 	if err != nil {
 		return nil, err
 	} else if loginedUser == nil {
@@ -46,12 +42,12 @@ func (handler *Server) GetUser(context *gin.Context) {
 		context.Error(ginJwt.ErrForbidden)
 	}
 
-	user, err := handler.UserService.GetUser(id)
+	user, err := handler.userInteractor.GetUser(id)
 	if err != nil {
 		context.Error(err)
 	}
 
-	context.JSON(200, user)
+	context.JSON(http.StatusOK, user)
 }
 
 func (handler *Server) CreateNewUser(context *gin.Context) {
@@ -62,20 +58,7 @@ func (handler *Server) CreateNewUser(context *gin.Context) {
 		context.Error(err)
 	}
 
-	id := utility.CreateUserID(255)
-
-	err = handler.UserService.CreateNewUser(id, "userID", reqBody.Name, reqBody.Thumbnail, reqBody.Email, reqBody.Password)
-	if err != nil {
-		context.Error(err)
-	}
-
-	// token作成処理
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":      time.Now().Add(time.Hour).Unix(),
-		"id":       id,
-		"orig_iat": time.Now().Unix(),
-	})
-	tokenStr, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	tokenStr, err := handler.userInteractor.CreateNewUser("userID", reqBody.Name, reqBody.Thumbnail, reqBody.Email, reqBody.Password)
 	if err != nil {
 		context.Error(err)
 	}
@@ -84,7 +67,7 @@ func (handler *Server) CreateNewUser(context *gin.Context) {
 }
 
 func (handler *Server) GetAllUsers(context *gin.Context) {
-	users, err := handler.UserService.SelectAll()
+	users, err := handler.userInteractor.SelectAll()
 	if err != nil {
 		context.Error(err)
 	}

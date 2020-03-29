@@ -12,6 +12,7 @@ require (
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-siris/siris v7.4.0+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/google/uuid v1.1.1 // indirect
 	github.com/google/wire v0.3.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
