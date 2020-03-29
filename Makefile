@@ -1,5 +1,21 @@
+SOURCE_FILE := $(notdir $(source))
+SOURCE_DIR := $(dir $(source))
+MOCK_FILE := mock_${SOURCE_FILE}
+MOCK_DIR := ${SOURCE_DIR}mock_$(lastword $(subst /, ,${SOURCE_DIR}))/
+MOCK_TARGET := $(lastword $(subst /, ,${SOURCE_DIR}))
+
+
 help: ## 使い方
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+mockgen: # mockgenの実行
+	# Usege: make mockgen source=<インターフェースの定義しているファイル>
+
+	# mockgenのインストール
+	go install github.com/golang/mock/mockgen
+
+	# mockgenの実行
+	mockgen -source ${SOURCE_DIR}${SOURCE_FILE} -destination ${MOCK_DIR}${MOCK_FILE}
 
 dbgen: ## sqlboilerによるコード自動生成
 	# sqlboilerのインストール
@@ -7,6 +23,9 @@ dbgen: ## sqlboilerによるコード自動生成
 
 	# DDL定義を元にコードを自動生成
 	sqlboiler mysql -o db/mysql/models --wipe
+
+test: ## testの実行
+	go test -v ./...
 
 lint: ## lintの実行
 	# golangci-lintのインストール
