@@ -1,0 +1,32 @@
+linters-settings:
+    gocritic:
+        enabled-tags:
+            - performance
+
+linters:
+    enable:
+        - govet
+        - errcheck
+        - staticcheck
+        - unused
+        - gosimple
+        - structcheck
+        - varcheck
+        - ineffassign
+        - deadcode
+        - typecheck
+        - gofmt
+        - goimports
+        - golint
+        - gocritic
+
+run:
+    timeout: 20m
+    skip-dirs:
+        - "pkg/.*/mock_.*"
+        - "pkg/api/handler"
+    skip-files:
+        - "pkg/api/middleware/jwt.go"
+
+issues:
+    exclude-rules:

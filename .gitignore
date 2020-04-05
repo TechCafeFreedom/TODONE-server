@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# idea
+*.idea
+
+# sqlboiler
+sqlboiler.toml
+
+# env
+.env
+
+# binary
+/binary
