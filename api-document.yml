@@ -5,8 +5,8 @@ info:
   version: '1.0.0'
 
 tags:
-  - name: 'user'
-    description: 'user data'
+  - name: 'project'
+    description: 'project data'
   - name: 'project'
     description: 'project'
   - name: 'todo'
@@ -19,14 +19,14 @@ paths:
   /view/users/self:
     get:
       tags:
-        - 'user'
-      summary: 'get profile of request user'
+        - 'project'
+      summary: 'get profile of request project'
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       responses:
         '200':
-          description: 'return user profile by idp infomation'
+          description: 'return project profile by idp infomation'
           content:
             application/json:
               schema:
@@ -40,16 +40,16 @@ paths:
   /action/users/self:
     put:
       tags:
-        - 'user'
-      summary: 'update user profile'
-      description: 'update user name and/or thumbnail'
+        - 'project'
+      summary: 'update project profile'
+      description: 'update project name and/or thumbnail'
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       requestBody:
         $ref: '#/components/requestBodies/UpdateUser'
       responses:
         '200':
-          description: 'return updated user info'
+          description: 'return updated project info'
           content:
             application/json:
               schema:
@@ -65,13 +65,13 @@ paths:
     get:
       tags:
         - 'project'
-      summary: 'get projects that a request_user joins'
+      summary: 'get project that a request_user joins'
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       responses:
         '200':
-          description: 'return projects that a request user joins'
+          description: 'return project that a request project joins'
           content:
             application/json:
               schema:
@@ -603,7 +603,7 @@ components:
         type: 'string'
   requestBodies:
     UpdateUser:
-      description: 'a requestBody when making a create-user or update-user request'
+      description: 'a requestBody when making a create-project or update-project request'
       content:
         application/json:
           schema:

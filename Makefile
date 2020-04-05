@@ -32,7 +32,7 @@ lint: ## lintの実行
 	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 	# pkg配下をチェック。設定は .golangci.yml に記載
-	golangci-lint run pkg/...
+	golangci-lint run --skip-dirs middleware pkg/...
 
 fmt: ## fmtの実行
 	# goimportsのインストール
@@ -49,10 +49,10 @@ wiregen: ## wire_gen.goの生成
 	GO111MODULE=off go get -u github.com/google/wire
 
 	# wire genの実行
-	wire gen
+	wire gen cmd/wire.go
 
 run: ## APIをビルドせずに立ち上げるコマンド
-	go run main.go wire_gen.go
+	go run ./cmd/main.go ./cmd/wire_gen.go
 
 build: ## APIをビルドして立ち上げるコマンド
 	go build -o binary/todone

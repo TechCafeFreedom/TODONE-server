@@ -1,13 +1,17 @@
-package reqbody
+package reqheader
 
-type UserLogin struct {
+type ProjectLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type UserCreate struct {
+type ProjectCreate struct {
 	Name      string `json:"name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	Thumbnail string `json:"thumbnail"`
+}
+
+type ProjectGet struct {
+	Authorization string
 }
