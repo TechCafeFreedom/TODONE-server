@@ -1,0 +1,655 @@
+openapi: 3.0.0
+info:
+  title: 'TODONE api server'
+  description: 'TODONE'
+  version: '1.0.0'
+
+tags:
+  - name: 'user'
+    description: 'user data'
+  - name: 'project'
+    description: 'project'
+  - name: 'todo'
+    description: 'todo'
+  - name: 'label'
+    description: 'label'
+
+paths:
+  # account ----------
+  /view/users/self:
+    get:
+      tags:
+        - 'user'
+      summary: 'get profile of request user'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      responses:
+        '200':
+          description: 'return user profile by idp infomation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/users/self:
+    put:
+      tags:
+        - 'user'
+      summary: 'update user profile'
+      description: 'update user name and/or thumbnail'
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUser'
+      responses:
+        '200':
+          description: 'return updated user info'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  # project ----------
+  /view/projects:
+    get:
+      tags:
+        - 'project'
+      summary: 'get projects that a request_user joins'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      responses:
+        '200':
+          description: 'return projects that a request user joins'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/GetProjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /view/projects/{project_id}:
+    get:
+      tags:
+        - 'project'
+      summary: 'get project match id in path'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+      responses:
+        '200':
+          description: 'return a project object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /view/projects/{project_id}/todos:
+    get:
+      tags:
+        - 'todo'
+      summary: 'get all todos on a project'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+      responses:
+        '200':
+          description: 'return an array of todo objects'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/GetTodoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /view/projects/{project_id}/labels:
+    get:
+      tags:
+        - 'label'
+      summary: 'return labels can use in project'
+      description: ''
+      parameters: 
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+      responses:
+        '200':
+          description: 'return array of label objects'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/GetLabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects:
+    post:
+      tags:
+        - 'project'
+      summary: 'create project'
+      description: ''
+      parameters: 
+        - $ref: '#/components/parameters/AccessToken'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateProject'
+      responses:
+        '200':
+          description: 'return new project'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects/{project_id}:
+    put:
+      tags: 
+        - 'project'
+      summary: 'update project'
+      description: '本人orプロジェクトのオーナーである必要?'
+      parameters: 
+        - $ref: '#/components/parameters/AccessToken'
+        - name: 'project_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '200':
+          description: 'return updated project'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProjectResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - 'project'
+      summary: 'delete project'
+      description: ''
+      parameters: 
+        - $ref: '#/components/parameters/AccessToken'
+        - name: 'project_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  # todo ----------
+  /view/projects/{project_id}/todos/{todo_id}:
+    get:
+      tags:
+        - 'todo'
+      summary: 'return todo by id'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/TodoID'
+      responses:
+        '200':
+          description: 'return todo object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTodoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects/{project_id}/todos:
+    post:
+      tags: 
+        - 'todo'
+      summary: 'create new todo'
+      description: ''
+      parameters: 
+        - $ref: '#/components/parameters/AccessToken'
+        - name: 'project_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTodo'
+      responses:
+        '200':
+          description: 'return new todo'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTodoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects/{project_id}/todos/{todo_id}:
+    put:
+      tags:
+        - 'todo'
+      summary: 'update todo'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: 'project_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+        - name: 'todo_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTodo'
+      responses:
+        '200':
+          description: 'return updated todo'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTodoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - 'todo'
+      summary: 'delete todo'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: 'project_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+        - name: 'todo_id'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  # label ----------
+  /action/projects/{project_id}/labels:
+    post:
+      tags:
+        - 'label'
+      summary: 'create label'
+      description: 'add a label that you can use in project'
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateLabel'
+      responses:
+        '200':
+          description: 'return a updated label'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects/{project_id}/labels/{label_id}:
+    put:
+      tags:
+        - 'label'
+      summary: 'update a label'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/LabelID'
+      requestBody: 
+        $ref: '#/components/requestBodies/UpdateLabel'
+      responses:
+        '200':
+          description: 'return a updated label'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - 'label'
+      summary: 'delete a label'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/LabelID'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  # TODO: 複数一気に追加をありにするか？
+  /action/projects/{project_id}/todos/{todo_id}/label:
+    post:
+      tags:
+        - 'label'
+      summary: 'add a label on a todo'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/TodoID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'string'
+      responses:
+        '200':
+          description: 'return labels on a todo'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/GetLabelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /action/projects/{project_id}/todos/{todo_id}/label/{label_id}:
+    delete:
+      tags:
+        - 'label'
+      summary: 'remove label on a todo'
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/TodoID'
+        - $ref: '#/components/parameters/LabelID'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    AccessToken:
+      # TODO: stringなのか
+      type: 'string'
+    GetUserResponse:
+      type: 'object'
+      properties:
+        id:
+          type: 'string'
+        name:
+          type: 'string'
+        thumbnail:
+          type: 'string'
+    UpdateUserRequest:
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+        thumbnail:
+          type: 'string'
+    GetProjectResponse:
+      type: 'object'
+      properties:
+        id:
+          type: 'string'
+        title:
+          type: 'string'
+        description:
+          type: 'string'
+        author:
+          $ref: '#/components/schemas/GetUserResponse'
+        members:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/GetUserResponse'
+        todos:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/GetTodoResponse'
+        labels:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/GetLabelResponse'
+        created_at:
+          type: 'string'
+        updated_at:
+          type: 'string'
+    UpdateProjectRequest:
+      type: 'object'
+      properties:
+        title:
+          type: 'string'
+        description: 
+          type: 'string'
+    GetTodoResponse:
+      type: 'object'
+      properties:
+        id:
+          type: 'string'
+        title:
+          type: 'string'
+        content:
+          type: 'string'
+        deadline:
+          type: 'string'
+        state:
+          type: 'string'
+        author:
+          $ref: '#/components/schemas/GetUserResponse'
+        labels:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/GetLabelResponse'
+        created_at:
+          type: 'string'
+        updated_at:
+          type: 'string'
+    UpdateTodoRequest:
+      type: 'object'
+      properties:
+        title:
+          type: 'string'
+        content:
+          type: 'string'
+        deadline:
+          type: 'string'
+        state:
+          type: 'string'
+    GetLabelResponse:
+      type: 'object'
+      properties:
+        id:
+          type: 'string'
+        name:
+          type: 'string'
+        description:
+          type: 'string'
+        color:
+          type: 'string'
+        created_at:
+          type: 'string'
+        updated_at:
+          type: 'string'
+    UpdateLabelRequest:
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+        description:
+          type: 'string'
+        color:
+          type: 'string'
+    ErrorResponse:
+      type: 'object'
+      properties:
+        code:
+          type: 'integer'
+        message:
+          type: 'string'
+  parameters:
+    AccessToken:
+      name: 'token'
+      in: 'header'
+      required: true
+      description: 'this token on Authorization Header'
+      schema:
+        $ref: '#/components/schemas/AccessToken'
+    ProjectID:
+      name: 'project_id'
+      in: 'path'
+      required: true
+      schema:
+        type: 'string'
+    TodoID:
+      name: 'todo_id'
+      in: 'path'
+      required: true
+      schema:
+        type: 'string'
+    LabelID:
+      name: 'label_id'
+      in: 'path'
+      required: true
+      schema:
+        type: 'string'
+  requestBodies:
+    UpdateUser:
+      description: 'a requestBody when making a create-user or update-user request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateUserRequest'
+    UpdateProject:
+      description: 'a requestBody when making a create-project or update-project request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateProjectRequest'
+    UpdateTodo:
+      description: 'a requestBody when making a create-todo or update-todo request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTodoRequest'
+    UpdateLabel:
+      description: 'a requestBody when making a create-label or update-label request'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateLabelRequest'
+  responses:
+    NoContent:
+      description: 'success response. statusCode: 204'
+    BadRequest:
+      description: 'client error. statusCode: 400'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: 'unauthorized error. statusCode: 401'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: 'conflict error. statusCode: 409. when unique values have duplidates, this error return.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: 'internal server error. statusCode: 500'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
