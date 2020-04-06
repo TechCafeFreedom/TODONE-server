@@ -2,7 +2,7 @@ package project
 
 import (
 	"net/http"
-	"todone/pkg/api/reqbody"
+	"todone/pkg/api/request/reqbody"
 	projectinteractor "todone/pkg/api/usecase/project"
 
 	"github.com/gin-gonic/gin"
