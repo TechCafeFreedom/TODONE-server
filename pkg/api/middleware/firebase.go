@@ -8,10 +8,9 @@ import (
 	"todone/pkg/api/handler/project"
 	"todone/pkg/api/request/reqheader"
 
-	"github.com/gin-gonic/gin"
-
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
 )
 
