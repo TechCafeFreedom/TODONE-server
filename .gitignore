@@ -14,3 +14,6 @@ sqlboiler.toml
 
 # binary
 /binary
+
+# secret
+todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json
