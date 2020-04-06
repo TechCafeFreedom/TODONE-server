@@ -1,13 +1,15 @@
 package project
 
 import (
-	model "todone/db/mysql/models"
+	"todone/db/mysql/model"
 	"todone/pkg/domain/repository/project"
 )
 
 type Service interface {
 	CreateNewProject(userID, title, description string) error
-	SelectAll() ([]*model.Project, error)
+	GetByPK(id int) (*model.Project, error)
+	GetByUserID(userID string) (model.ProjectSlice, error)
+	GetAll() (model.ProjectSlice, error)
 }
 
 type service struct {
@@ -31,6 +33,22 @@ func (s *service) CreateNewProject(userID, title, description string) error {
 	return nil
 }
 
-func (s *service) SelectAll() ([]*model.Project, error) {
+func (s *service) GetByPK(id int) (*model.Project, error) {
+	project, err := s.projectRepository.SelectByPK(id)
+	if err != nil {
+		return nil, err
+	}
+	return project, nil
+}
+
+func (s *service) GetByUserID(userID string) (model.ProjectSlice, error) {
+	projects, err := s.projectRepository.SelectByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
+}
+
+func (s *service) GetAll() (model.ProjectSlice, error) {
 	return s.projectRepository.SelectAll()
 }

@@ -22,7 +22,14 @@ dbgen: ## sqlboilerによるコード自動生成
 	GO111MODULE=off go get -u github.com/volatiletech/sqlboiler
 
 	# DDL定義を元にコードを自動生成
-	sqlboiler mysql -o db/mysql/models --wipe
+	sqlboiler mysql -o db/mysql/model -p model --wipe db/mysql/model
+
+wiregen: ## wire_gen.goの生成
+	# google/wireのインストール
+	GO111MODULE=off go get -u github.com/google/wire
+
+	# wire genの実行
+	wire gen cmd/wire.go
 
 test: ## testの実行
 	go test -v ./...
@@ -43,13 +50,6 @@ fmt: ## fmtの実行
 	goimports -w pkg/
 
 fmt-lint: fmt lint ## fmtとlintの実行
-
-wiregen: ## wire_gen.goの生成
-	# google/wireのインストール
-	GO111MODULE=off go get -u github.com/google/wire
-
-	# wire genの実行
-	wire gen cmd/wire.go
 
 run: ## APIをビルドせずに立ち上げるコマンド
 	go run ./cmd/main.go ./cmd/wire_gen.go

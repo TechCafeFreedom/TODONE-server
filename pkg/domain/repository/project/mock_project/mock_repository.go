@@ -6,7 +6,7 @@ package mock_project
 
 import (
 	reflect "reflect"
-	models "todone/db/mysql/models"
+	model "todone/db/mysql/model"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -35,7 +35,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertProject mocks base method
-func (m *MockRepository) InsertProject(project *models.Project) error {
+func (m *MockRepository) InsertProject(project *model.Project) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertProject", project)
 	ret0, _ := ret[0].(error)
@@ -48,11 +48,41 @@ func (mr *MockRepositoryMockRecorder) InsertProject(project interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProject", reflect.TypeOf((*MockRepository)(nil).InsertProject), project)
 }
 
+// SelectByPK mocks base method
+func (m *MockRepository) SelectByPK(id int) (*model.Project, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectByPK", id)
+	ret0, _ := ret[0].(*model.Project)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectByPK indicates an expected call of SelectByPK
+func (mr *MockRepositoryMockRecorder) SelectByPK(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), id)
+}
+
+// SelectByUserID mocks base method
+func (m *MockRepository) SelectByUserID(userID string) (model.ProjectSlice, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectByUserID", userID)
+	ret0, _ := ret[0].(model.ProjectSlice)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectByUserID indicates an expected call of SelectByUserID
+func (mr *MockRepositoryMockRecorder) SelectByUserID(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByUserID", reflect.TypeOf((*MockRepository)(nil).SelectByUserID), userID)
+}
+
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll() ([]*models.Project, error) {
+func (m *MockRepository) SelectAll() (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll")
-	ret0, _ := ret[0].([]*models.Project)
+	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

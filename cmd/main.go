@@ -42,7 +42,9 @@ func main() {
 	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
 	{
 		firebaseAuth.POST("/project", projectAPI.CreateNewProject)
+		firebaseAuth.GET("/user/projects", projectAPI.GetProjectsByUserID)
 	}
+	r.GET("/project", projectAPI.GetProjectByPK)
 	r.GET("/projects", projectAPI.GetAllProjects)
 
 	// port: 8080

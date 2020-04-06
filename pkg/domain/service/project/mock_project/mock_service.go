@@ -6,7 +6,7 @@ package mock_project
 
 import (
 	reflect "reflect"
-	models "todone/db/mysql/models"
+	model "todone/db/mysql/model"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -48,17 +48,47 @@ func (mr *MockServiceMockRecorder) CreateNewProject(userID, title, description i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockService)(nil).CreateNewProject), userID, title, description)
 }
 
-// SelectAll mocks base method
-func (m *MockService) SelectAll() ([]*models.Project, error) {
+// GetByPK mocks base method
+func (m *MockService) GetByPK(id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAll")
-	ret0, _ := ret[0].([]*models.Project)
+	ret := m.ctrl.Call(m, "GetByPK", id)
+	ret0, _ := ret[0].(*model.Project)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SelectAll indicates an expected call of SelectAll
-func (mr *MockServiceMockRecorder) SelectAll() *gomock.Call {
+// GetByPK indicates an expected call of GetByPK
+func (mr *MockServiceMockRecorder) GetByPK(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAll", reflect.TypeOf((*MockService)(nil).SelectAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockService)(nil).GetByPK), id)
+}
+
+// GetByUserID mocks base method
+func (m *MockService) GetByUserID(userID string) (model.ProjectSlice, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByUserID", userID)
+	ret0, _ := ret[0].(model.ProjectSlice)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByUserID indicates an expected call of GetByUserID
+func (mr *MockServiceMockRecorder) GetByUserID(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockService)(nil).GetByUserID), userID)
+}
+
+// GetAll mocks base method
+func (m *MockService) GetAll() (model.ProjectSlice, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAll")
+	ret0, _ := ret[0].(model.ProjectSlice)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAll indicates an expected call of GetAll
+func (mr *MockServiceMockRecorder) GetAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockService)(nil).GetAll))
 }

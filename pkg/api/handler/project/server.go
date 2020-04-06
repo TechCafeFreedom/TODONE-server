@@ -29,8 +29,31 @@ func (s *Server) CreateNewProject(context *gin.Context) {
 	context.Status(http.StatusOK)
 }
 
+func (s *Server) GetProjectByPK(context *gin.Context) {
+	var reqBody reqbody.ProjectPK
+	if err := context.BindJSON(&reqBody); err != nil {
+		context.Error(err)
+	}
+
+	project, err := s.projectInteractor.GetByPK(reqBody.ID)
+	if err != nil {
+		context.Error(err)
+	}
+
+	context.JSON(http.StatusOK, project)
+}
+
+func (s *Server) GetProjectsByUserID(context *gin.Context) {
+	projects, err := s.projectInteractor.GetByUserID(context)
+	if err != nil {
+		context.Error(err)
+	}
+
+	context.JSON(http.StatusOK, projects)
+}
+
 func (s *Server) GetAllProjects(context *gin.Context) {
-	projects, err := s.projectInteractor.SelectAll()
+	projects, err := s.projectInteractor.GetAll()
 	if err != nil {
 		context.Error(err)
 	}
