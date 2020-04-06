@@ -3,6 +3,7 @@ package project
 import (
 	"net/http"
 	"todone/pkg/api/request/reqbody"
+	"todone/pkg/api/response"
 	projectinteractor "todone/pkg/api/usecase/project"
 
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,15 @@ func (s *Server) GetProjectByPK(context *gin.Context) {
 		context.Error(err)
 	}
 
-	context.JSON(http.StatusOK, project)
+	res := response.ProjectResponse{
+		ID:          project.ID,
+		Title:       project.Title,
+		Description: project.Description,
+		CreatedAt:   project.CreatedAt,
+		UpdatedAt:   project.UpdatedAt,
+	}
+
+	context.JSON(http.StatusOK, res)
 }
 
 func (s *Server) GetProjectsByUserID(context *gin.Context) {
@@ -49,7 +58,18 @@ func (s *Server) GetProjectsByUserID(context *gin.Context) {
 		context.Error(err)
 	}
 
-	context.JSON(http.StatusOK, projects)
+	res := make(response.ProjectsResponse, 0, len(projects))
+	for _, data := range projects {
+		res = append(res, &response.ProjectResponse{
+			ID:          data.ID,
+			Title:       data.Title,
+			Description: data.Description,
+			CreatedAt:   data.CreatedAt,
+			UpdatedAt:   data.UpdatedAt,
+		})
+	}
+
+	context.JSON(http.StatusOK, res)
 }
 
 func (s *Server) GetAllProjects(context *gin.Context) {
@@ -58,5 +78,16 @@ func (s *Server) GetAllProjects(context *gin.Context) {
 		context.Error(err)
 	}
 
-	context.JSON(http.StatusOK, gin.H{"projects": projects})
+	res := make(response.ProjectsResponse, 0, len(projects))
+	for _, data := range projects {
+		res = append(res, &response.ProjectResponse{
+			ID:          data.ID,
+			Title:       data.Title,
+			Description: data.Description,
+			CreatedAt:   data.CreatedAt,
+			UpdatedAt:   data.UpdatedAt,
+		})
+	}
+
+	context.JSON(http.StatusOK, res)
 }
