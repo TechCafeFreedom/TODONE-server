@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,17 +35,17 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewProject mocks base method
-func (m *MockInteractor) CreateNewProject(context *gin.Context, title, description string) error {
+func (m *MockInteractor) CreateNewProject(userID, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewProject", context, title, description)
+	ret := m.ctrl.Call(m, "CreateNewProject", userID, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewProject indicates an expected call of CreateNewProject
-func (mr *MockInteractorMockRecorder) CreateNewProject(context, title, description interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) CreateNewProject(userID, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockInteractor)(nil).CreateNewProject), context, title, description)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockInteractor)(nil).CreateNewProject), userID, title, description)
 }
 
 // GetByPK mocks base method
@@ -65,18 +64,18 @@ func (mr *MockInteractorMockRecorder) GetByPK(id interface{}) *gomock.Call {
 }
 
 // GetByUserID mocks base method
-func (m *MockInteractor) GetByUserID(ctx *gin.Context) (model.ProjectSlice, error) {
+func (m *MockInteractor) GetByUserID(userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUserID", ctx)
+	ret := m.ctrl.Call(m, "GetByUserID", userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByUserID indicates an expected call of GetByUserID
-func (mr *MockInteractorMockRecorder) GetByUserID(ctx interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetByUserID(userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockInteractor)(nil).GetByUserID), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockInteractor)(nil).GetByUserID), userID)
 }
 
 // GetAll mocks base method

@@ -5,7 +5,6 @@ import (
 	"todone/db/mysql/model"
 	"todone/pkg/domain/service/project/mock_project"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,8 +17,6 @@ const (
 )
 
 func TestIntereractor_CreateNewProject(t *testing.T) {
-	ctx := &gin.Context{}
-	ctx.Set("AUTHED_USER_ID", userID)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -27,7 +24,7 @@ func TestIntereractor_CreateNewProject(t *testing.T) {
 	projectService.EXPECT().CreateNewProject(userID, title, description).Return(nil).Times(1)
 
 	interactor := New(projectService)
-	err := interactor.CreateNewProject(ctx, title, description)
+	err := interactor.CreateNewProject(userID, title, description)
 
 	assert.NoError(t, err)
 }
@@ -54,8 +51,6 @@ func TestIntereractor_GetByPK(t *testing.T) {
 }
 
 func TestIntereractor_GetByUserID(t *testing.T) {
-	ctx := &gin.Context{}
-	ctx.Set("AUTHED_USER_ID", userID)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -72,7 +67,7 @@ func TestIntereractor_GetByUserID(t *testing.T) {
 	projectService.EXPECT().GetByUserID(userID).Return(userProjects, nil).Times(1)
 
 	interactor := New(projectService)
-	projects, err := interactor.GetByUserID(ctx)
+	projects, err := interactor.GetByUserID(userID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)

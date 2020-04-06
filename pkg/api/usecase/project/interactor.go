@@ -1,17 +1,14 @@
 package project
 
 import (
-	"errors"
 	"todone/db/mysql/model"
 	projectservice "todone/pkg/domain/service/project"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Interactor interface {
-	CreateNewProject(context *gin.Context, title, description string) error
+	CreateNewProject(userID, title, description string) error
 	GetByPK(id int) (*model.Project, error)
-	GetByUserID(ctx *gin.Context) (model.ProjectSlice, error)
+	GetByUserID(userID string) (model.ProjectSlice, error)
 	GetAll() (model.ProjectSlice, error)
 }
 
@@ -25,16 +22,10 @@ func New(projectService projectservice.Service) Interactor {
 	}
 }
 
-func (i *intereractor) CreateNewProject(c *gin.Context, title, description string) error {
-	userID, ok := c.Get("AUTHED_USER_ID")
-	if !ok {
-		return errors.New("userID is not found in context")
-	}
-
-	if err := i.projectService.CreateNewProject(userID.(string), title, description); err != nil {
+func (i *intereractor) CreateNewProject(userID, title, description string) error {
+	if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -46,13 +37,8 @@ func (i *intereractor) GetByPK(id int) (*model.Project, error) {
 	return project, nil
 }
 
-func (i *intereractor) GetByUserID(c *gin.Context) (model.ProjectSlice, error) {
-	userID, ok := c.Get("AUTHED_USER_ID")
-	if !ok {
-		return nil, errors.New("userID is not found in context")
-	}
-
-	projects, err := i.projectService.GetByUserID(userID.(string))
+func (i *intereractor) GetByUserID(userID string) (model.ProjectSlice, error) {
+	projects, err := i.projectService.GetByUserID(userID)
 	if err != nil {
 		return nil, err
 	}

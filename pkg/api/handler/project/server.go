@@ -1,7 +1,9 @@
 package project
 
 import (
+	"errors"
 	"net/http"
+	"todone/db/mysql/model"
 	"todone/pkg/api/request/reqbody"
 	"todone/pkg/api/response"
 	projectinteractor "todone/pkg/api/usecase/project"
@@ -23,7 +25,12 @@ func (s *Server) CreateNewProject(context *gin.Context) {
 		context.Error(err)
 	}
 
-	if err := s.projectInteractor.CreateNewProject(context, reqBody.Title, reqBody.Description); err != nil {
+	userID, ok := context.Get("AUTHED_USER_ID")
+	if !ok {
+		context.Error(errors.New("userID is not found in context"))
+	}
+
+	if err := s.projectInteractor.CreateNewProject(userID.(string), reqBody.Title, reqBody.Description); err != nil {
 		context.Error(err)
 	}
 
@@ -41,35 +48,21 @@ func (s *Server) GetProjectByPK(context *gin.Context) {
 		context.Error(err)
 	}
 
-	res := response.ProjectResponse{
-		ID:          project.ID,
-		Title:       project.Title,
-		Description: project.Description,
-		CreatedAt:   project.CreatedAt,
-		UpdatedAt:   project.UpdatedAt,
-	}
-
-	context.JSON(http.StatusOK, res)
+	context.JSON(http.StatusOK, convertToProjectResponse(project))
 }
 
 func (s *Server) GetProjectsByUserID(context *gin.Context) {
-	projects, err := s.projectInteractor.GetByUserID(context)
+	userID, ok := context.Get("AUTHED_USER_ID")
+	if !ok {
+		context.Error(errors.New("userID is not found in context"))
+	}
+
+	projects, err := s.projectInteractor.GetByUserID(userID.(string))
 	if err != nil {
 		context.Error(err)
 	}
 
-	res := make(response.ProjectsResponse, 0, len(projects))
-	for _, data := range projects {
-		res = append(res, &response.ProjectResponse{
-			ID:          data.ID,
-			Title:       data.Title,
-			Description: data.Description,
-			CreatedAt:   data.CreatedAt,
-			UpdatedAt:   data.UpdatedAt,
-		})
-	}
-
-	context.JSON(http.StatusOK, res)
+	context.JSON(http.StatusOK, convertToProjectsResponse(projects))
 }
 
 func (s *Server) GetAllProjects(context *gin.Context) {
@@ -78,6 +71,20 @@ func (s *Server) GetAllProjects(context *gin.Context) {
 		context.Error(err)
 	}
 
+	context.JSON(http.StatusOK, convertToProjectsResponse(projects))
+}
+
+func convertToProjectResponse(project *model.Project) response.ProjectResponse {
+	return response.ProjectResponse{
+		ID:          project.ID,
+		Title:       project.Title,
+		Description: project.Description,
+		CreatedAt:   project.CreatedAt,
+		UpdatedAt:   project.UpdatedAt,
+	}
+}
+
+func convertToProjectsResponse(projects model.ProjectSlice) response.ProjectsResponse {
 	res := make(response.ProjectsResponse, 0, len(projects))
 	for _, data := range projects {
 		res = append(res, &response.ProjectResponse{
@@ -88,6 +95,5 @@ func (s *Server) GetAllProjects(context *gin.Context) {
 			UpdatedAt:   data.UpdatedAt,
 		})
 	}
-
-	context.JSON(http.StatusOK, res)
+	return res
 }
