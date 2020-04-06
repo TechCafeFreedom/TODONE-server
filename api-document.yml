@@ -6,8 +6,6 @@ info:
 
 tags:
   - name: 'project'
-    description: 'project data'
-  - name: 'project'
     description: 'project'
   - name: 'todo'
     description: 'todo'
@@ -15,51 +13,6 @@ tags:
     description: 'label'
 
 paths:
-  # account ----------
-  /view/users/self:
-    get:
-      tags:
-        - 'project'
-      summary: 'get profile of request project'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-      responses:
-        '200':
-          description: 'return project profile by idp infomation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUserResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /action/users/self:
-    put:
-      tags:
-        - 'project'
-      summary: 'update project profile'
-      description: 'update project name and/or thumbnail'
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateUser'
-      responses:
-        '200':
-          description: 'return updated project info'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUserResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
   # project ----------
   /view/projects:
     get:
@@ -457,25 +410,6 @@ paths:
 
 components:
   schemas:
-    AccessToken:
-      # TODO: stringなのか
-      type: 'string'
-    GetUserResponse:
-      type: 'object'
-      properties:
-        id:
-          type: 'string'
-        name:
-          type: 'string'
-        thumbnail:
-          type: 'string'
-    UpdateUserRequest:
-      type: 'object'
-      properties:
-        name:
-          type: 'string'
-        thumbnail:
-          type: 'string'
     GetProjectResponse:
       type: 'object'
       properties:
