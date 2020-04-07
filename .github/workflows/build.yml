@@ -40,7 +40,7 @@ jobs:
     - name: Create .env file
       run: |
         cp .env_example .env
-        cp .sqlboiler_example.toml .sqlboiler.toml
+        cp sqlboiler_example.toml sqlboiler.toml
 
     # install packages
     - name: Get dependencies
