@@ -24,7 +24,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: todone
-          
+
     steps:
 
     # set go version
@@ -42,6 +42,11 @@ jobs:
       run: |
         cp .env_example .env
         cp sqlboiler_example.toml sqlboiler.toml
+
+    # Run ddl
+    - name: Setup DB tables
+      run: |
+        mysql -u root -ppassword todone < ./db/mysql/ddl.sql
 
     # install packages
     - name: Get dependencies
