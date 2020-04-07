@@ -1,3 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# idea
+*.idea
+
+# sqlboiler
+sqlboiler.toml
+
+# env
+.env
+
+# binary
+/binary
+
+# secret
+todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json
+todone-server-7767abe40934.json
+
 # config file
 mysql-config.json
-todone-server-7767abe40934.json
