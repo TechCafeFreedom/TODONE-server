@@ -1,36 +1,40 @@
 openapi: 3.0.0
 info:
-  title: 'TODONE api server'
-  description: 'TODONE'
-  version: '1.0.0'
-
+  title: TODONE api server
+  description: TODONE
+  version: 1.0.0
 tags:
-  - name: 'user'
-    description: 'user data'
-  - name: 'project'
-    description: 'project'
-  - name: 'todo'
-    description: 'todo'
-  - name: 'label'
-    description: 'label'
-
+  - name: user
+    description: user data
+  - name: project
+    description: project
+  - name: todo
+    description: todo
+  - name: label
+    description: label
 paths:
-  # account ----------
   /view/users/self:
     get:
       tags:
-        - 'user'
-      summary: 'get profile of request user'
-      description: ''
+        - user
+      summary: 自分自身のプロフィール情報取得API
+      description: ユーザ情報取得API（自分自身）
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       responses:
         '200':
-          description: 'return user profile by idp infomation'
+          description: return user profile by idp infomation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUserResponse'
+              examples:
+                example:
+                  value:
+                    name: 鈴木一郎
+                    thumbnail: 'https://google.com/ichiro.png'
+                    created_at: '2020/01/01 11:11:11'
+                    updated_at: '2020/01/01 11:11:11'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -40,114 +44,270 @@ paths:
   /action/users/self:
     put:
       tags:
-        - 'user'
-      summary: 'update user profile'
-      description: 'update user name and/or thumbnail'
+        - user
+      summary: 自分自身のユーザ情報更新API
+      description: ユーザのプロフィール情報更新API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       requestBody:
         $ref: '#/components/requestBodies/UpdateUser'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                thumbnail:
+                  type: string
+        description: どちらか一方のみの更新であっても必ず両方の情報をBodyに含めること！
       responses:
         '200':
-          description: 'return updated user info'
+          description: 更新に成功したらステータスコード（200）のみ返却
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserResponse'
+                $ref: '#/components/schemas/UpdateUserResponse'
+              examples:
+                example:
+                  value:
+                    name: 鈴木一郎
+                    thumbnail: 'https://s3.com/hoge.png'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  # project ----------
+      operationId: ''
+    post:
+      summary: 自分自身のユーザ情報登録API
+      operationId: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserResponse'
+              examples:
+                example:
+                  value:
+                    name: 鈴木一郎
+                    thumbnail: 'https://google.com/hoge.png'
+      description: ユーザ作成API
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ユーザ名
+                thumbnail:
+                  type: string
+                  description: アイコン画像のLink
+        description: firebaseで作成したユーザ情報を自前DBに保存するAPI
+      tags:
+        - user
   /view/projects:
     get:
       tags:
-        - 'project'
-      summary: 'get projects that a request_user joins'
-      description: ''
+        - project
+      summary: プロジェクト一覧取得API
+      description: プロジェクト一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       responses:
         '200':
-          description: 'return projects that a request user joins'
+          description: return projects that a request user joins
           content:
             application/json:
               schema:
-                type: 'array'
+                type: array
                 items:
-                  $ref: '#/components/schemas/GetProjectResponse'
+                  $ref: '#/components/schemas/GetProjectsResponse'
+              examples:
+                example:
+                  value:
+                    - project_id: 1
+                      title: プロジェクトタイトル
+                      description: プロジェクトの説明
+                      author:
+                        name: 鈴木一郎
+                        thumbnail: 'https://google.com/hoge.png'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                      members:
+                        - name: 鈴木一郎
+                          thumbnail: 'https://google.com/hoge.png'
+                          createdAt: '2020/02/22 22:22:22'
+                          updatedAt: '2020/02/22 22:22:22'
+                        - name: 佐藤次郎
+                          thumbnail: 'https://google.com/hoge.png'
+                          createdAt: '2020/02/22 22:22:22'
+                          updatedAt: '2020/02/22 22:22:22'
+                      todos:
+                        - todo_id: sampleID
+                          title: sample title
+                          content: sample content
+                          deadline: string format
+                          state: string?
+                          author:
+                            name: 鈴木一郎
+                            thumbnail: 'https://google.com/hoge.png'
+                            createdAt: '2020/02/22 22:22:22'
+                            updatedAt: '2020/02/22 22:22:22'
+                          label:
+                            - label_id: 1
+                              name: ラベル名
+                              description: ラベルの説明
+                              color: '#bbb'
+                              createdAt: '2020/02/22 22:22:22'
+                              updatedAt: '2020/02/22 22:22:22'
+                          createdAt: '2020/02/22 22:22:22'
+                          updatedAt: '2020/02/22 22:22:22'
+                      labels:
+                        - label_id: 1
+                          name: ラベル名
+                          description: ラベルの説明
+                          color: '#bbb'
+                          createdAt: '2020/02/22 22:22:22'
+                          updatedAt: '2020/02/22 22:22:22'
+                      createdAt: '2020/02/22 22:22:22'
+                      updatedAt: '2020/02/22 22:22:22'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /view/projects/{project_id}:
+      operationId: ''
+  '/view/projects/{project_id}':
     get:
       tags:
-        - 'project'
-      summary: 'get project match id in path'
-      description: ''
+        - project
+      summary: プロジェクト情報取得API（プロジェクトID指定）
+      description: プロジェクトIDをして１件取得するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/ProjectID'
       responses:
         '200':
-          description: 'return a project object'
+          description: return a project object
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetProjectResponse'
+              examples:
+                example:
+                  value:
+                    project_id: 1
+                    title: プロジェクトタイトル
+                    description: プロジェクトの説明
+                    author:
+                      name: 鈴木一郎
+                      thumbnail: 'https://google.com/hoge.png'
+                      createdAt: '2020/02/22 22:22:22'
+                      updatedAt: '2020/02/22 22:22:22'
+                    members:
+                      - name: 鈴木一郎
+                        thumbnail: 'https://google.com/hoge.png'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                      - name: 佐藤次郎
+                        thumbnail: 'https://google.com/hoge.png'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                    todos:
+                      - todo_id: sampleID
+                        title: sample title
+                        content: sample content
+                        deadline: string format
+                        state: string?
+                        author:
+                          name: 鈴木一郎
+                          thumbnail: 'https://google.com/hoge.png'
+                          createdAt: '2020/02/22 22:22:22'
+                          updatedAt: '2020/02/22 22:22:22'
+                        label:
+                          - label_id: 1
+                            name: ラベル名
+                            description: ラベルの説明
+                            color: '#bbb'
+                            createdAt: '2020/02/22 22:22:22'
+                            updatedAt: '2020/02/22 22:22:22'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                    labels:
+                      - label_id: 1
+                        name: ラベル名
+                        description: ラベルの説明
+                        color: '#bbb'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                    createdAt: '2020/02/22 22:22:22'
+                    updatedAt: '2020/02/22 22:22:22'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /view/projects/{project_id}/todos:
+  '/view/projects/{project_id}/todos':
     get:
       tags:
-        - 'todo'
-      summary: 'get all todos on a project'
-      description: ''
+        - todo
+      summary: todo一覧取得API（プロジェクトID指定）
+      description: 指定プロジェクトのtodo一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/ProjectID'
       responses:
         '200':
-          description: 'return an array of todo objects'
+          description: return an array of todo objects
           content:
             application/json:
               schema:
-                type: 'array'
+                type: array
                 items:
-                  $ref: '#/components/schemas/GetTodoResponse'
+                  $ref: '#/components/schemas/GetTodosResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /view/projects/{project_id}/labels:
+  '/view/projects/{project_id}/labels':
     get:
       tags:
-        - 'label'
-      summary: 'return labels can use in project'
-      description: ''
+        - label
+      summary: プロジェクト内使用可能ラベル取得API
+      description: プロジェクト内で使えるラベル一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/ProjectID'
       responses:
         '200':
-          description: 'return array of label objects'
+          description: return array of label objects
           content:
             application/json:
               schema:
-                type: 'array'
+                type: array
                 items:
-                  $ref: '#/components/schemas/GetLabelResponse'
+                  $ref: '#/components/schemas/GetLabelsResponse'
+              examples:
+                example:
+                  value:
+                    - label_id: 1
+                      name: ラベル名
+                      description: ラベルの説明
+                      color: '#bbb'
+                      createdAt: '2020/02/22 22:22:22'
+                      updatedAt: '2020/02/22 22:22:22'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -157,288 +317,466 @@ paths:
   /action/projects:
     post:
       tags:
-        - 'project'
-      summary: 'create project'
-      description: ''
+        - project
+      summary: 新規プロジェクト作成API
+      description: 新規プロジェクト作成API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       requestBody:
         $ref: '#/components/requestBodies/UpdateProject'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+        description: 新規作成するプロジェクトのタイトルと説明情報
       responses:
         '200':
-          description: 'return new project'
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetProjectResponse'
+                $ref: '#/components/schemas/UpdateProjectResponse'
+              examples:
+                example:
+                  value:
+                    project_id: 1
+                    title: プロジェクトタイトル
+                    description: プロジェクト説明
+                    created_at: '2020/01/01 11:11:11'
+                    updated_at: '2020/01/01 11:11:11'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /action/projects/{project_id}:
+  '/action/projects/{project_id}':
     put:
       tags:
-        - 'project'
-      summary: 'update project'
-      description: '本人orプロジェクトのオーナーである必要?'
+        - project
+      summary: プロジェクト情報更新API
+      description: プロジェクトのタイトル・説明を更新するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: 'project_id'
-          in: 'path'
+        - name: project_id
+          in: path
           required: true
           schema:
-            type: 'string'
+            type: string
       responses:
         '200':
-          description: 'return updated project'
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetProjectResponse'
+                $ref: '#/components/schemas/UpdateProjectResponse'
+              examples:
+                example:
+                  value:
+                    project_id: 1
+                    title: プロジェクトタイトル
+                    description: プロジェクト説明
+                    created_at: '2020/01/01 11:11:11'
+                    updated_at: '2020/01/01 11:11:11'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-    delete:
-      tags:
-        - 'project'
-      summary: 'delete project'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - name: 'project_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-      responses:
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  # todo ----------
-  /view/projects/{project_id}/todos/{todo_id}:
-    get:
-      tags:
-        - 'todo'
-      summary: 'return todo by id'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
-        - $ref: '#/components/parameters/TodoID'
-      responses:
-        '200':
-          description: 'return todo object'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetTodoResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /action/projects/{project_id}/todos:
-    post:
-      tags:
-        - 'todo'
-      summary: 'create new todo'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - name: 'project_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateTodo'
-      responses:
-        '200':
-          description: 'return new todo'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetTodoResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /action/projects/{project_id}/todos/{todo_id}:
-    put:
-      tags:
-        - 'todo'
-      summary: 'update todo'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - name: 'project_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-        - name: 'todo_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateTodo'
-      responses:
-        '200':
-          description: 'return updated todo'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetTodoResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      tags:
-        - 'todo'
-      summary: 'delete todo'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - name: 'project_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-        - name: 'todo_id'
-          in: 'path'
-          required: true
-          schema:
-            type: 'string'
-      responses:
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  # label ----------
-  /action/projects/{project_id}/labels:
-    post:
-      tags:
-        - 'label'
-      summary: 'create label'
-      description: 'add a label that you can use in project'
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateLabel'
-      responses:
-        '200':
-          description: 'return a updated label'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetLabelResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  /action/projects/{project_id}/labels/{label_id}:
-    put:
-      tags:
-        - 'label'
-      summary: 'update a label'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
-        - $ref: '#/components/parameters/LabelID'
-      requestBody:
-        $ref: '#/components/requestBodies/UpdateLabel'
-      responses:
-        '200':
-          description: 'return a updated label'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetLabelResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      tags:
-        - 'label'
-      summary: 'delete a label'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
-        - $ref: '#/components/parameters/LabelID'
-      responses:
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-  # TODO: 複数一気に追加をありにするか？
-  /action/projects/{project_id}/todos/{todo_id}/label:
-    post:
-      tags:
-        - 'label'
-      summary: 'add a label on a todo'
-      description: ''
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
-        - $ref: '#/components/parameters/TodoID'
       requestBody:
         content:
           application/json:
             schema:
-              type: 'string'
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+        description: タイトル・説明のどちらか片方だけの更新であっても必ず両方の情報を送信すること！
+      operationId: ''
+    delete:
+      tags:
+        - project
+      summary: プロジェクト削除API
+      description: 指定されたプロジェクトを削除する
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        '200':
-          description: 'return labels on a todo'
-          content:
-            application/json:
-              schema:
-                type: 'array'
-                items:
-                  $ref: '#/components/schemas/GetLabelResponse'
+        '204':
+          $ref: '#/components/responses/NoContent'
+          description: OK
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /action/projects/{project_id}/todos/{todo_id}/label/{label_id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+  '/view/projects/{project_id}/todos/{todo_id}':
+    get:
+      tags:
+        - todo
+      summary: todoに付与されているラベル取得API
+      description: todo_idによるtodo情報取得API
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/TodoID'
+      responses:
+        '200':
+          description: return todo object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTodoResponse'
+              examples:
+                example:
+                  value:
+                    todo_id: sampleID
+                    title: sample title
+                    content: sample content
+                    deadline: string format
+                    state: string?
+                    author:
+                      name: 鈴木一郎
+                      thumbnail: 'https://google.com/hoge.png'
+                      createdAt: '2020/02/22 22:22:22'
+                      updatedAt: '2020/02/22 22:22:22'
+                    label:
+                      - label_id: 1
+                        name: ラベル名
+                        description: ラベルの説明
+                        color: '#bbb'
+                        createdAt: '2020/02/22 22:22:22'
+                        updatedAt: '2020/02/22 22:22:22'
+                    createdAt: '2020/02/22 22:22:22'
+                    updatedAt: '2020/02/22 22:22:22'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  '/action/projects/{project_id}/todos':
+    post:
+      tags:
+        - todo
+      summary: 新規todo作成API
+      description: 指定されたプロジェクトに紐づくtodoを作成するAPI
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTodo'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                deadline:
+                  type: string
+        description: 'todo情報（title, content, deadline）を送信する'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTodoResponse'
+              examples:
+                example:
+                  value:
+                    title: todoタイトル
+                    content: todoの内容
+                    deadline: '2020/01/01 11:11:11'
+                    state: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+  '/action/projects/{project_id}/todos/{todo_id}':
+    put:
+      tags:
+        - todo
+      summary: todo情報更新API
+      description: todo情報更新API
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: todo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTodo'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: todoタイトル
+                content:
+                  type: string
+                  description: コンテンツ内容
+                deadline:
+                  type: string
+                  description: 期限日時
+                state:
+                  type: integer
+                  description: 'todo: 1 / wip: 2 / done: 3'
+        description: |-
+          todoの更新情報
+          いずれか1つだけの変更の場合でも全ての情報を送ること！
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTodoRequest'
+              examples:
+                example:
+                  value:
+                    title: todoタイトル
+                    content: todo内容
+                    deadline: '2020/01/01 11:11:11'
+                    state: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      operationId: ''
     delete:
       tags:
-        - 'label'
-      summary: 'remove label on a todo'
+        - todo
+      summary: todo削除API
+      description: 指定されたtodoを削除する
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: todo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/NoContent'
+          description: OK
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/TodoID'
+  '/action/projects/{project_id}/labels':
+    post:
+      tags:
+        - label
+      summary: プロジェクト内で使えるラベル新規作成API
+      description: プロジェクトで使えるラベルを追加するAPI
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateLabel'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ラベル名
+                description:
+                  type: string
+                  description: ラベルの説明
+                color:
+                  type: string
+                  description: ラベルの色
+        description: 作成するラベルの情報
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateLabelResponse'
+              examples:
+                example:
+                  value:
+                    name: ラベル名
+                    description: ラベル説明
+                    color: '#bbb'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      operationId: ''
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+  '/action/projects/{project_id}/labels/{label_id}':
+    put:
+      tags:
+        - label
+      summary: ラベル情報更新API
+      description: ラベル情報更新API
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/LabelID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateLabel'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ラベル名
+                description:
+                  type: string
+                  description: ラベルの説明
+                color:
+                  type: string
+                  description: ラベルの色
+      responses:
+        '200':
+          description: return a updated label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateLabelResponse'
+              examples:
+                example:
+                  value:
+                    name: ラベル名
+                    description: ラベル説明
+                    color: '#bbb'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - label
+      summary: ラベル削除API
+      description: ''
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/LabelID'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/LabelID'
+  '/action/projects/{project_id}/todos/{todo_id}/label':
+    post:
+      tags:
+        - label
+      summary: todoにラベルを付与するAPI
+      description: todoに付与したラベルを登録するAPI
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/TodoID'
+      requestBody:
+        description: 新規作成するラベル情報
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ラベル名
+                description:
+                  type: string
+                  description: ラベルの説明
+                color:
+                  type: string
+                  description: ラベルの色
+      responses:
+        '200':
+          description: return labels on a todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateLabelResponse'
+              examples:
+                example:
+                  value:
+                    name: ラベル名
+                    description: ラベル説明
+                    color: '#bbb'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/TodoID'
+  '/action/projects/{project_id}/todos/{todo_id}/label/{label_id}':
+    delete:
+      tags:
+        - label
+      summary: todoに登録されているラベル解除API
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
@@ -454,174 +792,357 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
+    put:
+      summary: todoに付与されているラベルの情報更新API
+      operationId: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateLabelResponse'
+              examples:
+                example:
+                  value:
+                    name: ラベル名
+                    description: ラベル説明
+                    color: '#bbb'
+      description: ラベル情報更新API
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ラベル名
+                description:
+                  type: string
+                  description: ラベルの説明
+                color:
+                  type: string
+                  description: ラベルの色
+      tags:
+        - label
+    parameters:
+      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/TodoID'
+      - $ref: '#/components/parameters/LabelID'
 components:
   schemas:
     AccessToken:
-      # TODO: stringなのか
-      type: 'string'
-    GetUserResponse:
-      type: 'object'
-      properties:
-        id:
-          type: 'string'
-        name:
-          type: 'string'
-        thumbnail:
-          type: 'string'
+      type: string
+      description: Firebaseから取得できるjwtトークン
     UpdateUserRequest:
-      type: 'object'
+      type: object
       properties:
         name:
-          type: 'string'
+          type: string
         thumbnail:
-          type: 'string'
-    GetProjectResponse:
-      type: 'object'
+          type: string
+    UpdateProjectRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+    UpdateTodoResponse:
+      type: object
+      description: todo情報更新レスポンス
+      x-tags:
+        - todo
+      title: Update todo response
       properties:
         id:
-          type: 'string'
+          type: integer
+          description: todoID
         title:
-          type: 'string'
+          type: string
+          description: todoタイトル
+        content:
+          type: string
+          description: todoコンテンツ（内容）
+        deadline:
+          type: string
+          description: 期限日時
+        state:
+          description: 'todo: 1 / wip: 2 / done: 3'
+          type: integer
+        created_at:
+          type: string
+          description: 作成日時
+        updated_at:
+          type: string
+          description: 最終更新日時
+      x-examples: {}
+    UpdateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        deadline:
+          type: string
+        state:
+          type: string
+    UpdateLabelResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
         description:
-          type: 'string'
+          type: string
+        color:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      title: Update label response
+      description: ラベル情報更新レスポンス
+      x-tags:
+        - label
+    UpdateLabelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        color:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    UpdateUserResponse:
+      title: Update user response
+      type: object
+      description: ユーザ情報更新レスポンス
+      properties:
+        name:
+          type: string
+          description: ユーザ名
+        thumbnail:
+          type: string
+          description: アイコン画像のURL
+    UpdateProjectResponse:
+      title: Update project response
+      type: object
+      properties:
+        id:
+          type: integer
+          description: プロジェクトID
+        title:
+          type: string
+          description: プロジェクトタイトル
+        description:
+          type: string
+          description: プロジェクトの説明
+        created_at:
+          type: string
+          description: 作成日
+        updated_at:
+          type: string
+          description: 最終更新日時
+      description: プロジェクト情報更新レスポンス
+    GetUserResponse:
+      title: GetUserResponse
+      type: object
+      description: ユーザリソース取得情報
+      properties:
+        name:
+          type: string
+          description: ユーザ名
+        thumbnail:
+          type: string
+          description: アイコン画像URL
+        created_at:
+          type: string
+          description: 作成日時
+        updated_at:
+          type: string
+          description: 最終更新日時
+      x-tags:
+        - user
+      x-examples:
+        example:
+          name: 鈴木一郎
+          thumbnail: 'https://google.com/ichiro.png'
+          created_at: '2020/01/01 11:11:11'
+          updated_at: '2020/01/01 11:11:11'
+    GetProjectResponse:
+      title: GetProjectResponse
+      type: object
+      description: プロジェクト取得情報
+      x-tags:
+        - project
+      x-examples: {}
+      properties:
+        project_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
         author:
           $ref: '#/components/schemas/GetUserResponse'
         members:
-          type: 'array'
-          items:
-            $ref: '#/components/schemas/GetUserResponse'
+          $ref: '#/components/schemas/GetMembersResource'
         todos:
-          type: 'array'
-          items:
-            $ref: '#/components/schemas/GetTodoResponse'
-        labels:
-          type: 'array'
-          items:
-            $ref: '#/components/schemas/GetLabelResponse'
-        created_at:
-          type: 'string'
-        updated_at:
-          type: 'string'
-    UpdateProjectRequest:
-      type: 'object'
+          $ref: '#/components/schemas/GetTodosResponse'
+    GetLabelResponse:
+      title: GetLabelResponse
+      type: object
       properties:
-        title:
-          type: 'string'
+        label_id:
+          type: integer
+          description: ラベルID
+        name:
+          type: string
+          description: ラベル名
         description:
-          type: 'string'
+          type: string
+          description: ラベルの説明
+        color:
+          type: string
+          description: ラベルの色
+        created_at:
+          type: string
+          description: 作成日時
+        updated_at:
+          type: string
+          description: 最終更新日時
+      description: ラベル取得情報
+      x-tags:
+        - label
+      x-examples:
+        example:
+          label_id: 1
+          name: bug
+          description: バグ
+          color: '#FFKESD'
+          created_at: '2020/01/01 11:11:11'
+          updated_at: '2020/01/01 11:11:11'
     GetTodoResponse:
-      type: 'object'
+      title: GetTodoResponse
+      type: object
+      description: todo取得情報
+      x-tags:
+        - todo
       properties:
-        id:
-          type: 'string'
+        todo_id:
+          type: integer
         title:
-          type: 'string'
+          type: string
         content:
-          type: 'string'
+          type: string
         deadline:
-          type: 'string'
+          type: string
         state:
-          type: 'string'
+          type: integer
         author:
           $ref: '#/components/schemas/GetUserResponse'
         labels:
-          type: 'array'
+          type: array
           items:
             $ref: '#/components/schemas/GetLabelResponse'
         created_at:
-          type: 'string'
+          type: string
         updated_at:
-          type: 'string'
-    UpdateTodoRequest:
-      type: 'object'
-      properties:
-        title:
-          type: 'string'
-        content:
-          type: 'string'
-        deadline:
-          type: 'string'
-        state:
-          type: 'string'
-    GetLabelResponse:
-      type: 'object'
-      properties:
-        id:
-          type: 'string'
-        name:
-          type: 'string'
-        description:
-          type: 'string'
-        color:
-          type: 'string'
-        created_at:
-          type: 'string'
-        updated_at:
-          type: 'string'
-    UpdateLabelRequest:
-      type: 'object'
-      properties:
-        name:
-          type: 'string'
-        description:
-          type: 'string'
-        color:
-          type: 'string'
-    ErrorResponse:
-      type: 'object'
-      properties:
-        code:
-          type: 'integer'
-        message:
-          type: 'string'
+          type: string
+    GetProjectsResponse:
+      title: GetProjectsResponse
+      type: array
+      description: プロジェクト一覧取得レスポンス
+      items:
+        $ref: '#/components/schemas/GetProjectResponse'
+      x-tags:
+        - project
+    GetTodosResponse:
+      title: GetTodosResponse
+      type: array
+      description: todo一覧取得API
+      items:
+        $ref: '#/components/schemas/GetTodoResponse'
+      x-tags:
+        - todo
+    GetLabelsResponse:
+      title: GetLabelsResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/GetLabelResponse'
+      description: ラベル一覧取得レスポンス
+      x-tags:
+        - label
+      x-examples: {}
+    GetMembersResource:
+      title: GetMembersResource
+      type: array
+      description: ユーザの集合を表す
+      items:
+        $ref: '#/components/schemas/GetUserResponse'
   parameters:
     AccessToken:
-      name: 'token'
-      in: 'header'
+      name: token
+      in: header
       required: true
-      description: 'this token on Authorization Header'
+      description: this token on Authorization Header
       schema:
         $ref: '#/components/schemas/AccessToken'
     ProjectID:
-      name: 'project_id'
-      in: 'path'
+      name: project_id
+      in: path
       required: true
+      description: プロジェクトID
       schema:
-        type: 'string'
+        type: integer
     TodoID:
-      name: 'todo_id'
-      in: 'path'
+      name: todo_id
+      in: path
       required: true
+      description: todoID
       schema:
-        type: 'string'
+        type: integer
     LabelID:
-      name: 'label_id'
-      in: 'path'
+      name: label_id
+      in: path
       required: true
+      description: ラベルID
       schema:
-        type: 'string'
+        type: integer
   requestBodies:
     UpdateUser:
-      description: 'a requestBody when making a create-user or update-user request'
+      description: a requestBody when making a create-user or update-user request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateUserRequest'
     UpdateProject:
-      description: 'a requestBody when making a create-project or update-project request'
+      description: a requestBody when making a create-project or update-project request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateProjectRequest'
     UpdateTodo:
-      description: 'a requestBody when making a create-todo or update-todo request'
+      description: a requestBody when making a create-todo or update-todo request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateTodoRequest'
     UpdateLabel:
-      description: 'a requestBody when making a create-label or update-label request'
+      description: a requestBody when making a create-label or update-label request
       content:
         application/json:
           schema:
