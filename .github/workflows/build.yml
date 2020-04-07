@@ -47,7 +47,7 @@ jobs:
     - name: Setup DB tables
       run: |
         # ERROR 2013 (HY000)対策. max_connect_errors でロックされたホストを一回吹っ飛ばす
-        mysql -u root -ppassword -e"FLUSH HOSTS"
+        mysql --protocol=tcp -u root -ppassword -e"FLUSH HOSTS"
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
     # install packages
