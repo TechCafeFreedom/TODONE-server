@@ -47,6 +47,8 @@ jobs:
     # Run ddl
     - name: Setup DB tables
       run: |
+        echo "mysqld: ALL: allow" > /etc/hosts.allow
+        sudo mysql.server restart
         mysql --protocol=tcp -u root -ppassword -e"FLUSH HOSTS"
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 

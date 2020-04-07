@@ -46,6 +46,9 @@ jobs:
     # Run ddl
     - name: Setup DB tables
       run: |
+        # ERROR 2013 (HY000)対策
+        echo "mysqld: ALL: allow" > /etc/hosts.allow
+        sudo mysql.server restart
         # ERROR 2013 (HY000)対策. max_connect_errors でロックされたホストを一回吹っ飛ばす
         mysql --protocol=tcp -u root -ppassword -e"FLUSH HOSTS"
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
