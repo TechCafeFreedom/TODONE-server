@@ -31,3 +31,15 @@ unixドメインソケットを使って接続する必要がある。値は全�
 ```
 // dataSourceNameは以下のように指定
 {MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_PROTOCOL}({MYSQL_INSTANCE})/{MYSQL_DB}
+```
+
+## CI/CDのフローについて
+**Test/Build**
+トリガーは以下
+- masterブランチ以外へのpush
+- 全プルリク
+
+**Test/Build/Deploy**
+トリガーは以下
+- masterブランチへのpush
+

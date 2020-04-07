@@ -45,7 +45,7 @@ jobs:
         cp sqlboiler_example.toml sqlboiler.toml
 
     # Run ddl
-    - name: Setup DB tables
+    - name: Run DDL
       run: |
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
