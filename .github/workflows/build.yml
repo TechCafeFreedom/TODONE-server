@@ -21,6 +21,7 @@ jobs:
         image: mysql:5.7
         ports:
           - 3306:3306
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: todone
@@ -46,11 +47,6 @@ jobs:
     # Run ddl
     - name: Setup DB tables
       run: |
-        # ERROR 2013 (HY000)対策
-        sudo echo "mysqld: ALL: allow" > /etc/hosts.allow
-        sudo mysql.server restart
-        # ERROR 2013 (HY000)対策. max_connect_errors でロックされたホストを一回吹っ飛ばす
-        mysql --protocol=tcp -u root -ppassword -e"FLUSH HOSTS"
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
     # install packages
