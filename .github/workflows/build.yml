@@ -46,7 +46,7 @@ jobs:
     # Run ddl
     - name: Setup DB tables
       run: |
-        mysql -u root -ppassword todone < ./db/mysql/ddl.sql
+        mysql -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
     # install packages
     - name: Get dependencies
