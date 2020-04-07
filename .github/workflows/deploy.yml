@@ -3,13 +3,14 @@
 # - GCP_SA_EMAIL  : gcpのサービスアカウントのemail
 # - GCP_SA_KEY    : gcpサービスアカウントのkey_file(json)をbase64エンコーディングした文字列 `$ cat *.json | base64`
 
-name: Go
+# Deploy テスト、ビルド、デプロイを自動で行う
+# トリガー: masterへのpush、merge
+name: Deploy
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - 'master'
 
 jobs:
   build:
@@ -42,7 +43,7 @@ jobs:
 
     # build
     - name: Build
-      run: go build -v .
+      run: go build -v ./cmd/main.go
 
   deploy:
     name: Deploy

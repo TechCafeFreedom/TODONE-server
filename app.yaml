@@ -13,10 +13,4 @@
 
 runtime: go112 # replace with go111 for Go 1.11
 
-env_variables:
-  MYSQL_USER: "root"
-  MYSQL_PASSWORD: "qESNYeM7irdN"
-  MYSQL_HOST: "localhost"
-  MYSQL_INSTANCE: "/cloudsql/todone-server:asia-northeast1:todone-db"
-  MYSQL_PROTOCOL: "unix"
-  MYSQL_DB: "todone"
+main: ./cmd
