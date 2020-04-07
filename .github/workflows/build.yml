@@ -14,6 +14,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+
+    services:
+      # testにmysqlが必要なので
+      mysql:
+        image: mysql
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+
     steps:
 
     # set go version
@@ -25,6 +35,12 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+
+    # Create env files
+    - name: Create .env file
+      run: |
+        cp .env_example .env
+        cp .sqlboiler_example.toml .sqlboiler.toml
 
     # install packages
     - name: Get dependencies
