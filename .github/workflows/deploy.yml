@@ -47,7 +47,7 @@ jobs:
     # Run ddl
     - name: Setup DB tables
       run: |
-        mysql -h mysql -P 3306 --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
+        mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
     # install packages
     - name: Get dependencies
