@@ -16,6 +16,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    
+    services:
+    # testにmysqlが必要なので
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+
     steps:
 
     # set go version
