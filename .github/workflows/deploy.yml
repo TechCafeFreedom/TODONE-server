@@ -64,7 +64,7 @@ jobs:
 
     # build
     - name: Build
-      run: go build -v ./cmd/main.go
+      run: go build -v ./cmd/main.go ./cmd/wire_gen.go 
 
   deploy:
     name: Deploy
