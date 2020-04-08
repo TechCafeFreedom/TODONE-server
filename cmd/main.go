@@ -24,6 +24,7 @@ func main() {
 	masterTxManager := tx.NewDBMasterTxManager(dbInstance)
 
 	// APIインスタンスとmiddlewareインスタンスの作成
+	userAPI := InitUserAPI(dbInstance, masterTxManager)
 	projectAPI := InitProjectAPI(dbInstance, masterTxManager)
 	firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
 
@@ -41,8 +42,16 @@ func main() {
 		})
 	})
 
-	// projectAPI
+	// userAPI
 	firebaseAuth := r.Group("")
+	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
+	{
+		firebaseAuth.POST("/user", userAPI.CreateNewUser)
+		firebaseAuth.GET("/user", userAPI.GetUserByPK)
+	}
+	r.GET("/users", userAPI.GetAllUsers)
+
+	// projectAPI
 	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
 	{
 		firebaseAuth.POST("/project", projectAPI.CreateNewProject)

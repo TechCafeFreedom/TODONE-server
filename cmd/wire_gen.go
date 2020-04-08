@@ -8,10 +8,14 @@ package main
 import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"todone/pkg/api/handler/project"
+	"todone/pkg/api/handler/user"
 	project4 "todone/pkg/api/usecase/project"
+	user4 "todone/pkg/api/usecase/user"
 	project3 "todone/pkg/domain/service/project"
+	user3 "todone/pkg/domain/service/user"
 	"todone/pkg/infrastructure/mysql"
 	project2 "todone/pkg/infrastructure/mysql/project"
+	user2 "todone/pkg/infrastructure/mysql/user"
 )
 
 // Injectors from wire.go:
@@ -21,5 +25,13 @@ func InitProjectAPI(db boil.ContextExecutor, masterTxManager mysql.MasterTxManag
 	service := project3.New(repository)
 	interactor := project4.New(masterTxManager, service)
 	server := project.New(interactor)
+	return server
+}
+
+func InitUserAPI(db boil.ContextExecutor, masterTxManager mysql.MasterTxManager) user.Server {
+	repository := user2.New(db)
+	service := user3.New(repository)
+	interactor := user4.New(masterTxManager, service)
+	server := user.New(interactor)
 	return server
 }

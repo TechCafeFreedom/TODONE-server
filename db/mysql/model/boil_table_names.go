@@ -4,7 +4,21 @@
 package model
 
 var TableNames = struct {
-	Projects string
+	Labels         string
+	Projects       string
+	ProjectsLabels string
+	ProjectsTodos  string
+	Todos          string
+	TodosLabels    string
+	Users          string
+	UsersProjects  string
 }{
-	Projects: "projects",
+	Labels:         "labels",
+	Projects:       "projects",
+	ProjectsLabels: "projects_labels",
+	ProjectsTodos:  "projects_todos",
+	Todos:          "todos",
+	TodosLabels:    "todos_labels",
+	Users:          "users",
+	UsersProjects:  "users_projects",
 }

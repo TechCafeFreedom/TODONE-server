@@ -49,6 +49,7 @@ CREATE TABLE labels
 
 CREATE TABLE users_projects
 (
+    id         INT          AUTO_INCREMENT PRIMARY KEY,
     user_id    VARCHAR(256) NOT NULL,
     project_id INT          NOT NULL,
     role       TINYINT      NOT NULL,
@@ -63,6 +64,7 @@ CREATE INDEX idx_users_projects ON users_projects (user_id, project_id);
 
 CREATE TABLE projects_todos
 (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     todo_id    INT NOT NULL,
     FOREIGN KEY (project_id)
@@ -76,6 +78,7 @@ CREATE INDEX idx_projects_todos ON projects_todos (project_id, todo_id);
 
 CREATE TABLE projects_labels
 (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     label_id   INT NOT NULL,
     FOREIGN KEY (project_id)
@@ -89,8 +92,9 @@ CREATE INDEX idx_projects_labels ON projects_labels (project_id, label_id);
 
 CREATE TABLE todos_labels
 (
-    todo_id INT NOT NULL,
-    label_id   INT NOT NULL,
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    todo_id  INT NOT NULL,
+    label_id INT NOT NULL,
     FOREIGN KEY (todo_id)
         REFERENCES todos (id)
         ON DELETE CASCADE ON UPDATE CASCADE,

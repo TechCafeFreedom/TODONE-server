@@ -30,12 +30,12 @@ func (p *projectRepositoryImpliment) InsertProject(project *model.Project) error
 
 // プロジェクト取得機能（PK: id）
 func (p *projectRepositoryImpliment) SelectByPK(id int) (*model.Project, error) {
-	project, err := model.FindProject(context.Background(), p.db, id)
+	projectData, err := model.FindProject(context.Background(), p.db, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return project, nil
+	return projectData, nil
 }
 
 // ユーザのもつプロジェクト取得機能

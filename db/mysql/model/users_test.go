@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testProjects(t *testing.T) {
+func testUsers(t *testing.T) {
 	t.Parallel()
 
-	query := Projects()
+	query := Users()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testProjectsDelete(t *testing.T) {
+func testUsersDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testProjectsDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testProjectsDelete(t *testing.T) {
 	}
 }
 
-func testProjectsQueryDeleteAll(t *testing.T) {
+func testUsersQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testProjectsQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := Projects().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := Users().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testProjectsQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testProjectsSliceDeleteAll(t *testing.T) {
+func testUsersSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testProjectsSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := ProjectSlice{o}
+	slice := UserSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testProjectsSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testProjectsSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testProjectsExists(t *testing.T) {
+func testUsersExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testProjectsExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := ProjectExists(ctx, tx, o.ID)
+	e, err := UserExists(ctx, tx, o.UserID)
 	if err != nil {
-		t.Errorf("Unable to check if Project exists: %s", err)
+		t.Errorf("Unable to check if User exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected ProjectExists to return true, but got false.")
+		t.Errorf("Expected UserExists to return true, but got false.")
 	}
 }
 
-func testProjectsFind(t *testing.T) {
+func testUsersFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testProjectsFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	projectFound, err := FindProject(ctx, tx, o.ID)
+	userFound, err := FindUser(ctx, tx, o.UserID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if projectFound == nil {
+	if userFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testProjectsBind(t *testing.T) {
+func testUsersBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testProjectsBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = Projects().Bind(ctx, tx, o); err != nil {
+	if err = Users().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testProjectsOne(t *testing.T) {
+func testUsersOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testProjectsOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := Projects().One(ctx, tx); err != nil {
+	if x, err := Users().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testProjectsAll(t *testing.T) {
+func testUsersAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	projectOne := &Project{}
-	projectTwo := &Project{}
-	if err = randomize.Struct(seed, projectOne, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	userOne := &User{}
+	userTwo := &User{}
+	if err = randomize.Struct(seed, userOne, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
-	if err = randomize.Struct(seed, projectTwo, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, userTwo, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = projectOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = userOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = projectTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = userTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := Projects().All(ctx, tx)
+	slice, err := Users().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testProjectsAll(t *testing.T) {
 	}
 }
 
-func testProjectsCount(t *testing.T) {
+func testUsersCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	projectOne := &Project{}
-	projectTwo := &Project{}
-	if err = randomize.Struct(seed, projectOne, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	userOne := &User{}
+	userTwo := &User{}
+	if err = randomize.Struct(seed, userOne, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
-	if err = randomize.Struct(seed, projectTwo, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, userTwo, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = projectOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = userOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = projectTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = userTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testProjectsCount(t *testing.T) {
 	}
 }
 
-func projectBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func projectAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Project) error {
-	*o = Project{}
+func userAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
+	*o = User{}
 	return nil
 }
 
-func testProjectsHooks(t *testing.T) {
+func testUsersHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &Project{}
-	o := &Project{}
+	empty := &User{}
+	o := &User{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, projectDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Project object: %s", err)
+	if err = randomize.Struct(seed, o, userDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize User object: %s", err)
 	}
 
-	AddProjectHook(boil.BeforeInsertHook, projectBeforeInsertHook)
+	AddUserHook(boil.BeforeInsertHook, userBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	projectBeforeInsertHooks = []ProjectHook{}
+	userBeforeInsertHooks = []UserHook{}
 
-	AddProjectHook(boil.AfterInsertHook, projectAfterInsertHook)
+	AddUserHook(boil.AfterInsertHook, userAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	projectAfterInsertHooks = []ProjectHook{}
+	userAfterInsertHooks = []UserHook{}
 
-	AddProjectHook(boil.AfterSelectHook, projectAfterSelectHook)
+	AddUserHook(boil.AfterSelectHook, userAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	projectAfterSelectHooks = []ProjectHook{}
+	userAfterSelectHooks = []UserHook{}
 
-	AddProjectHook(boil.BeforeUpdateHook, projectBeforeUpdateHook)
+	AddUserHook(boil.BeforeUpdateHook, userBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	projectBeforeUpdateHooks = []ProjectHook{}
+	userBeforeUpdateHooks = []UserHook{}
 
-	AddProjectHook(boil.AfterUpdateHook, projectAfterUpdateHook)
+	AddUserHook(boil.AfterUpdateHook, userAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	projectAfterUpdateHooks = []ProjectHook{}
+	userAfterUpdateHooks = []UserHook{}
 
-	AddProjectHook(boil.BeforeDeleteHook, projectBeforeDeleteHook)
+	AddUserHook(boil.BeforeDeleteHook, userBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	projectBeforeDeleteHooks = []ProjectHook{}
+	userBeforeDeleteHooks = []UserHook{}
 
-	AddProjectHook(boil.AfterDeleteHook, projectAfterDeleteHook)
+	AddUserHook(boil.AfterDeleteHook, userAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	projectAfterDeleteHooks = []ProjectHook{}
+	userAfterDeleteHooks = []UserHook{}
 
-	AddProjectHook(boil.BeforeUpsertHook, projectBeforeUpsertHook)
+	AddUserHook(boil.BeforeUpsertHook, userBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	projectBeforeUpsertHooks = []ProjectHook{}
+	userBeforeUpsertHooks = []UserHook{}
 
-	AddProjectHook(boil.AfterUpsertHook, projectAfterUpsertHook)
+	AddUserHook(boil.AfterUpsertHook, userAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	projectAfterUpsertHooks = []ProjectHook{}
+	userAfterUpsertHooks = []UserHook{}
 }
 
-func testProjectsInsert(t *testing.T) {
+func testUsersInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testProjectsInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testProjectsInsert(t *testing.T) {
 	}
 }
 
-func testProjectsInsertWhitelist(t *testing.T) {
+func testUsersInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(projectColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(userColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,33 +494,33 @@ func testProjectsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testProjectToManyProjectsLabels(t *testing.T) {
+func testUserToManyProjects(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
-	var b, c ProjectsLabel
+	var a User
+	var b, c Project
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, projectsLabelDBTypes, false, projectsLabelColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, projectsLabelDBTypes, false, projectsLabelColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.ProjectID = a.ID
-	c.ProjectID = a.ID
+	b.UserID = a.UserID
+	c.UserID = a.UserID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -529,17 +529,17 @@ func testProjectToManyProjectsLabels(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.ProjectsLabels().All(ctx, tx)
+	check, err := a.Projects().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.ProjectID == b.ProjectID {
+		if v.UserID == b.UserID {
 			bFound = true
 		}
-		if v.ProjectID == c.ProjectID {
+		if v.UserID == c.UserID {
 			cFound = true
 		}
 	}
@@ -551,19 +551,19 @@ func testProjectToManyProjectsLabels(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := ProjectSlice{&a}
-	if err = a.L.LoadProjectsLabels(ctx, tx, false, (*[]*Project)(&slice), nil); err != nil {
+	slice := UserSlice{&a}
+	if err = a.L.LoadProjects(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsLabels); got != 2 {
+	if got := len(a.R.Projects); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.ProjectsLabels = nil
-	if err = a.L.LoadProjectsLabels(ctx, tx, true, &a, nil); err != nil {
+	a.R.Projects = nil
+	if err = a.L.LoadProjects(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsLabels); got != 2 {
+	if got := len(a.R.Projects); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -572,33 +572,33 @@ func testProjectToManyProjectsLabels(t *testing.T) {
 	}
 }
 
-func testProjectToManyProjectsTodos(t *testing.T) {
+func testUserToManyTodos(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
-	var b, c ProjectsTodo
+	var a User
+	var b, c Todo
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, projectsTodoDBTypes, false, projectsTodoColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, todoDBTypes, false, todoColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, projectsTodoDBTypes, false, projectsTodoColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, todoDBTypes, false, todoColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.ProjectID = a.ID
-	c.ProjectID = a.ID
+	b.UserID = a.UserID
+	c.UserID = a.UserID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -607,17 +607,17 @@ func testProjectToManyProjectsTodos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.ProjectsTodos().All(ctx, tx)
+	check, err := a.Todos().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.ProjectID == b.ProjectID {
+		if v.UserID == b.UserID {
 			bFound = true
 		}
-		if v.ProjectID == c.ProjectID {
+		if v.UserID == c.UserID {
 			cFound = true
 		}
 	}
@@ -629,19 +629,19 @@ func testProjectToManyProjectsTodos(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := ProjectSlice{&a}
-	if err = a.L.LoadProjectsTodos(ctx, tx, false, (*[]*Project)(&slice), nil); err != nil {
+	slice := UserSlice{&a}
+	if err = a.L.LoadTodos(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsTodos); got != 2 {
+	if got := len(a.R.Todos); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.ProjectsTodos = nil
-	if err = a.L.LoadProjectsTodos(ctx, tx, true, &a, nil); err != nil {
+	a.R.Todos = nil
+	if err = a.L.LoadTodos(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsTodos); got != 2 {
+	if got := len(a.R.Todos); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -650,18 +650,18 @@ func testProjectToManyProjectsTodos(t *testing.T) {
 	}
 }
 
-func testProjectToManyUsersProjects(t *testing.T) {
+func testUserToManyUsersProjects(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
+	var a User
 	var b, c UsersProject
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
@@ -675,8 +675,8 @@ func testProjectToManyUsersProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b.ProjectID = a.ID
-	c.ProjectID = a.ID
+	b.UserID = a.UserID
+	c.UserID = a.UserID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -692,10 +692,10 @@ func testProjectToManyUsersProjects(t *testing.T) {
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.ProjectID == b.ProjectID {
+		if v.UserID == b.UserID {
 			bFound = true
 		}
-		if v.ProjectID == c.ProjectID {
+		if v.UserID == c.UserID {
 			cFound = true
 		}
 	}
@@ -707,8 +707,8 @@ func testProjectToManyUsersProjects(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := ProjectSlice{&a}
-	if err = a.L.LoadUsersProjects(ctx, tx, false, (*[]*Project)(&slice), nil); err != nil {
+	slice := UserSlice{&a}
+	if err = a.L.LoadUsersProjects(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if got := len(a.R.UsersProjects); got != 2 {
@@ -728,23 +728,23 @@ func testProjectToManyUsersProjects(t *testing.T) {
 	}
 }
 
-func testProjectToManyAddOpProjectsLabels(t *testing.T) {
+func testUserToManyAddOpProjects(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
-	var b, c, d, e ProjectsLabel
+	var a User
+	var b, c, d, e Project
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*ProjectsLabel{&b, &c, &d, &e}
+	foreigners := []*Project{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, projectsLabelDBTypes, false, strmangle.SetComplement(projectsLabelPrimaryKeyColumns, projectsLabelColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -759,13 +759,13 @@ func testProjectToManyAddOpProjectsLabels(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*ProjectsLabel{
+	foreignersSplitByInsertion := [][]*Project{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddProjectsLabels(ctx, tx, i != 0, x...)
+		err = a.AddProjects(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -773,28 +773,28 @@ func testProjectToManyAddOpProjectsLabels(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.ID != first.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, first.ProjectID)
+		if a.UserID != first.UserID {
+			t.Error("foreign key was wrong value", a.UserID, first.UserID)
 		}
-		if a.ID != second.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, second.ProjectID)
+		if a.UserID != second.UserID {
+			t.Error("foreign key was wrong value", a.UserID, second.UserID)
 		}
 
-		if first.R.Project != &a {
+		if first.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Project != &a {
+		if second.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.ProjectsLabels[i*2] != first {
+		if a.R.Projects[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.ProjectsLabels[i*2+1] != second {
+		if a.R.Projects[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.ProjectsLabels().Count(ctx, tx)
+		count, err := a.Projects().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -803,23 +803,23 @@ func testProjectToManyAddOpProjectsLabels(t *testing.T) {
 		}
 	}
 }
-func testProjectToManyAddOpProjectsTodos(t *testing.T) {
+func testUserToManyAddOpTodos(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
-	var b, c, d, e ProjectsTodo
+	var a User
+	var b, c, d, e Todo
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*ProjectsTodo{&b, &c, &d, &e}
+	foreigners := []*Todo{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, projectsTodoDBTypes, false, strmangle.SetComplement(projectsTodoPrimaryKeyColumns, projectsTodoColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, todoDBTypes, false, strmangle.SetComplement(todoPrimaryKeyColumns, todoColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -834,13 +834,13 @@ func testProjectToManyAddOpProjectsTodos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*ProjectsTodo{
+	foreignersSplitByInsertion := [][]*Todo{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddProjectsTodos(ctx, tx, i != 0, x...)
+		err = a.AddTodos(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -848,28 +848,28 @@ func testProjectToManyAddOpProjectsTodos(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.ID != first.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, first.ProjectID)
+		if a.UserID != first.UserID {
+			t.Error("foreign key was wrong value", a.UserID, first.UserID)
 		}
-		if a.ID != second.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, second.ProjectID)
+		if a.UserID != second.UserID {
+			t.Error("foreign key was wrong value", a.UserID, second.UserID)
 		}
 
-		if first.R.Project != &a {
+		if first.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Project != &a {
+		if second.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.ProjectsTodos[i*2] != first {
+		if a.R.Todos[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.ProjectsTodos[i*2+1] != second {
+		if a.R.Todos[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.ProjectsTodos().Count(ctx, tx)
+		count, err := a.Todos().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -878,18 +878,18 @@ func testProjectToManyAddOpProjectsTodos(t *testing.T) {
 		}
 	}
 }
-func testProjectToManyAddOpUsersProjects(t *testing.T) {
+func testUserToManyAddOpUsersProjects(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Project
+	var a User
 	var b, c, d, e UsersProject
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	foreigners := []*UsersProject{&b, &c, &d, &e}
@@ -923,17 +923,17 @@ func testProjectToManyAddOpUsersProjects(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.ID != first.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, first.ProjectID)
+		if a.UserID != first.UserID {
+			t.Error("foreign key was wrong value", a.UserID, first.UserID)
 		}
-		if a.ID != second.ProjectID {
-			t.Error("foreign key was wrong value", a.ID, second.ProjectID)
+		if a.UserID != second.UserID {
+			t.Error("foreign key was wrong value", a.UserID, second.UserID)
 		}
 
-		if first.R.Project != &a {
+		if first.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Project != &a {
+		if second.R.User != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
@@ -953,123 +953,15 @@ func testProjectToManyAddOpUsersProjects(t *testing.T) {
 		}
 	}
 }
-func testProjectToOneUserUsingUser(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
 
-	var local Project
-	var foreign User
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	local.UserID = foreign.UserID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.User().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if check.UserID != foreign.UserID {
-		t.Errorf("want: %v, got %v", foreign.UserID, check.UserID)
-	}
-
-	slice := ProjectSlice{&local}
-	if err = local.L.LoadUser(ctx, tx, false, (*[]*Project)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.User == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.User = nil
-	if err = local.L.LoadUser(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.User == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
-func testProjectToOneSetOpUserUsingUser(t *testing.T) {
-	var err error
-
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Project
-	var b, c User
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &b, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	for i, x := range []*User{&b, &c} {
-		err = a.SetUser(ctx, tx, i != 0, x)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if a.R.User != x {
-			t.Error("relationship struct not set to correct value")
-		}
-
-		if x.R.Projects[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if a.UserID != x.UserID {
-			t.Error("foreign key was wrong value", a.UserID)
-		}
-
-		zero := reflect.Zero(reflect.TypeOf(a.UserID))
-		reflect.Indirect(reflect.ValueOf(&a.UserID)).Set(zero)
-
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if a.UserID != x.UserID {
-			t.Error("foreign key was wrong value", a.UserID, x.UserID)
-		}
-	}
-}
-
-func testProjectsReload(t *testing.T) {
+func testUsersReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1084,14 +976,14 @@ func testProjectsReload(t *testing.T) {
 	}
 }
 
-func testProjectsReloadAll(t *testing.T) {
+func testUsersReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1101,21 +993,21 @@ func testProjectsReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := ProjectSlice{o}
+	slice := UserSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testProjectsSelect(t *testing.T) {
+func testUsersSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1125,7 +1017,7 @@ func testProjectsSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := Projects().All(ctx, tx)
+	slice, err := Users().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1136,25 +1028,25 @@ func testProjectsSelect(t *testing.T) {
 }
 
 var (
-	projectDBTypes = map[string]string{`ID`: `int`, `UserID`: `varchar`, `Title`: `varchar`, `Description`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
-	_              = bytes.MinRead
+	userDBTypes = map[string]string{`UserID`: `varchar`, `Name`: `varchar`, `Thumbnail`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
+	_           = bytes.MinRead
 )
 
-func testProjectsUpdate(t *testing.T) {
+func testUsersUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(projectPrimaryKeyColumns) {
+	if 0 == len(userPrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(projectAllColumns) == len(projectPrimaryKeyColumns) {
+	if len(userAllColumns) == len(userPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1164,7 +1056,7 @@ func testProjectsUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1173,8 +1065,8 @@ func testProjectsUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, o, userDBTypes, true, userPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -1184,18 +1076,18 @@ func testProjectsUpdate(t *testing.T) {
 	}
 }
 
-func testProjectsSliceUpdateAll(t *testing.T) {
+func testUsersSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(projectAllColumns) == len(projectPrimaryKeyColumns) {
+	if len(userAllColumns) == len(userPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Project{}
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := &User{}
+	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1205,7 +1097,7 @@ func testProjectsSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1214,18 +1106,18 @@ func testProjectsSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, projectDBTypes, true, projectPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, o, userDBTypes, true, userPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(projectAllColumns, projectPrimaryKeyColumns) {
-		fields = projectAllColumns
+	if strmangle.StringSliceMatch(userAllColumns, userPrimaryKeyColumns) {
+		fields = userAllColumns
 	} else {
 		fields = strmangle.SetComplement(
-			projectAllColumns,
-			projectPrimaryKeyColumns,
+			userAllColumns,
+			userPrimaryKeyColumns,
 		)
 	}
 
@@ -1243,7 +1135,7 @@ func testProjectsSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := ProjectSlice{o}
+	slice := UserSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -1251,32 +1143,32 @@ func testProjectsSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testProjectsUpsert(t *testing.T) {
+func testUsersUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(projectAllColumns) == len(projectPrimaryKeyColumns) {
+	if len(userAllColumns) == len(userPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
-	if len(mySQLProjectUniqueColumns) == 0 {
+	if len(mySQLUserUniqueColumns) == 0 {
 		t.Skip("Skipping table with no unique columns to conflict on")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := Project{}
-	if err = randomize.Struct(seed, &o, projectDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	o := User{}
+	if err = randomize.Struct(seed, &o, userDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Project: %s", err)
+		t.Errorf("Unable to upsert User: %s", err)
 	}
 
-	count, err := Projects().Count(ctx, tx)
+	count, err := Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1285,15 +1177,15 @@ func testProjectsUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, projectDBTypes, false, projectPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Project struct: %s", err)
+	if err = randomize.Struct(seed, &o, userDBTypes, false, userPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Project: %s", err)
+		t.Errorf("Unable to upsert User: %s", err)
 	}
 
-	count, err = Projects().Count(ctx, tx)
+	count, err = Users().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
