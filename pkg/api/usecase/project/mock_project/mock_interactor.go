@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
 
+	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,60 +36,60 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewProject mocks base method
-func (m *MockInteractor) CreateNewProject(userID, title, description string) error {
+func (m *MockInteractor) CreateNewProject(ctx *gin.Context, userID, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewProject", userID, title, description)
+	ret := m.ctrl.Call(m, "CreateNewProject", ctx, userID, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewProject indicates an expected call of CreateNewProject
-func (mr *MockInteractorMockRecorder) CreateNewProject(userID, title, description interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) CreateNewProject(ctx, userID, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockInteractor)(nil).CreateNewProject), userID, title, description)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockInteractor)(nil).CreateNewProject), ctx, userID, title, description)
 }
 
 // GetByPK mocks base method
-func (m *MockInteractor) GetByPK(id int) (*model.Project, error) {
+func (m *MockInteractor) GetByPK(ctx *gin.Context, id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByPK", id)
+	ret := m.ctrl.Call(m, "GetByPK", ctx, id)
 	ret0, _ := ret[0].(*model.Project)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByPK indicates an expected call of GetByPK
-func (mr *MockInteractorMockRecorder) GetByPK(id interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetByPK(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockInteractor)(nil).GetByPK), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockInteractor)(nil).GetByPK), ctx, id)
 }
 
 // GetByUserID mocks base method
-func (m *MockInteractor) GetByUserID(userID string) (model.ProjectSlice, error) {
+func (m *MockInteractor) GetByUserID(ctx *gin.Context, userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUserID", userID)
+	ret := m.ctrl.Call(m, "GetByUserID", ctx, userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByUserID indicates an expected call of GetByUserID
-func (mr *MockInteractorMockRecorder) GetByUserID(userID interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetByUserID(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockInteractor)(nil).GetByUserID), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockInteractor)(nil).GetByUserID), ctx, userID)
 }
 
 // GetAll mocks base method
-func (m *MockInteractor) GetAll() (model.ProjectSlice, error) {
+func (m *MockInteractor) GetAll(ctx *gin.Context) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
+	ret := m.ctrl.Call(m, "GetAll", ctx)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll
-func (mr *MockInteractorMockRecorder) GetAll() *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetAll(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockInteractor)(nil).GetAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockInteractor)(nil).GetAll), ctx)
 }

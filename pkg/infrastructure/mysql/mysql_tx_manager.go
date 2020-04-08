@@ -2,8 +2,11 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
+
+	"github.com/volatiletech/sqlboiler/boil"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,9 +60,22 @@ type dbMasterTx struct {
 }
 
 func (m *dbMasterTx) Commit() error {
-	return m.Commit()
+	return m.tx.Commit()
 }
 
 func (m *dbMasterTx) Rollback() error {
-	return m.Rollback()
+	return m.tx.Rollback()
+}
+
+func ExtractExecutor(masterTx MasterTx) (boil.ContextExecutor, error) {
+	return ExtractTx(masterTx)
+}
+
+func ExtractTx(masterTx MasterTx) (*sql.Tx, error) {
+	// キャストする
+	tx, ok := masterTx.(*dbMasterTx)
+	if !ok {
+		return nil, errors.New("masterTxをdbMasterTxへキャストできませんでした。")
+	}
+	return tx.tx, nil
 }

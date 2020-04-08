@@ -1,10 +1,11 @@
 package project
 
 import (
-	"context"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/repository/project"
+	"todone/pkg/infrastructure/mysql"
 
+	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
@@ -20,8 +21,12 @@ func New(db boil.ContextExecutor) project.Repository {
 }
 
 // プロジェクト作成機能
-func (p *projectRepositoryImpliment) InsertProject(project *model.Project) error {
-	if err := project.Insert(context.Background(), p.db, boil.Infer()); err != nil {
+func (p *projectRepositoryImpliment) InsertProject(ctx *gin.Context, masterTx mysql.MasterTx, project *model.Project) error {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return err
+	}
+	if err := project.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 
@@ -29,8 +34,12 @@ func (p *projectRepositoryImpliment) InsertProject(project *model.Project) error
 }
 
 // プロジェクト取得機能（PK: id）
-func (p *projectRepositoryImpliment) SelectByPK(id int) (*model.Project, error) {
-	projectData, err := model.FindProject(context.Background(), p.db, id)
+func (p *projectRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
+	projectData, err := model.FindProject(ctx, exec, id)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +48,12 @@ func (p *projectRepositoryImpliment) SelectByPK(id int) (*model.Project, error) 
 }
 
 // ユーザのもつプロジェクト取得機能
-func (p *projectRepositoryImpliment) SelectByUserID(userID string) (model.ProjectSlice, error) {
-	projects, err := model.Projects(model.ProjectWhere.UserID.EQ(userID)).All(context.Background(), p.db)
+func (p *projectRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
+	projects, err := model.Projects(model.ProjectWhere.UserID.EQ(userID)).All(ctx, exec)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +62,13 @@ func (p *projectRepositoryImpliment) SelectByUserID(userID string) (model.Projec
 }
 
 // プロジェクト全件取得機能
-func (p *projectRepositoryImpliment) SelectAll() (model.ProjectSlice, error) {
+func (p *projectRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
 	queries := []qm.QueryMod{}
-	projects, err := model.Projects(queries...).All(context.Background(), p.db)
+	projects, err := model.Projects(queries...).All(ctx, exec)
 	if err != nil {
 		return nil, err
 	}

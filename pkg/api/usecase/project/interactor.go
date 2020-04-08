@@ -10,9 +10,9 @@ import (
 
 type Interactor interface {
 	CreateNewProject(ctx *gin.Context, userID, title, description string) error
-	GetByPK(id int) (*model.Project, error)
-	GetByUserID(userID string) (model.ProjectSlice, error)
-	GetAll() (model.ProjectSlice, error)
+	GetByPK(ctx *gin.Context, id int) (*model.Project, error)
+	GetByUserID(ctx *gin.Context, userID string) (model.ProjectSlice, error)
+	GetAll(ctx *gin.Context) (model.ProjectSlice, error)
 }
 
 type intereractor struct {
@@ -29,10 +29,7 @@ func New(masterTxManager mysql.MasterTxManager, projectService projectservice.Se
 
 func (i *intereractor) CreateNewProject(ctx *gin.Context, userID, title, description string) error {
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
-		if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
-			return err
-		}
-		if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
+		if err := i.projectService.CreateNewProject(ctx, masterTx, userID, title, description); err != nil {
 			return err
 		}
 		return nil
@@ -43,26 +40,53 @@ func (i *intereractor) CreateNewProject(ctx *gin.Context, userID, title, descrip
 	return nil
 }
 
-func (i *intereractor) GetByPK(id int) (*model.Project, error) {
-	project, err := i.projectService.GetByPK(id)
+func (i *intereractor) GetByPK(ctx *gin.Context, id int) (*model.Project, error) {
+	var projectData *model.Project
+	var err error
+
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		projectData, err = i.projectService.GetByPK(ctx, masterTx, id)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return project, nil
+	return projectData, nil
 }
 
-func (i *intereractor) GetByUserID(userID string) (model.ProjectSlice, error) {
-	projects, err := i.projectService.GetByUserID(userID)
+func (i *intereractor) GetByUserID(ctx *gin.Context, userID string) (model.ProjectSlice, error) {
+	var projectSlice model.ProjectSlice
+	var err error
+
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		projectSlice, err = i.projectService.GetByUserID(ctx, masterTx, userID)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return projects, nil
+	return projectSlice, nil
 }
 
-func (i *intereractor) GetAll() (model.ProjectSlice, error) {
-	projects, err := i.projectService.GetAll()
+func (i *intereractor) GetAll(ctx *gin.Context) (model.ProjectSlice, error) {
+	var projectSlice model.ProjectSlice
+	var err error
+
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		projectSlice, err = i.projectService.GetAll(ctx, masterTx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return projects, nil
+	return projectSlice, nil
 }

@@ -43,7 +43,7 @@ func (s *Server) GetProjectByPK(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	project, err := s.projectInteractor.GetByPK(reqBody.ID)
+	project, err := s.projectInteractor.GetByPK(ctx, reqBody.ID)
 	if err != nil {
 		ctx.Error(err)
 	}
@@ -57,7 +57,7 @@ func (s *Server) GetProjectsByUserID(ctx *gin.Context) {
 		ctx.Error(errors.New("userID is not found in context"))
 	}
 
-	projects, err := s.projectInteractor.GetByUserID(userID.(string))
+	projects, err := s.projectInteractor.GetByUserID(ctx, userID.(string))
 	if err != nil {
 		ctx.Error(err)
 	}
@@ -66,7 +66,7 @@ func (s *Server) GetProjectsByUserID(ctx *gin.Context) {
 }
 
 func (s *Server) GetAllProjects(ctx *gin.Context) {
-	projects, err := s.projectInteractor.GetAll()
+	projects, err := s.projectInteractor.GetAll(ctx)
 	if err != nil {
 		ctx.Error(err)
 	}

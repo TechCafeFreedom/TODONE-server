@@ -4,7 +4,9 @@ import (
 	"testing"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/repository/project/mock_project"
+	"todone/pkg/infrastructure/mysql"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,6 +19,7 @@ const (
 )
 
 func TestService_CreateNewUser(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -26,16 +29,19 @@ func TestService_CreateNewUser(t *testing.T) {
 		Description: description,
 	}
 
+	masterTx := mysql.NewMockMasterTx()
+
 	projectRepository := mock_project.NewMockRepository(ctrl)
-	projectRepository.EXPECT().InsertProject(newProject).Return(nil).Times(1)
+	projectRepository.EXPECT().InsertProject(ctx, masterTx, newProject).Return(nil).Times(1)
 
 	service := New(projectRepository)
-	err := service.CreateNewProject(userID, title, description)
+	err := service.CreateNewProject(ctx, masterTx, userID, title, description)
 
 	assert.NoError(t, err)
 }
 
 func TestService_GetByPK(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -46,17 +52,20 @@ func TestService_GetByPK(t *testing.T) {
 		Description: description,
 	}
 
+	masterTx := mysql.NewMockMasterTx()
+
 	projectRepository := mock_project.NewMockRepository(ctrl)
-	projectRepository.EXPECT().SelectByPK(id).Return(existedProject, nil).Times(1)
+	projectRepository.EXPECT().SelectByPK(ctx, masterTx, id).Return(existedProject, nil).Times(1)
 
 	service := New(projectRepository)
-	projects, err := service.GetByPK(id)
+	projects, err := service.GetByPK(ctx, masterTx, id)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)
 }
 
 func TestService_GetByUserID(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -69,17 +78,20 @@ func TestService_GetByUserID(t *testing.T) {
 		},
 	}
 
+	masterTx := mysql.NewMockMasterTx()
+
 	projectRepository := mock_project.NewMockRepository(ctrl)
-	projectRepository.EXPECT().SelectByUserID(userID).Return(userProjects, nil).Times(1)
+	projectRepository.EXPECT().SelectByUserID(ctx, masterTx, userID).Return(userProjects, nil).Times(1)
 
 	service := New(projectRepository)
-	projects, err := service.GetByUserID(userID)
+	projects, err := service.GetByUserID(ctx, masterTx, userID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)
 }
 
 func TestService_SelectAll(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -92,11 +104,13 @@ func TestService_SelectAll(t *testing.T) {
 		},
 	}
 
+	masterTx := mysql.NewMockMasterTx()
+
 	projectRepository := mock_project.NewMockRepository(ctrl)
-	projectRepository.EXPECT().SelectAll().Return(existedProjects, nil).Times(1)
+	projectRepository.EXPECT().SelectAll(ctx, masterTx).Return(existedProjects, nil).Times(1)
 
 	service := New(projectRepository)
-	projects, err := service.GetAll()
+	projects, err := service.GetAll(ctx, masterTx)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)

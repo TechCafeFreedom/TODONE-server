@@ -7,7 +7,9 @@ package mock_project
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
+	mysql "todone/pkg/infrastructure/mysql"
 
+	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,60 +37,60 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewProject mocks base method
-func (m *MockService) CreateNewProject(userID, title, description string) error {
+func (m *MockService) CreateNewProject(ctx *gin.Context, masterTx mysql.MasterTx, userID, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewProject", userID, title, description)
+	ret := m.ctrl.Call(m, "CreateNewProject", ctx, masterTx, userID, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewProject indicates an expected call of CreateNewProject
-func (mr *MockServiceMockRecorder) CreateNewProject(userID, title, description interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) CreateNewProject(ctx, masterTx, userID, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockService)(nil).CreateNewProject), userID, title, description)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewProject", reflect.TypeOf((*MockService)(nil).CreateNewProject), ctx, masterTx, userID, title, description)
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(id int) (*model.Project, error) {
+func (m *MockService) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByPK", id)
+	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, id)
 	ret0, _ := ret[0].(*model.Project)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByPK indicates an expected call of GetByPK
-func (mr *MockServiceMockRecorder) GetByPK(id interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockService)(nil).GetByPK), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockService)(nil).GetByPK), ctx, masterTx, id)
 }
 
 // GetByUserID mocks base method
-func (m *MockService) GetByUserID(userID string) (model.ProjectSlice, error) {
+func (m *MockService) GetByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUserID", userID)
+	ret := m.ctrl.Call(m, "GetByUserID", ctx, masterTx, userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByUserID indicates an expected call of GetByUserID
-func (mr *MockServiceMockRecorder) GetByUserID(userID interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetByUserID(ctx, masterTx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockService)(nil).GetByUserID), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockService)(nil).GetByUserID), ctx, masterTx, userID)
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll() (model.ProjectSlice, error) {
+func (m *MockService) GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
+	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll
-func (mr *MockServiceMockRecorder) GetAll() *gomock.Call {
+func (mr *MockServiceMockRecorder) GetAll(ctx, masterTx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockService)(nil).GetAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockService)(nil).GetAll), ctx, masterTx)
 }

@@ -27,7 +27,7 @@ func TestIntereractor_CreateNewProject(t *testing.T) {
 	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
-	projectService.EXPECT().CreateNewProject(userID, title, description).Return(nil).Times(2)
+	projectService.EXPECT().CreateNewProject(ctx, masterTx, userID, title, description).Return(nil).Times(1)
 
 	interactor := New(masterTxManager, projectService)
 	err := interactor.CreateNewProject(ctx, userID, title, description)
@@ -36,6 +36,7 @@ func TestIntereractor_CreateNewProject(t *testing.T) {
 }
 
 func TestIntereractor_GetByPK(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -50,16 +51,17 @@ func TestIntereractor_GetByPK(t *testing.T) {
 	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
-	projectService.EXPECT().GetByPK(id).Return(existedProject, nil).Times(1)
+	projectService.EXPECT().GetByPK(ctx, masterTx, id).Return(existedProject, nil).Times(1)
 
 	interactor := New(masterTxManager, projectService)
-	projects, err := interactor.GetByPK(id)
+	projects, err := interactor.GetByPK(ctx, id)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)
 }
 
 func TestIntereractor_GetByUserID(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -76,16 +78,17 @@ func TestIntereractor_GetByUserID(t *testing.T) {
 	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
-	projectService.EXPECT().GetByUserID(userID).Return(userProjects, nil).Times(1)
+	projectService.EXPECT().GetByUserID(ctx, masterTx, userID).Return(userProjects, nil).Times(1)
 
 	interactor := New(masterTxManager, projectService)
-	projects, err := interactor.GetByUserID(userID)
+	projects, err := interactor.GetByUserID(ctx, userID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)
 }
 
 func TestIntereractor_GetAll(t *testing.T) {
+	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -102,10 +105,10 @@ func TestIntereractor_GetAll(t *testing.T) {
 	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
-	projectService.EXPECT().GetAll().Return(existedProjects, nil).Times(1)
+	projectService.EXPECT().GetAll(ctx, masterTx).Return(existedProjects, nil).Times(1)
 
 	interactor := New(masterTxManager, projectService)
-	projects, err := interactor.GetAll()
+	projects, err := interactor.GetAll(ctx)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, projects)

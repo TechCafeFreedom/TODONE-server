@@ -7,7 +7,9 @@ package mock_project
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
+	mysql "todone/pkg/infrastructure/mysql"
 
+	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,60 +37,60 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertProject mocks base method
-func (m *MockRepository) InsertProject(project *model.Project) error {
+func (m *MockRepository) InsertProject(ctx *gin.Context, masterTx mysql.MasterTx, project *model.Project) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertProject", project)
+	ret := m.ctrl.Call(m, "InsertProject", ctx, masterTx, project)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertProject indicates an expected call of InsertProject
-func (mr *MockRepositoryMockRecorder) InsertProject(project interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) InsertProject(ctx, masterTx, project interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProject", reflect.TypeOf((*MockRepository)(nil).InsertProject), project)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProject", reflect.TypeOf((*MockRepository)(nil).InsertProject), ctx, masterTx, project)
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(id int) (*model.Project, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectByPK", id)
+	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, id)
 	ret0, _ := ret[0].(*model.Project)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectByPK indicates an expected call of SelectByPK
-func (mr *MockRepositoryMockRecorder) SelectByPK(id interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), ctx, masterTx, id)
 }
 
 // SelectByUserID mocks base method
-func (m *MockRepository) SelectByUserID(userID string) (model.ProjectSlice, error) {
+func (m *MockRepository) SelectByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectByUserID", userID)
+	ret := m.ctrl.Call(m, "SelectByUserID", ctx, masterTx, userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectByUserID indicates an expected call of SelectByUserID
-func (mr *MockRepositoryMockRecorder) SelectByUserID(userID interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) SelectByUserID(ctx, masterTx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByUserID", reflect.TypeOf((*MockRepository)(nil).SelectByUserID), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByUserID", reflect.TypeOf((*MockRepository)(nil).SelectByUserID), ctx, masterTx, userID)
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll() (model.ProjectSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAll")
+	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.ProjectSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectAll indicates an expected call of SelectAll
-func (mr *MockRepositoryMockRecorder) SelectAll() *gomock.Call {
+func (mr *MockRepositoryMockRecorder) SelectAll(ctx, masterTx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAll", reflect.TypeOf((*MockRepository)(nil).SelectAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAll", reflect.TypeOf((*MockRepository)(nil).SelectAll), ctx, masterTx)
 }
