@@ -3,27 +3,41 @@ package project
 import (
 	"todone/db/mysql/model"
 	projectservice "todone/pkg/domain/service/project"
+	"todone/pkg/infrastructure/mysql"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Interactor interface {
-	CreateNewProject(userID, title, description string) error
+	CreateNewProject(ctx *gin.Context, userID, title, description string) error
 	GetByPK(id int) (*model.Project, error)
 	GetByUserID(userID string) (model.ProjectSlice, error)
 	GetAll() (model.ProjectSlice, error)
 }
 
 type intereractor struct {
-	projectService projectservice.Service
+	masterTxManager mysql.MasterTxManager
+	projectService  projectservice.Service
 }
 
-func New(projectService projectservice.Service) Interactor {
+func New(masterTxManager mysql.MasterTxManager, projectService projectservice.Service) Interactor {
 	return &intereractor{
-		projectService: projectService,
+		masterTxManager: masterTxManager,
+		projectService:  projectService,
 	}
 }
 
-func (i *intereractor) CreateNewProject(userID, title, description string) error {
-	if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
+func (i *intereractor) CreateNewProject(ctx *gin.Context, userID, title, description string) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
+			return err
+		}
+		if err := i.projectService.CreateNewProject(userID, title, description); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return err
 	}
 	return nil

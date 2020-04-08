@@ -6,20 +6,20 @@
 package main
 
 import (
+	"github.com/volatiletech/sqlboiler/boil"
 	"todone/pkg/api/handler/project"
 	project4 "todone/pkg/api/usecase/project"
 	project3 "todone/pkg/domain/service/project"
+	"todone/pkg/infrastructure/mysql"
 	project2 "todone/pkg/infrastructure/mysql/project"
-
-	"github.com/volatiletech/sqlboiler/boil"
 )
 
 // Injectors from wire.go:
 
-func InitProjectAPI(db boil.ContextExecutor) project.Server {
+func InitProjectAPI(db boil.ContextExecutor, masterTxManager mysql.MasterTxManager) project.Server {
 	repository := project2.New(db)
 	service := project3.New(repository)
-	interactor := project4.New(service)
+	interactor := project4.New(masterTxManager, service)
 	server := project.New(interactor)
 	return server
 }

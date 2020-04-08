@@ -3,6 +3,7 @@ package main
 import (
 	"todone/db/mysql"
 	"todone/pkg/api/middleware"
+	tx "todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -19,8 +20,11 @@ func main() {
 	dbInstance := mysql.CreateSQLInstance()
 	defer dbInstance.Close()
 
+	// トランザクションマネージャーの作成
+	masterTxManager := tx.NewDBMasterTxManager(dbInstance)
+
 	// APIインスタンスとmiddlewareインスタンスの作成
-	projectAPI := InitProjectAPI(dbInstance)
+	projectAPI := InitProjectAPI(dbInstance, masterTxManager)
 	firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
 
 	// CORS対応

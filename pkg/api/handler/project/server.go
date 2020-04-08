@@ -19,59 +19,59 @@ func New(projectInteractor projectinteractor.Interactor) Server {
 	return Server{projectInteractor: projectInteractor}
 }
 
-func (s *Server) CreateNewProject(context *gin.Context) {
+func (s *Server) CreateNewProject(ctx *gin.Context) {
 	var reqBody reqbody.ProjectCreate
-	if err := context.BindJSON(&reqBody); err != nil {
-		context.Error(err)
+	if err := ctx.BindJSON(&reqBody); err != nil {
+		ctx.Error(err)
 	}
 
-	userID, ok := context.Get("AUTHED_USER_ID")
+	userID, ok := ctx.Get("AUTHED_USER_ID")
 	if !ok {
-		context.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("userID is not found in context"))
 	}
 
-	if err := s.projectInteractor.CreateNewProject(userID.(string), reqBody.Title, reqBody.Description); err != nil {
-		context.Error(err)
+	if err := s.projectInteractor.CreateNewProject(ctx, userID.(string), reqBody.Title, reqBody.Description); err != nil {
+		ctx.Error(err)
 	}
 
-	context.Status(http.StatusOK)
+	ctx.Status(http.StatusOK)
 }
 
-func (s *Server) GetProjectByPK(context *gin.Context) {
+func (s *Server) GetProjectByPK(ctx *gin.Context) {
 	var reqBody reqbody.ProjectPK
-	if err := context.BindJSON(&reqBody); err != nil {
-		context.Error(err)
+	if err := ctx.BindJSON(&reqBody); err != nil {
+		ctx.Error(err)
 	}
 
 	project, err := s.projectInteractor.GetByPK(reqBody.ID)
 	if err != nil {
-		context.Error(err)
+		ctx.Error(err)
 	}
 
-	context.JSON(http.StatusOK, convertToProjectResponse(project))
+	ctx.JSON(http.StatusOK, convertToProjectResponse(project))
 }
 
-func (s *Server) GetProjectsByUserID(context *gin.Context) {
-	userID, ok := context.Get("AUTHED_USER_ID")
+func (s *Server) GetProjectsByUserID(ctx *gin.Context) {
+	userID, ok := ctx.Get("AUTHED_USER_ID")
 	if !ok {
-		context.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("userID is not found in context"))
 	}
 
 	projects, err := s.projectInteractor.GetByUserID(userID.(string))
 	if err != nil {
-		context.Error(err)
+		ctx.Error(err)
 	}
 
-	context.JSON(http.StatusOK, convertToProjectsResponse(projects))
+	ctx.JSON(http.StatusOK, convertToProjectsResponse(projects))
 }
 
-func (s *Server) GetAllProjects(context *gin.Context) {
+func (s *Server) GetAllProjects(ctx *gin.Context) {
 	projects, err := s.projectInteractor.GetAll()
 	if err != nil {
-		context.Error(err)
+		ctx.Error(err)
 	}
 
-	context.JSON(http.StatusOK, convertToProjectsResponse(projects))
+	ctx.JSON(http.StatusOK, convertToProjectsResponse(projects))
 }
 
 func convertToProjectResponse(project *model.Project) response.ProjectResponse {
