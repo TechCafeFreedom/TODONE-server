@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/volatiletech/sqlboiler/boil"
-
 	"github.com/gin-gonic/gin"
+	"github.com/volatiletech/sqlboiler/boil"
 )
 
 type dbMasterTxManager struct {
