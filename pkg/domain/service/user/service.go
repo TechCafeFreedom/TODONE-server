@@ -6,7 +6,6 @@ import (
 	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/volatiletech/null"
 )
 
