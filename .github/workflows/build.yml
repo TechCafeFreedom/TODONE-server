@@ -1,11 +1,8 @@
 # Build テスト、ビルドのフローを自動化
-# トリガー: master以外のブランチへのpush、全ブランチに対するPR
+# トリガー: 全ブランチに対するPR
 name: Build
 
 on:
-  push:
-    branches-ignore:
-      - 'master'
   pull_request:
     branches:
       - '*'
