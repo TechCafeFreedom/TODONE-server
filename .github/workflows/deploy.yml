@@ -3,7 +3,7 @@
 # - GCP_SA_EMAIL  : gcpのサービスアカウントのemail
 # - GCP_SA_KEY    : gcpサービスアカウントのkey_file(json)をbase64エンコーディングした文字列 `$ cat *.json | base64`
 
-# Deploy テスト、ビルド、デプロイを自動で行う
+# Deploy デプロイを自動で行う
 # トリガー: masterへのpush、merge
 name: Deploy
 
@@ -13,63 +13,9 @@ on:
       - 'master'
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    
-    services:
-      # testにmysqlが必要なので
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: todone
-    steps:
-
-    # set go version
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.12
-      id: go
-
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-
-    # Create env files
-    - name: Create .env file
-      run: |
-        cp .env_example .env
-        cp sqlboiler_example.toml sqlboiler.toml
-
-    # Run ddl
-    - name: Run DDL
-      run: |
-        mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
-
-    # install packages
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
-    
-    # run test
-    - name: Test
-      run: go test -v ./...
-
-    # build
-    - name: Build
-      run: go build -v ./cmd/main.go ./cmd/wire_gen.go 
 
   deploy:
     name: Deploy
-    needs: Build
     runs-on: ubuntu-latest
     # https://github.com/GoogleCloudPlatform/github-actions/tree/master/setup-gcloud
     steps:

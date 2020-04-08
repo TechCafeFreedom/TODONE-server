@@ -34,8 +34,8 @@ unixドメインソケットを使って接続する必要がある。値は全�
 ```
 
 ## CI/CDのフローについて
-- Test/Build
+- StaticCheck(fmt, lint)/Test/Build
     - 全プルリク
-- Test/Build/Deploy
+- Deploy
     - masterブランチへのpush
 
