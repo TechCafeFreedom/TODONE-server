@@ -43,7 +43,7 @@ func (s *Server) GetUserByPK(ctx *gin.Context) {
 		ctx.Error(errors.New("userID is not found in context"))
 	}
 
-	user, err := s.userInteractor.GetByPK(userID.(string))
+	user, err := s.userInteractor.GetByPK(ctx, userID.(string))
 	if err != nil {
 		ctx.Error(err)
 	}
@@ -52,7 +52,7 @@ func (s *Server) GetUserByPK(ctx *gin.Context) {
 }
 
 func (s *Server) GetAllUsers(ctx *gin.Context) {
-	users, err := s.userInteractor.GetAll()
+	users, err := s.userInteractor.GetAll(ctx)
 	if err != nil {
 		ctx.Error(err)
 	}

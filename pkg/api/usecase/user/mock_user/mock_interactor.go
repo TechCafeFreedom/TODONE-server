@@ -50,31 +50,31 @@ func (mr *MockInteractorMockRecorder) CreateNewUser(ctx, userID, title, descript
 }
 
 // GetByPK mocks base method
-func (m *MockInteractor) GetByPK(userID string) (*model.User, error) {
+func (m *MockInteractor) GetByPK(ctx *gin.Context, userID string) (*model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByPK", userID)
+	ret := m.ctrl.Call(m, "GetByPK", ctx, userID)
 	ret0, _ := ret[0].(*model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByPK indicates an expected call of GetByPK
-func (mr *MockInteractorMockRecorder) GetByPK(userID interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetByPK(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockInteractor)(nil).GetByPK), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockInteractor)(nil).GetByPK), ctx, userID)
 }
 
 // GetAll mocks base method
-func (m *MockInteractor) GetAll() (model.UserSlice, error) {
+func (m *MockInteractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
+	ret := m.ctrl.Call(m, "GetAll", ctx)
 	ret0, _ := ret[0].(model.UserSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll
-func (mr *MockInteractorMockRecorder) GetAll() *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetAll(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockInteractor)(nil).GetAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockInteractor)(nil).GetAll), ctx)
 }

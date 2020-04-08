@@ -7,7 +7,9 @@ package mock_user
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
+	mysql "todone/pkg/infrastructure/mysql"
 
+	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,45 +37,45 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertUser mocks base method
-func (m *MockRepository) InsertUser(user *model.User) error {
+func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx mysql.MasterTx, user *model.User) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertUser", user)
+	ret := m.ctrl.Call(m, "InsertUser", ctx, masterTx, user)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertUser indicates an expected call of InsertUser
-func (mr *MockRepositoryMockRecorder) InsertUser(user interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockRepository)(nil).InsertUser), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockRepository)(nil).InsertUser), ctx, masterTx, user)
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(userID string) (*model.User, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectByPK", userID)
+	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectByPK indicates an expected call of SelectByPK
-func (mr *MockRepositoryMockRecorder) SelectByPK(userID interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), ctx, masterTx, userID)
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll() (model.UserSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAll")
+	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.UserSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectAll indicates an expected call of SelectAll
-func (mr *MockRepositoryMockRecorder) SelectAll() *gomock.Call {
+func (mr *MockRepositoryMockRecorder) SelectAll(ctx, masterTx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAll", reflect.TypeOf((*MockRepository)(nil).SelectAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAll", reflect.TypeOf((*MockRepository)(nil).SelectAll), ctx, masterTx)
 }

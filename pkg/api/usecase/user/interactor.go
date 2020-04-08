@@ -10,8 +10,8 @@ import (
 
 type Interactor interface {
 	CreateNewUser(ctx *gin.Context, userID, title, description string) error
-	GetByPK(userID string) (*model.User, error)
-	GetAll() (model.UserSlice, error)
+	GetByPK(ctx *gin.Context, userID string) (*model.User, error)
+	GetAll(ctx *gin.Context) (model.UserSlice, error)
 }
 
 type intereractor struct {
@@ -28,7 +28,7 @@ func New(masterTxManager mysql.MasterTxManager, userService userservice.Service)
 
 func (i *intereractor) CreateNewUser(ctx *gin.Context, userID, title, description string) error {
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
-		if err := i.userService.CreateNewUser(userID, title, description); err != nil {
+		if err := i.userService.CreateNewUser(ctx, masterTx, userID, title, description); err != nil {
 			return err
 		}
 		return nil
@@ -39,18 +39,36 @@ func (i *intereractor) CreateNewUser(ctx *gin.Context, userID, title, descriptio
 	return nil
 }
 
-func (i *intereractor) GetByPK(userID string) (*model.User, error) {
-	user, err := i.userService.GetByPK(userID)
+func (i *intereractor) GetByPK(ctx *gin.Context, userID string) (*model.User, error) {
+	var userData *model.User
+	var err error
+
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		userData, err = i.userService.GetByPK(ctx, masterTx, userID)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return userData, nil
 }
 
-func (i *intereractor) GetAll() (model.UserSlice, error) {
-	users, err := i.userService.GetAll()
+func (i *intereractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
+	var userSlice model.UserSlice
+	var err error
+
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+		userSlice, err = i.userService.GetAll(ctx, masterTx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	return users, nil
+	return userSlice, nil
 }

@@ -1,10 +1,11 @@
 package user
 
 import (
-	"context"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/repository/user"
+	"todone/pkg/infrastructure/mysql"
 
+	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
@@ -19,16 +20,24 @@ func New(db boil.ContextExecutor) user.Repository {
 	}
 }
 
-func (u userRepositoryImpliment) InsertUser(user *model.User) error {
-	if err := user.Insert(context.Background(), u.db, boil.Infer()); err != nil {
+func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx mysql.MasterTx, user *model.User) error {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return err
+	}
+	if err := user.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(userID string) (*model.User, error) {
-	userData, err := model.FindUser(context.Background(), u.db, userID)
+func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
+	userData, err := model.FindUser(ctx, exec, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -36,9 +45,13 @@ func (u userRepositoryImpliment) SelectByPK(userID string) (*model.User, error) 
 	return userData, nil
 }
 
-func (u userRepositoryImpliment) SelectAll() (model.UserSlice, error) {
+func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
 	queries := []qm.QueryMod{}
-	users, err := model.Users(queries...).All(context.Background(), u.db)
+	users, err := model.Users(queries...).All(ctx, exec)
 	if err != nil {
 		return nil, err
 	}
