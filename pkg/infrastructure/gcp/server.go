@@ -28,14 +28,13 @@ func CreateInstances() (*sql.DB, middleware.FirebaseAuth) {
 	var db *sql.DB
 	var fireAuth middleware.FirebaseAuth
 
-	opt := option.WithCredentialsFile("todone-server-7767abe40934.json")
 	ctx := context.Background()
-	client, err := secretmanager.NewClient(ctx, opt)
+	client, err := secretmanager.NewClient(ctx)
 	if err != nil {
 		log.Printf("failed to create gcp client: %v", err)
 		log.Printf("db connection and fireauth auth local env")
 		db = createDBInstanceForLocal()
-		fireAuth = createFirebaseInstanceForLocal(ctx, "todone-29688-firebase-adminsdk-5y0zs-43a903b550.json")
+		fireAuth = createFirebaseInstanceForLocal(ctx, "todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
 		return db, fireAuth
 	}
 	defer client.Close()
