@@ -12,6 +12,9 @@ import (
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
+
+	secretmanager "cloud.google.com/go/secretmanager/apiv1"
+	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
 type FirebaseAuth interface {
@@ -24,9 +27,21 @@ type firebaseAuth struct {
 }
 
 func CreateFirebaseInstance(server project.Server) FirebaseAuth {
-	// firebase appの作成
+
 	ctx := context.Background()
-	opt := option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
+
+	// get credential of firebase
+	var opt option.ClientOption
+	gcpClient, err := secretmanager.NewClient(ctx)
+	if err != nil {
+		// local
+		opt = option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
+	} else {
+		// gcp
+		opt = option.WithCredentialsJSON(getFirebaseCredentialJSON(gcpClient, &ctx))
+	}
+
+	// firebase appの作成
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		log.Panic(fmt.Errorf("error initializing firebase app: %v", err))
@@ -67,4 +82,22 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	}
 	// contextにuser_idを格納
 	c.Set("AUTHED_USER_ID", authedUserToken.UID)
+}
+
+// getFirebaseCredentialJSON
+func getFirebaseCredentialJSON(client *secretmanager.Client, ctx *context.Context) []byte {
+	projectID := "todone-server"
+	secretID := "fireauth-key"
+	// requestの作成
+	accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
+		Name: fmt.Sprintf("projects/%s/secrets/%s/versions/latest", projectID, secretID),
+	}
+
+	// get secret value
+	result, err := client.AccessSecretVersion(*ctx, accessRequest)
+	if err != nil {
+		log.Panicf("failed to access secret version: %v", err)
+	}
+
+	return result.Payload.Data
 }
