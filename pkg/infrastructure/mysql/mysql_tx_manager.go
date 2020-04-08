@@ -74,7 +74,7 @@ func ExtractTx(masterTx MasterTx) (*sql.Tx, error) {
 	// キャストする
 	tx, ok := masterTx.(*dbMasterTx)
 	if !ok {
-		return nil, errors.New("masterTxをdbMasterTxへキャストできませんでした。")
+		return nil, errors.New("masterTx cannot cast to dbMasterTx")
 	}
 	return tx.tx, nil
 }
