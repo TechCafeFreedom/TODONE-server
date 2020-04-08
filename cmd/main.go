@@ -2,8 +2,7 @@ package main
 
 import (
 	"log"
-	"todone/db/mysql"
-	"todone/pkg/api/middleware"
+	"todone/pkg/infrastructure/gcp"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,13 +15,17 @@ func main() {
 		log.Printf("failed to load .env file: %v", err)
 	}
 
-	// DBインスタンスの作成
-	dbInstance := mysql.CreateSQLInstance()
+	// DBインスタンスとfireauthのクライアントを取得
+	dbInstance, firebaseClient := gcp.CreateInstances()
 	defer dbInstance.Close()
+
+	// DBインスタンスの作成
+	// dbInstance := mysql.CreateSQLInstance()
+	// defer dbInstance.Close()
 
 	// APIインスタンスとmiddlewareインスタンスの作成
 	projectAPI := InitProjectAPI(dbInstance)
-	firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
+	// firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
 
 	// CORS対応
 	r := gin.Default()

@@ -36,9 +36,10 @@ func CreateFirebaseInstance(server project.Server) FirebaseAuth {
 	if err != nil {
 		// local
 		opt = option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
+		// opt = option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-43a903b550.json")
 	} else {
 		// gcp
-		opt = option.WithCredentialsJSON(getFirebaseCredentialJSON(gcpClient, &ctx))
+		opt = option.WithCredentialsJSON(getFirebaseCredentialJSON(gcpClient, ctx))
 	}
 
 	// firebase appの作成
@@ -85,7 +86,7 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 }
 
 // getFirebaseCredentialJSON
-func getFirebaseCredentialJSON(client *secretmanager.Client, ctx *context.Context) []byte {
+func getFirebaseCredentialJSON(client *secretmanager.Client, ctx context.Context) []byte {
 	projectID := "todone-server"
 	secretID := "fireauth-key"
 	// requestの作成
@@ -94,7 +95,7 @@ func getFirebaseCredentialJSON(client *secretmanager.Client, ctx *context.Contex
 	}
 
 	// get secret value
-	result, err := client.AccessSecretVersion(*ctx, accessRequest)
+	result, err := client.AccessSecretVersion(ctx, accessRequest)
 	if err != nil {
 		log.Panicf("failed to access secret version: %v", err)
 	}
