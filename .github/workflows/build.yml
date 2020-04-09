@@ -1,0 +1,96 @@
+# Build テスト、ビルドのフローを自動化
+# トリガー: 全ブランチに対するPR
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  # static-check: fmt, lint
+  static-check:
+    name: StaticCheck
+    runs-on: ubuntu-latest
+    container: golang:1.12
+
+    steps:
+      # set go version
+      - name: Set up Go 1.12
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.12
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        
+      # Run fmt
+      - name: Go fmt
+        run: |
+          GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
+          gofmt -s -w pkg/
+          goimports -w pkg/
+
+      # Run lint
+      - name: Go Lint
+        run: |
+          GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+          golangci-lint run --skip-dirs middleware pkg/...
+
+  # build test, build
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [ static-check ]
+
+    services:
+      # testにmysqlが必要なので
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: todone
+
+    steps:
+
+    # set go version
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    # Create env files
+    - name: Create env file
+      run: |
+        cp .env_example .env
+        cp sqlboiler_example.toml sqlboiler.toml
+
+    # Run ddl
+    - name: Run DDL
+      run: |
+        mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
+
+    # install packages
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+    
+    # run test
+    - name: Test
+      run: go test -v ./...
+
+    # build
+    - name: Build
+      run: go build -v ./cmd/main.go ./cmd/wire_gen.go 
