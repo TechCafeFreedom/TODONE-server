@@ -1,0 +1,36 @@
+# github secretsに以下の値の登録してください
+# - GCP_PROJECT_ID: gcpのprojectのid
+# - GCP_SA_EMAIL  : gcpのサービスアカウントのemail
+# - GCP_SA_KEY    : gcpサービスアカウントのkey_file(json)をbase64エンコーディングした文字列 `$ cat *.json | base64`
+
+# Deploy デプロイを自動で行う
+# トリガー: masterへのpush、merge
+name: Deploy
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    # https://github.com/GoogleCloudPlatform/github-actions/tree/master/setup-gcloud
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: GCP authenticate
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '285.0.0'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: GAE deploy
+        run: |
+          gcloud app deploy app.yaml --quiet
