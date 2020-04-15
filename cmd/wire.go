@@ -14,16 +14,15 @@ import (
 	userRepo "todone/pkg/infrastructure/mysql/user"
 
 	"github.com/google/wire"
-	"github.com/volatiletech/sqlboiler/boil"
 )
 
-func InitProjectAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) projectHandler.Server {
+func InitProjectAPI(masterTxManager repository.MasterTxManager) projectHandler.Server {
 	wire.Build(projectRepo.New, projectSvc.New, projectInteractor.New, projectHandler.New)
 
 	return projectHandler.Server{}
 }
 
-func InitUserAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) userHandler.Server {
+func InitUserAPI(masterTxManager repository.MasterTxManager) userHandler.Server {
 	wire.Build(userRepo.New, userSvc.New, userInteractor.New, userHandler.New)
 
 	return userHandler.Server{}

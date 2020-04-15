@@ -6,7 +6,6 @@
 package main
 
 import (
-	"github.com/volatiletech/sqlboiler/boil"
 	"todone/pkg/api/handler/project"
 	"todone/pkg/api/handler/user"
 	project4 "todone/pkg/api/usecase/project"
@@ -20,16 +19,16 @@ import (
 
 // Injectors from wire.go:
 
-func InitProjectAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) project.Server {
-	projectRepository := project2.New(db)
+func InitProjectAPI(masterTxManager repository.MasterTxManager) project.Server {
+	projectRepository := project2.New(masterTxManager)
 	service := project3.New(projectRepository)
 	interactor := project4.New(masterTxManager, service)
 	server := project.New(interactor)
 	return server
 }
 
-func InitUserAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) user.Server {
-	userRepository := user2.New(db)
+func InitUserAPI(masterTxManager repository.MasterTxManager) user.Server {
+	userRepository := user2.New(masterTxManager)
 	service := user3.New(userRepository)
 	interactor := user4.New(masterTxManager, service)
 	server := user.New(interactor)

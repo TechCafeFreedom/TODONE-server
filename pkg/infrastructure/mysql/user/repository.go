@@ -12,12 +12,12 @@ import (
 )
 
 type userRepositoryImpliment struct {
-	db boil.ContextExecutor
+	masterTxManager repository.MasterTxManager
 }
 
-func New(db boil.ContextExecutor) user.Repository {
+func New(masterTxManager repository.MasterTxManager) user.Repository {
 	return &userRepositoryImpliment{
-		db: db,
+		masterTxManager: masterTxManager,
 	}
 }
 
