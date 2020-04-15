@@ -104,3 +104,43 @@ jobs:
     # build
     - name: Build
       run: go build -v ./cmd/main.go ./cmd/wire_gen.go 
+
+  slack-notification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    needs: [ static-check, build ]
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: get commit message
+      run: |
+        echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
+    
+    - name: Slack Notification Success
+      if: success()
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: notify-server
+        SLACK_ICON: https://github.com/actions.png?size=48
+        SLACK_TITLE: 'StaticCheck and Build success!'
+        SLACK_MESSAGE: |
+          StaticCheck and Build Success!
+          commit -> `$commitmsg`
+        SLACK_USERNAME: GitHub Actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Slack Notification Failure
+      if: failure()
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: notify-server
+        SLACK_ICON: https://github.com/actions.png?size=48
+        SLACK_COLOR: '#ff0000'
+        SLACK_TITLE: 'StaticCheck or Build is failure!!!'
+        SLACK_MESSAGE: |
+          StaticCheck or Build failure!
+          See more detail to check github.
+          commit -> `$commitmsg`
+        SLACK_USERNAME: GitHub Actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
