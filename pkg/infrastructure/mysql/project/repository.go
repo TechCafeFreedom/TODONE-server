@@ -2,6 +2,7 @@ package project
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/project"
 	"todone/pkg/infrastructure/mysql"
 
@@ -21,12 +22,12 @@ func New(db boil.ContextExecutor) project.Repository {
 }
 
 // プロジェクト作成機能
-func (p *projectRepositoryImpliment) InsertProject(ctx *gin.Context, masterTx mysql.MasterTx, project *model.Project) error {
+func (p *projectRepositoryImpliment) InsertProject(ctx *gin.Context, masterTx repository.MasterTx, projectData *model.Project) error {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return err
 	}
-	if err := project.Insert(ctx, exec, boil.Infer()); err != nil {
+	if err := projectData.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 
@@ -34,7 +35,7 @@ func (p *projectRepositoryImpliment) InsertProject(ctx *gin.Context, masterTx my
 }
 
 // プロジェクト取得機能（PK: id）
-func (p *projectRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
+func (p *projectRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Project, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -48,7 +49,7 @@ func (p *projectRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql
 }
 
 // ユーザのもつプロジェクト取得機能
-func (p *projectRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
+func (p *projectRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID string) (model.ProjectSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -62,7 +63,7 @@ func (p *projectRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx m
 }
 
 // プロジェクト全件取得機能
-func (p *projectRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
+func (p *projectRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.ProjectSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err

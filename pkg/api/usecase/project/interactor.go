@@ -2,8 +2,8 @@ package project
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	projectservice "todone/pkg/domain/service/project"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,11 +16,11 @@ type Interactor interface {
 }
 
 type intereractor struct {
-	masterTxManager mysql.MasterTxManager
+	masterTxManager repository.MasterTxManager
 	projectService  projectservice.Service
 }
 
-func New(masterTxManager mysql.MasterTxManager, projectService projectservice.Service) Interactor {
+func New(masterTxManager repository.MasterTxManager, projectService projectservice.Service) Interactor {
 	return &intereractor{
 		masterTxManager: masterTxManager,
 		projectService:  projectService,
@@ -28,7 +28,7 @@ func New(masterTxManager mysql.MasterTxManager, projectService projectservice.Se
 }
 
 func (i *intereractor) CreateNewProject(ctx *gin.Context, userID, title, description string) error {
-	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		if err := i.projectService.CreateNewProject(ctx, masterTx, userID, title, description); err != nil {
 			return err
 		}
@@ -44,7 +44,7 @@ func (i *intereractor) GetByPK(ctx *gin.Context, id int) (*model.Project, error)
 	var projectData *model.Project
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		projectData, err = i.projectService.GetByPK(ctx, masterTx, id)
 		if err != nil {
 			return err
@@ -61,7 +61,7 @@ func (i *intereractor) GetByUserID(ctx *gin.Context, userID string) (model.Proje
 	var projectSlice model.ProjectSlice
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		projectSlice, err = i.projectService.GetByUserID(ctx, masterTx, userID)
 		if err != nil {
 			return err
@@ -78,7 +78,7 @@ func (i *intereractor) GetAll(ctx *gin.Context) (model.ProjectSlice, error) {
 	var projectSlice model.ProjectSlice
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		projectSlice, err = i.projectService.GetAll(ctx, masterTx)
 		if err != nil {
 			return err

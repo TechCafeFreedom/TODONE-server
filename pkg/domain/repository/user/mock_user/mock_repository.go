@@ -7,7 +7,7 @@ package mock_user
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
-	mysql "todone/pkg/infrastructure/mysql"
+	"todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -37,7 +37,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertUser mocks base method
-func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx mysql.MasterTx, user *model.User) error {
+func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, user *model.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertUser", ctx, masterTx, user)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, user interface{}
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*model.User)
@@ -66,7 +66,7 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, userID interface
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.UserSlice)

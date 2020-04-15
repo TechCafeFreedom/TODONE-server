@@ -3,8 +3,8 @@ package user
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/service/user/mock_user"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -23,8 +23,8 @@ func TestIntereractor_CreateNewUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
 	userService.EXPECT().CreateNewUser(ctx, masterTx, userID, name, thumbnail).Return(nil).Times(1)
@@ -46,8 +46,8 @@ func TestIntereractor_GetByPK(t *testing.T) {
 		Thumbnail: null.StringFrom(thumbnail),
 	}
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
 	userService.EXPECT().GetByPK(ctx, masterTx, userID).Return(existedUser, nil).Times(1)
@@ -72,8 +72,8 @@ func TestIntereractor_GetAll(t *testing.T) {
 		},
 	}
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
 	userService.EXPECT().GetAll(ctx, masterTx).Return(existedUsers, nil).Times(1)

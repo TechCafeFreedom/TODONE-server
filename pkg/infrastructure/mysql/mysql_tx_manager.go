@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"todone/pkg/domain/repository"
 
 	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -14,11 +15,11 @@ type dbMasterTxManager struct {
 	db *sql.DB
 }
 
-func NewDBMasterTxManager(db *sql.DB) MasterTxManager {
+func NewDBMasterTxManager(db *sql.DB) repository.MasterTxManager {
 	return &dbMasterTxManager{db}
 }
 
-func (m *dbMasterTxManager) Transaction(ctx *gin.Context, f func(ctx *gin.Context, masterTx MasterTx) error) error {
+func (m *dbMasterTxManager) Transaction(ctx *gin.Context, f func(ctx *gin.Context, masterTx repository.MasterTx) error) error {
 	tx, err := m.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -66,11 +67,11 @@ func (m *dbMasterTx) Rollback() error {
 	return m.tx.Rollback()
 }
 
-func ExtractExecutor(masterTx MasterTx) (boil.ContextExecutor, error) {
+func ExtractExecutor(masterTx repository.MasterTx) (boil.ContextExecutor, error) {
 	return ExtractTx(masterTx)
 }
 
-func ExtractTx(masterTx MasterTx) (*sql.Tx, error) {
+func ExtractTx(masterTx repository.MasterTx) (*sql.Tx, error) {
 	// キャストする
 	tx, ok := masterTx.(*dbMasterTx)
 	if !ok {

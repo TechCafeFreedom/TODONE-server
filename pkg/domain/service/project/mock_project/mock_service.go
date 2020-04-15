@@ -7,7 +7,7 @@ package mock_project
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
-	mysql "todone/pkg/infrastructure/mysql"
+	"todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -37,7 +37,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewProject mocks base method
-func (m *MockService) CreateNewProject(ctx *gin.Context, masterTx mysql.MasterTx, userID, title, description string) error {
+func (m *MockService) CreateNewProject(ctx *gin.Context, masterTx repository.MasterTx, userID, title, description string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewProject", ctx, masterTx, userID, title, description)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockServiceMockRecorder) CreateNewProject(ctx, masterTx, userID, title
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
+func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, id)
 	ret0, _ := ret[0].(*model.Project)
@@ -66,7 +66,7 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, id interface{}) *gomoc
 }
 
 // GetByUserID mocks base method
-func (m *MockService) GetByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
+func (m *MockService) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUserID", ctx, masterTx, userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
@@ -81,7 +81,7 @@ func (mr *MockServiceMockRecorder) GetByUserID(ctx, masterTx, userID interface{}
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
+func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.ProjectSlice)

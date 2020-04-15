@@ -2,17 +2,17 @@ package user
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/null"
 )
 
 type Service interface {
-	CreateNewUser(ctx *gin.Context, masterTx mysql.MasterTx, userID, name, thumbnail string) error
-	GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error)
-	GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error)
+	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error
+	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error)
+	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error)
 }
 
 type service struct {
@@ -25,7 +25,7 @@ func New(userRepository user.Repository) Service {
 	}
 }
 
-func (s *service) CreateNewUser(ctx *gin.Context, masterTx mysql.MasterTx, userID, name, thumbnail string) error {
+func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error {
 	if err := s.userRepository.InsertUser(ctx, masterTx, &model.User{
 		UserID:    userID,
 		Name:      name,
@@ -36,7 +36,7 @@ func (s *service) CreateNewUser(ctx *gin.Context, masterTx mysql.MasterTx, userI
 	return nil
 }
 
-func (s *service) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
+func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
 	userData, err := s.userRepository.SelectByPK(ctx, masterTx, userID)
 	if err != nil {
 		return nil, err
@@ -44,6 +44,6 @@ func (s *service) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID stri
 	return userData, nil
 }
 
-func (s *service) GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
+func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
 	return s.userRepository.SelectAll(ctx, masterTx)
 }

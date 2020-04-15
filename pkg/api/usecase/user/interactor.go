@@ -2,8 +2,8 @@ package user
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	userservice "todone/pkg/domain/service/user"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,11 +15,11 @@ type Interactor interface {
 }
 
 type intereractor struct {
-	masterTxManager mysql.MasterTxManager
+	masterTxManager repository.MasterTxManager
 	userService     userservice.Service
 }
 
-func New(masterTxManager mysql.MasterTxManager, userService userservice.Service) Interactor {
+func New(masterTxManager repository.MasterTxManager, userService userservice.Service) Interactor {
 	return &intereractor{
 		masterTxManager: masterTxManager,
 		userService:     userService,
@@ -27,7 +27,7 @@ func New(masterTxManager mysql.MasterTxManager, userService userservice.Service)
 }
 
 func (i *intereractor) CreateNewUser(ctx *gin.Context, userID, title, description string) error {
-	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		if err := i.userService.CreateNewUser(ctx, masterTx, userID, title, description); err != nil {
 			return err
 		}
@@ -43,7 +43,7 @@ func (i *intereractor) GetByPK(ctx *gin.Context, userID string) (*model.User, er
 	var userData *model.User
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		userData, err = i.userService.GetByPK(ctx, masterTx, userID)
 		if err != nil {
 			return err
@@ -60,7 +60,7 @@ func (i *intereractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
 	var userSlice model.UserSlice
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx mysql.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		userSlice, err = i.userService.GetAll(ctx, masterTx)
 		if err != nil {
 			return err

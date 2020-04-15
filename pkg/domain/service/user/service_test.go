@@ -3,8 +3,8 @@ package user
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user/mock_user"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -23,7 +23,7 @@ func TestService_CreateNewUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	newUser := &model.User{
 		UserID:    userID,
@@ -45,7 +45,7 @@ func TestService_GetByPK(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	existedUser := &model.User{
 		UserID:    userID,
@@ -68,7 +68,7 @@ func TestService_SelectAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	existedUsers := model.UserSlice{
 		{

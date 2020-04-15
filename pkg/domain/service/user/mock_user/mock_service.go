@@ -7,7 +7,7 @@ package mock_user
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
-	mysql "todone/pkg/infrastructure/mysql"
+	"todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -37,7 +37,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx mysql.MasterTx, userID, name, thumbnail string) error {
+func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, userID, name, thumbnail)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, userID, name, th
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
+func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*model.User)
@@ -66,7 +66,7 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, userID interface{}) *g
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
+func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.UserSlice)

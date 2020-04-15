@@ -3,8 +3,8 @@ package project
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/service/project/mock_project"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -23,8 +23,8 @@ func TestIntereractor_CreateNewProject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
 	projectService.EXPECT().CreateNewProject(ctx, masterTx, userID, title, description).Return(nil).Times(1)
@@ -47,8 +47,8 @@ func TestIntereractor_GetByPK(t *testing.T) {
 		Description: description,
 	}
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
 	projectService.EXPECT().GetByPK(ctx, masterTx, id).Return(existedProject, nil).Times(1)
@@ -74,8 +74,8 @@ func TestIntereractor_GetByUserID(t *testing.T) {
 		},
 	}
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
 	projectService.EXPECT().GetByUserID(ctx, masterTx, userID).Return(userProjects, nil).Times(1)
@@ -101,8 +101,8 @@ func TestIntereractor_GetAll(t *testing.T) {
 		},
 	}
 
-	masterTx := mysql.NewMockMasterTx()
-	masterTxManager := mysql.NewMockMasterTxManager(masterTx)
+	masterTx := repository.NewMockMasterTx()
+	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	projectService := mock_project.NewMockService(ctrl)
 	projectService.EXPECT().GetAll(ctx, masterTx).Return(existedProjects, nil).Times(1)

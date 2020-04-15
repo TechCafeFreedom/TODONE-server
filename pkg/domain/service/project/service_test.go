@@ -3,8 +3,8 @@ package project
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/project/mock_project"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -29,7 +29,7 @@ func TestService_CreateNewUser(t *testing.T) {
 		Description: description,
 	}
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	projectRepository := mock_project.NewMockRepository(ctrl)
 	projectRepository.EXPECT().InsertProject(ctx, masterTx, newProject).Return(nil).Times(1)
@@ -52,7 +52,7 @@ func TestService_GetByPK(t *testing.T) {
 		Description: description,
 	}
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	projectRepository := mock_project.NewMockRepository(ctrl)
 	projectRepository.EXPECT().SelectByPK(ctx, masterTx, id).Return(existedProject, nil).Times(1)
@@ -78,7 +78,7 @@ func TestService_GetByUserID(t *testing.T) {
 		},
 	}
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	projectRepository := mock_project.NewMockRepository(ctrl)
 	projectRepository.EXPECT().SelectByUserID(ctx, masterTx, userID).Return(userProjects, nil).Times(1)
@@ -104,7 +104,7 @@ func TestService_SelectAll(t *testing.T) {
 		},
 	}
 
-	masterTx := mysql.NewMockMasterTx()
+	masterTx := repository.NewMockMasterTx()
 
 	projectRepository := mock_project.NewMockRepository(ctrl)
 	projectRepository.EXPECT().SelectAll(ctx, masterTx).Return(existedProjects, nil).Times(1)

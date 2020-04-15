@@ -1,4 +1,4 @@
-package mysql
+package repository
 
 import "github.com/gin-gonic/gin"
 

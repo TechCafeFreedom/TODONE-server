@@ -11,26 +11,26 @@ import (
 	"todone/pkg/api/handler/user"
 	project4 "todone/pkg/api/usecase/project"
 	user4 "todone/pkg/api/usecase/user"
+	"todone/pkg/domain/repository"
 	project3 "todone/pkg/domain/service/project"
 	user3 "todone/pkg/domain/service/user"
-	"todone/pkg/infrastructure/mysql"
 	project2 "todone/pkg/infrastructure/mysql/project"
 	user2 "todone/pkg/infrastructure/mysql/user"
 )
 
 // Injectors from wire.go:
 
-func InitProjectAPI(db boil.ContextExecutor, masterTxManager mysql.MasterTxManager) project.Server {
-	repository := project2.New(db)
-	service := project3.New(repository)
+func InitProjectAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) project.Server {
+	projectRepository := project2.New(db)
+	service := project3.New(projectRepository)
 	interactor := project4.New(masterTxManager, service)
 	server := project.New(interactor)
 	return server
 }
 
-func InitUserAPI(db boil.ContextExecutor, masterTxManager mysql.MasterTxManager) user.Server {
-	repository := user2.New(db)
-	service := user3.New(repository)
+func InitUserAPI(db boil.ContextExecutor, masterTxManager repository.MasterTxManager) user.Server {
+	userRepository := user2.New(db)
+	service := user3.New(userRepository)
 	interactor := user4.New(masterTxManager, service)
 	server := user.New(interactor)
 	return server

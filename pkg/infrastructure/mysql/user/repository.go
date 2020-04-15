@@ -2,6 +2,7 @@ package user
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 	"todone/pkg/infrastructure/mysql"
 
@@ -20,19 +21,19 @@ func New(db boil.ContextExecutor) user.Repository {
 	}
 }
 
-func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx mysql.MasterTx, user *model.User) error {
+func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, userData *model.User) error {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return err
 	}
-	if err := user.Insert(ctx, exec, boil.Infer()); err != nil {
+	if err := userData.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (*model.User, error) {
+func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -45,7 +46,7 @@ func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx mysql.Mas
 	return userData, nil
 }
 
-func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.UserSlice, error) {
+func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err

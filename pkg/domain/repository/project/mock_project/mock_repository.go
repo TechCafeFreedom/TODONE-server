@@ -7,7 +7,7 @@ package mock_project
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
-	mysql "todone/pkg/infrastructure/mysql"
+	"todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -37,7 +37,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertProject mocks base method
-func (m *MockRepository) InsertProject(ctx *gin.Context, masterTx mysql.MasterTx, project *model.Project) error {
+func (m *MockRepository) InsertProject(ctx *gin.Context, masterTx repository.MasterTx, project *model.Project) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertProject", ctx, masterTx, project)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockRepositoryMockRecorder) InsertProject(ctx, masterTx, project inter
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Project, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, id)
 	ret0, _ := ret[0].(*model.Project)
@@ -66,7 +66,7 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, id interface{}) 
 }
 
 // SelectByUserID mocks base method
-func (m *MockRepository) SelectByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
+func (m *MockRepository) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID string) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByUserID", ctx, masterTx, userID)
 	ret0, _ := ret[0].(model.ProjectSlice)
@@ -81,7 +81,7 @@ func (mr *MockRepositoryMockRecorder) SelectByUserID(ctx, masterTx, userID inter
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.ProjectSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
 	ret0, _ := ret[0].(model.ProjectSlice)

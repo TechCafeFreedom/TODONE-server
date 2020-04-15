@@ -2,17 +2,17 @@ package project
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/project"
-	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Service interface {
-	CreateNewProject(ctx *gin.Context, masterTx mysql.MasterTx, userID, title, description string) error
-	GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error)
-	GetByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error)
-	GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error)
+	CreateNewProject(ctx *gin.Context, masterTx repository.MasterTx, userID, title, description string) error
+	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Project, error)
+	GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID string) (model.ProjectSlice, error)
+	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.ProjectSlice, error)
 }
 
 type service struct {
@@ -25,7 +25,7 @@ func New(projectRepository project.Repository) Service {
 	}
 }
 
-func (s *service) CreateNewProject(ctx *gin.Context, masterTx mysql.MasterTx, userID, title, description string) error {
+func (s *service) CreateNewProject(ctx *gin.Context, masterTx repository.MasterTx, userID, title, description string) error {
 	if err := s.projectRepository.InsertProject(ctx, masterTx, &model.Project{
 		UserID:      userID,
 		Title:       title,
@@ -36,15 +36,15 @@ func (s *service) CreateNewProject(ctx *gin.Context, masterTx mysql.MasterTx, us
 	return nil
 }
 
-func (s *service) GetByPK(ctx *gin.Context, masterTx mysql.MasterTx, id int) (*model.Project, error) {
-	project, err := s.projectRepository.SelectByPK(ctx, masterTx, id)
+func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Project, error) {
+	projectData, err := s.projectRepository.SelectByPK(ctx, masterTx, id)
 	if err != nil {
 		return nil, err
 	}
-	return project, nil
+	return projectData, nil
 }
 
-func (s *service) GetByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID string) (model.ProjectSlice, error) {
+func (s *service) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID string) (model.ProjectSlice, error) {
 	projects, err := s.projectRepository.SelectByUserID(ctx, masterTx, userID)
 	if err != nil {
 		return nil, err
@@ -52,6 +52,6 @@ func (s *service) GetByUserID(ctx *gin.Context, masterTx mysql.MasterTx, userID 
 	return projects, nil
 }
 
-func (s *service) GetAll(ctx *gin.Context, masterTx mysql.MasterTx) (model.ProjectSlice, error) {
+func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.ProjectSlice, error) {
 	return s.projectRepository.SelectAll(ctx, masterTx)
 }
