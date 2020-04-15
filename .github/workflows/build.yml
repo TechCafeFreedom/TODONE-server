@@ -12,10 +12,9 @@ jobs:
   static-check:
     name: StaticCheck
     runs-on: ubuntu-latest
-    container: golang:1.12
 
     steps:
-      # set go version
+      # set up go
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
         with:
@@ -30,15 +29,15 @@ jobs:
         run: |
           GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
           gofmt -s -w pkg/
-          goimports -w pkg/
+          ~/go/bin/goimports -w pkg/
 
       # Run lint
       - name: Go Lint
         run: |
           GO111MODULE=off go get -u golang.org/x/lint/golint
-          golint pkg/...
+          ~/go/bin/golint pkg/...
 
-  # build test, build
+  # build test and build
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -57,8 +56,8 @@ jobs:
 
     steps:
 
-    # set go version
-    - name: Set up Go 1.13
+    # set up go
+    - name: Set up Go 1.12
       uses: actions/setup-go@v1
       with:
         go-version: 1.12
@@ -78,8 +77,19 @@ jobs:
       run: |
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
+    # cache
+    - name: Cache go module
+      uses: actions/cache@v1
+      id: cache-go
+      with:
+        path: ~/go/pkg/mod
+        key: ${{env.cache-version}}-${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
     # install packages
     - name: Get dependencies
+      if: ${{ steps.cache-go.outputs.cache-hit }} != 'true'
       run: |
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
