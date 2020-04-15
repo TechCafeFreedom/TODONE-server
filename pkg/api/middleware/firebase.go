@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"todone/pkg/api/handler/project"
 	"todone/pkg/api/request/reqheader"
 
 	firebase "firebase.google.com/go"
@@ -19,11 +18,10 @@ type FirebaseAuth interface {
 }
 
 type firebaseAuth struct {
-	server project.Server
 	client *auth.Client
 }
 
-func CreateFirebaseInstance(server project.Server) FirebaseAuth {
+func CreateFirebaseInstance() FirebaseAuth {
 	// firebase appの作成
 	ctx := context.Background()
 	opt := option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
@@ -39,7 +37,6 @@ func CreateFirebaseInstance(server project.Server) FirebaseAuth {
 	}
 
 	return &firebaseAuth{
-		server: server,
 		client: client,
 	}
 }

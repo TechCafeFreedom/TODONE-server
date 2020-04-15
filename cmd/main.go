@@ -23,10 +23,12 @@ func main() {
 	// トランザクションマネージャーの作成
 	masterTxManager := tx.NewDBMasterTxManager(dbInstance)
 
-	// APIインスタンスとmiddlewareインスタンスの作成
+	// APIインスタンスの作成
 	userAPI := InitUserAPI(masterTxManager)
 	projectAPI := InitProjectAPI(masterTxManager)
-	firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
+
+	// firebase middlewareの作成
+	firebaseClient := middleware.CreateFirebaseInstance()
 
 	// CORS対応
 	r := gin.Default()
