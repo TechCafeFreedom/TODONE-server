@@ -34,7 +34,7 @@ func (s *Server) CreateNewProject(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.Status(http.StatusOK)
+	ctx.Status(http.StatusNoContent)
 }
 
 func (s *Server) GetProjectByPK(ctx *gin.Context) {
