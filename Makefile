@@ -55,5 +55,5 @@ run: ## APIをビルドせずに立ち上げるコマンド
 	go run ./cmd
 
 build: ## APIをビルドして立ち上げるコマンド
-	go build -o binary/todone
+	go build -o binary/todone ./cmd
 	./binary/todone
