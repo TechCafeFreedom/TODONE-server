@@ -52,7 +52,7 @@ fmt: ## fmtの実行
 fmt-lint: fmt lint ## fmtとlintの実行
 
 run: ## APIをビルドせずに立ち上げるコマンド
-	go run ./cmd/main.go ./cmd/wire_gen.go
+	go run ./cmd
 
 build: ## APIをビルドして立ち上げるコマンド
 	go build -o binary/todone
