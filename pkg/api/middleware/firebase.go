@@ -36,10 +36,9 @@ func CreateFirebaseInstance(server project.Server) FirebaseAuth {
 	if err != nil {
 		// local
 		opt = option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-456e1cfaf4.json")
-		// opt = option.WithCredentialsFile("todone-29688-firebase-adminsdk-5y0zs-43a903b550.json")
 	} else {
 		// gcp
-		opt = option.WithCredentialsJSON(getFirebaseCredentialJSON(gcpClient, ctx))
+		opt = option.WithCredentialsJSON(getFirebaseCredentialJSON(ctx, gcpClient))
 	}
 
 	// firebase appの作成
@@ -85,8 +84,8 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	c.Set("AUTHED_USER_ID", authedUserToken.UID)
 }
 
-// getFirebaseCredentialJSON
-func getFirebaseCredentialJSON(client *secretmanager.Client, ctx context.Context) []byte {
+// getFirebaseCredentialJSON firebaseの証明書をjsonで取得
+func getFirebaseCredentialJSON(ctx context.Context, client *secretmanager.Client) []byte {
 	projectID := "todone-server"
 	secretID := "fireauth-key"
 	// requestの作成
