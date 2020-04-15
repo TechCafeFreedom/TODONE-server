@@ -61,5 +61,7 @@ func main() {
 	r.GET("/projects", projectAPI.GetAllProjects)
 
 	// port: 8080
-	r.Run(":8080")
+	if err := r.Run(":8080"); err != nil {
+		panic(err)
+	}
 }

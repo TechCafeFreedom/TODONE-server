@@ -39,7 +39,7 @@ lint: ## lintの実行
 	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 	# pkg配下をチェック。設定は .golangci.yml に記載
-	golangci-lint run --skip-dirs middleware --skip-dirs mysql pkg/...
+	golangci-lint run
 
 fmt: ## fmtの実行
 	# goimportsのインストール
