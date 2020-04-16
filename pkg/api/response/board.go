@@ -2,7 +2,7 @@ package response
 
 import "time"
 
-type ProjectResponse struct {
+type BoardResponse struct {
 	ID          int       `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
@@ -10,4 +10,4 @@ type ProjectResponse struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type ProjectsResponse []*ProjectResponse
+type BoardsResponse []*BoardResponse

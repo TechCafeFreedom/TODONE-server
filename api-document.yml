@@ -6,8 +6,8 @@ info:
 tags:
   - name: user
     description: user data
-  - name: project
-    description: project
+  - name: board
+    description: board
   - name: todo
     description: todo
   - name: label
@@ -113,27 +113,27 @@ paths:
         description: firebaseで作成したユーザ情報を自前DBに保存するAPI
       tags:
         - user
-  /view/projects:
+  /view/boards:
     get:
       tags:
-        - project
+        - board
       summary: プロジェクト一覧取得API
       description: プロジェクト一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       responses:
         '200':
-          description: return projects that a request user joins
+          description: return boards that a request user joins
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/GetProjectsResponse'
+                  $ref: '#/components/schemas/GetBoardsResponse'
               examples:
                 example:
                   value:
-                    - project_id: 1
+                    - board_id: 1
                       title: プロジェクトタイトル
                       description: プロジェクトの説明
                       author:
@@ -186,26 +186,26 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
       operationId: ''
-  '/view/projects/{project_id}':
+  '/view/boards/{board_id}':
     get:
       tags:
-        - project
+        - board
       summary: プロジェクト情報取得API（プロジェクトID指定）
       description: プロジェクトIDをして１件取得するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
       responses:
         '200':
-          description: return a project object
+          description: return a board object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetProjectResponse'
+                $ref: '#/components/schemas/GetBoardResponse'
               examples:
                 example:
                   value:
-                    project_id: 1
+                    board_id: 1
                     title: プロジェクトタイトル
                     description: プロジェクトの説明
                     author:
@@ -257,7 +257,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  '/view/projects/{project_id}/todos':
+  '/view/boards/{board_id}/todos':
     get:
       tags:
         - todo
@@ -265,7 +265,7 @@ paths:
       description: 指定プロジェクトのtodo一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
       responses:
         '200':
           description: return an array of todo objects
@@ -281,7 +281,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  '/view/projects/{project_id}/labels':
+  '/view/boards/{board_id}/labels':
     get:
       tags:
         - label
@@ -289,7 +289,7 @@ paths:
       description: プロジェクト内で使えるラベル一覧取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
       responses:
         '200':
           description: return array of label objects
@@ -314,16 +314,16 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /action/projects:
+  /action/boards:
     post:
       tags:
-        - project
+        - board
       summary: 新規プロジェクト作成API
       description: 新規プロジェクト作成API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
       requestBody:
-        $ref: '#/components/requestBodies/UpdateProject'
+        $ref: '#/components/requestBodies/UpdateBoard'
         content:
           application/json:
             schema:
@@ -340,11 +340,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProjectResponse'
+                $ref: '#/components/schemas/UpdateBoardResponse'
               examples:
                 example:
                   value:
-                    project_id: 1
+                    board_id: 1
                     title: プロジェクトタイトル
                     description: プロジェクト説明
                     created_at: '2020/01/01 11:11:11'
@@ -355,15 +355,15 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  '/action/projects/{project_id}':
+  '/action/boards/{board_id}':
     put:
       tags:
-        - project
+        - board
       summary: プロジェクト情報更新API
       description: プロジェクトのタイトル・説明を更新するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: project_id
+        - name: board_id
           in: path
           required: true
           schema:
@@ -374,11 +374,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProjectResponse'
+                $ref: '#/components/schemas/UpdateBoardResponse'
               examples:
                 example:
                   value:
-                    project_id: 1
+                    board_id: 1
                     title: プロジェクトタイトル
                     description: プロジェクト説明
                     created_at: '2020/01/01 11:11:11'
@@ -403,12 +403,12 @@ paths:
       operationId: ''
     delete:
       tags:
-        - project
+        - board
       summary: プロジェクト削除API
       description: 指定されたプロジェクトを削除する
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: project_id
+        - name: board_id
           in: path
           required: true
           schema:
@@ -424,8 +424,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
-  '/view/projects/{project_id}/todos/{todo_id}':
+      - $ref: '#/components/parameters/BoardID'
+  '/view/boards/{board_id}/todos/{todo_id}':
     get:
       tags:
         - todo
@@ -433,7 +433,7 @@ paths:
       description: todo_idによるtodo情報取得API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
         - $ref: '#/components/parameters/TodoID'
       responses:
         '200':
@@ -470,7 +470,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  '/action/projects/{project_id}/todos':
+  '/action/boards/{board_id}/todos':
     post:
       tags:
         - todo
@@ -478,7 +478,7 @@ paths:
       description: 指定されたプロジェクトに紐づくtodoを作成するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: project_id
+        - name: board_id
           in: path
           required: true
           schema:
@@ -518,8 +518,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
-  '/action/projects/{project_id}/todos/{todo_id}':
+      - $ref: '#/components/parameters/BoardID'
+  '/action/boards/{board_id}/todos/{todo_id}':
     put:
       tags:
         - todo
@@ -527,7 +527,7 @@ paths:
       description: todo情報更新API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: project_id
+        - name: board_id
           in: path
           required: true
           schema:
@@ -587,7 +587,7 @@ paths:
       description: 指定されたtodoを削除する
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - name: project_id
+        - name: board_id
           in: path
           required: true
           schema:
@@ -608,9 +608,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/BoardID'
       - $ref: '#/components/parameters/TodoID'
-  '/action/projects/{project_id}/labels':
+  '/action/boards/{board_id}/labels':
     post:
       tags:
         - label
@@ -618,7 +618,7 @@ paths:
       description: プロジェクトで使えるラベルを追加するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
       requestBody:
         $ref: '#/components/requestBodies/UpdateLabel'
         content:
@@ -657,8 +657,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       operationId: ''
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
-  '/action/projects/{project_id}/labels/{label_id}':
+      - $ref: '#/components/parameters/BoardID'
+  '/action/boards/{board_id}/labels/{label_id}':
     put:
       tags:
         - label
@@ -666,7 +666,7 @@ paths:
       description: ラベル情報更新API
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
         - $ref: '#/components/parameters/LabelID'
       requestBody:
         $ref: '#/components/requestBodies/UpdateLabel'
@@ -710,7 +710,7 @@ paths:
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
         - $ref: '#/components/parameters/LabelID'
       responses:
         '204':
@@ -722,9 +722,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/BoardID'
       - $ref: '#/components/parameters/LabelID'
-  '/action/projects/{project_id}/todos/{todo_id}/label':
+  '/action/boards/{board_id}/todos/{todo_id}/label':
     post:
       tags:
         - label
@@ -732,7 +732,7 @@ paths:
       description: todoに付与したラベルを登録するAPI
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
         - $ref: '#/components/parameters/TodoID'
       requestBody:
         description: 新規作成するラベル情報
@@ -770,9 +770,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/BoardID'
       - $ref: '#/components/parameters/TodoID'
-  '/action/projects/{project_id}/todos/{todo_id}/label/{label_id}':
+  '/action/boards/{board_id}/todos/{todo_id}/label/{label_id}':
     delete:
       tags:
         - label
@@ -780,7 +780,7 @@ paths:
       description: ''
       parameters:
         - $ref: '#/components/parameters/AccessToken'
-        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/BoardID'
         - $ref: '#/components/parameters/TodoID'
         - $ref: '#/components/parameters/LabelID'
       responses:
@@ -829,7 +829,7 @@ paths:
       tags:
         - label
     parameters:
-      - $ref: '#/components/parameters/ProjectID'
+      - $ref: '#/components/parameters/BoardID'
       - $ref: '#/components/parameters/TodoID'
       - $ref: '#/components/parameters/LabelID'
 components:
@@ -844,7 +844,7 @@ components:
           type: string
         thumbnail:
           type: string
-    UpdateProjectRequest:
+    UpdateBoardRequest:
       type: object
       properties:
         title:
@@ -937,8 +937,8 @@ components:
         thumbnail:
           type: string
           description: アイコン画像のURL
-    UpdateProjectResponse:
-      title: Update project response
+    UpdateBoardResponse:
+      title: Update board response
       type: object
       properties:
         id:
@@ -982,15 +982,15 @@ components:
           thumbnail: 'https://google.com/ichiro.png'
           created_at: '2020/01/01 11:11:11'
           updated_at: '2020/01/01 11:11:11'
-    GetProjectResponse:
-      title: GetProjectResponse
+    GetBoardResponse:
+      title: GetBoardResponse
       type: object
       description: プロジェクト取得情報
       x-tags:
-        - project
+        - board
       x-examples: {}
       properties:
-        project_id:
+        board_id:
           type: integer
         title:
           type: string
@@ -1062,14 +1062,14 @@ components:
           type: string
         updated_at:
           type: string
-    GetProjectsResponse:
-      title: GetProjectsResponse
+    GetBoardsResponse:
+      title: GetBoardsResponse
       type: array
       description: プロジェクト一覧取得レスポンス
       items:
-        $ref: '#/components/schemas/GetProjectResponse'
+        $ref: '#/components/schemas/GetBoardResponse'
       x-tags:
-        - project
+        - board
     GetTodosResponse:
       title: GetTodosResponse
       type: array
@@ -1101,8 +1101,8 @@ components:
       description: this token on Authorization Header
       schema:
         $ref: '#/components/schemas/AccessToken'
-    ProjectID:
-      name: project_id
+    BoardID:
+      name: board_id
       in: path
       required: true
       description: プロジェクトID
@@ -1129,12 +1129,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UpdateUserRequest'
-    UpdateProject:
-      description: a requestBody when making a create-project or update-project request
+    UpdateBoard:
+      description: a requestBody when making a create-board or update-board request
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UpdateProjectRequest'
+            $ref: '#/components/schemas/UpdateBoardRequest'
     UpdateTodo:
       description: a requestBody when making a create-todo or update-todo request
       content:

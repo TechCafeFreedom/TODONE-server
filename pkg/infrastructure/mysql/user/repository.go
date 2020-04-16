@@ -33,12 +33,25 @@ func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repositor
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
+func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
 	}
 	userData, err := model.FindUser(ctx, exec, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return userData, nil
+}
+
+func (u userRepositoryImpliment) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+	exec, err := mysql.ExtractExecutor(masterTx)
+	if err != nil {
+		return nil, err
+	}
+	userData, err := model.Users(model.UserWhere.AccessToken.EQ(accessToken)).One(ctx, exec)
 	if err != nil {
 		return nil, err
 	}

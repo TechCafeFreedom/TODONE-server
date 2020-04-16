@@ -25,25 +25,25 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	userID, ok := ctx.Get("AUTHED_USER_ID")
+	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
 		ctx.Error(errors.New("userID is not found in context"))
 	}
 
-	if err := s.userInteractor.CreateNewUser(ctx, userID.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
+	if err := s.userInteractor.CreateNewUser(ctx, accessToken.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
 		ctx.Error(err)
 	}
 
 	ctx.Status(http.StatusNoContent)
 }
 
-func (s *Server) GetUserByPK(ctx *gin.Context) {
-	userID, ok := ctx.Get("AUTHED_USER_ID")
+func (s *Server) GetUserProfile(ctx *gin.Context) {
+	userID, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
 		ctx.Error(errors.New("userID is not found in context"))
 	}
 
-	user, err := s.userInteractor.GetByPK(ctx, userID.(string))
+	user, err := s.userInteractor.GetUserProfile(ctx, userID.(string))
 	if err != nil {
 		ctx.Error(err)
 	}

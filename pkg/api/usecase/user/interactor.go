@@ -9,8 +9,8 @@ import (
 )
 
 type Interactor interface {
-	CreateNewUser(ctx *gin.Context, userID, title, description string) error
-	GetByPK(ctx *gin.Context, userID string) (*model.User, error)
+	CreateNewUser(ctx *gin.Context, accessToken, title, description string) error
+	GetUserProfile(ctx *gin.Context, accessToken string) (*model.User, error)
 	GetAll(ctx *gin.Context) (model.UserSlice, error)
 }
 
@@ -26,9 +26,10 @@ func New(masterTxManager repository.MasterTxManager, userService userservice.Ser
 	}
 }
 
-func (i *intereractor) CreateNewUser(ctx *gin.Context, userID, title, description string) error {
+func (i *intereractor) CreateNewUser(ctx *gin.Context, accessToken, title, description string) error {
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
-		if err := i.userService.CreateNewUser(ctx, masterTx, userID, title, description); err != nil {
+		// 新規ユーザ作成
+		if err := i.userService.CreateNewUser(ctx, masterTx, accessToken, title, description); err != nil {
 			return err
 		}
 		return nil
@@ -39,12 +40,13 @@ func (i *intereractor) CreateNewUser(ctx *gin.Context, userID, title, descriptio
 	return nil
 }
 
-func (i *intereractor) GetByPK(ctx *gin.Context, userID string) (*model.User, error) {
+func (i *intereractor) GetUserProfile(ctx *gin.Context, accessToken string) (*model.User, error) {
 	var userData *model.User
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
-		userData, err = i.userService.GetByPK(ctx, masterTx, userID)
+		// ログイン済ユーザのプロフィール情報取得
+		userData, err = i.userService.GetByAccessToken(ctx, masterTx, accessToken)
 		if err != nil {
 			return err
 		}
@@ -61,6 +63,7 @@ func (i *intereractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+		// (管理者用)ユーザ全件取得
 		userSlice, err = i.userService.GetAll(ctx, masterTx)
 		if err != nil {
 			return err

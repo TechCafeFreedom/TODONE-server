@@ -494,14 +494,14 @@ func testLabelsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testLabelToManyProjectsLabels(t *testing.T) {
+func testLabelToManyCards(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Label
-	var b, c ProjectsLabel
+	var b, c Card
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, labelDBTypes, true, labelColumnsWithDefault...); err != nil {
@@ -512,15 +512,12 @@ func testLabelToManyProjectsLabels(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, projectsLabelDBTypes, false, projectsLabelColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, cardDBTypes, false, cardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, projectsLabelDBTypes, false, projectsLabelColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, cardDBTypes, false, cardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-
-	b.LabelID = a.ID
-	c.LabelID = a.ID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -529,17 +526,26 @@ func testLabelToManyProjectsLabels(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.ProjectsLabels().All(ctx, tx)
+	_, err = tx.Exec("insert into `cards_labels` (`label_id`, `card_id`) values (?, ?)", a.ID, b.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = tx.Exec("insert into `cards_labels` (`label_id`, `card_id`) values (?, ?)", a.ID, c.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := a.Cards().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.LabelID == b.LabelID {
+		if v.ID == b.ID {
 			bFound = true
 		}
-		if v.LabelID == c.LabelID {
+		if v.ID == c.ID {
 			cFound = true
 		}
 	}
@@ -552,18 +558,18 @@ func testLabelToManyProjectsLabels(t *testing.T) {
 	}
 
 	slice := LabelSlice{&a}
-	if err = a.L.LoadProjectsLabels(ctx, tx, false, (*[]*Label)(&slice), nil); err != nil {
+	if err = a.L.LoadCards(ctx, tx, false, (*[]*Label)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsLabels); got != 2 {
+	if got := len(a.R.Cards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.ProjectsLabels = nil
-	if err = a.L.LoadProjectsLabels(ctx, tx, true, &a, nil); err != nil {
+	a.R.Cards = nil
+	if err = a.L.LoadCards(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ProjectsLabels); got != 2 {
+	if got := len(a.R.Cards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -572,34 +578,30 @@ func testLabelToManyProjectsLabels(t *testing.T) {
 	}
 }
 
-func testLabelToManyTodosLabels(t *testing.T) {
+func testLabelToManyAddOpCards(t *testing.T) {
 	var err error
+
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Label
-	var b, c TodosLabel
+	var b, c, d, e Card
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, labelDBTypes, true, labelColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Label struct: %s", err)
+	if err = randomize.Struct(seed, &a, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Card{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, cardDBTypes, false, strmangle.SetComplement(cardPrimaryKeyColumns, cardColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
-
-	if err = randomize.Struct(seed, &b, todosLabelDBTypes, false, todosLabelColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, todosLabelDBTypes, false, todosLabelColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-
-	b.LabelID = a.ID
-	c.LabelID = a.ID
-
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -607,50 +609,127 @@ func testLabelToManyTodosLabels(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.TodosLabels().All(ctx, tx)
+	foreignersSplitByInsertion := [][]*Card{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddCards(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if first.R.Labels[0] != &a {
+			t.Error("relationship was not added properly to the slice")
+		}
+		if second.R.Labels[0] != &a {
+			t.Error("relationship was not added properly to the slice")
+		}
+
+		if a.R.Cards[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Cards[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Cards().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+
+func testLabelToManySetOpCards(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Label
+	var b, c, d, e Card
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Card{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, cardDBTypes, false, strmangle.SetComplement(cardPrimaryKeyColumns, cardColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.SetCards(ctx, tx, false, &b, &c)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	bFound, cFound := false, false
-	for _, v := range check {
-		if v.LabelID == b.LabelID {
-			bFound = true
-		}
-		if v.LabelID == c.LabelID {
-			cFound = true
-		}
-	}
-
-	if !bFound {
-		t.Error("expected to find b")
-	}
-	if !cFound {
-		t.Error("expected to find c")
-	}
-
-	slice := LabelSlice{&a}
-	if err = a.L.LoadTodosLabels(ctx, tx, false, (*[]*Label)(&slice), nil); err != nil {
+	count, err := a.Cards().Count(ctx, tx)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.TodosLabels); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
+	if count != 2 {
+		t.Error("count was wrong:", count)
 	}
 
-	a.R.TodosLabels = nil
-	if err = a.L.LoadTodosLabels(ctx, tx, true, &a, nil); err != nil {
+	err = a.SetCards(ctx, tx, true, &d, &e)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.TodosLabels); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
+
+	count, err = a.Cards().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
 	}
 
-	if t.Failed() {
-		t.Logf("%#v", check)
+	// The following checks cannot be implemented since we have no handle
+	// to these when we call Set(). Leaving them here as wishful thinking
+	// and to let people know there's dragons.
+	//
+	// if len(b.R.Labels) != 0 {
+	// 	t.Error("relationship was not removed properly from the slice")
+	// }
+	// if len(c.R.Labels) != 0 {
+	// 	t.Error("relationship was not removed properly from the slice")
+	// }
+	if d.R.Labels[0] != &a {
+		t.Error("relationship was not added properly to the slice")
+	}
+	if e.R.Labels[0] != &a {
+		t.Error("relationship was not added properly to the slice")
+	}
+
+	if a.R.Cards[0] != &d {
+		t.Error("relationship struct slice not set to correct value")
+	}
+	if a.R.Cards[1] != &e {
+		t.Error("relationship struct slice not set to correct value")
 	}
 }
 
-func testLabelToManyAddOpProjectsLabels(t *testing.T) {
+func testLabelToManyRemoveOpCards(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -658,15 +737,15 @@ func testLabelToManyAddOpProjectsLabels(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a Label
-	var b, c, d, e ProjectsLabel
+	var b, c, d, e Card
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*ProjectsLabel{&b, &c, &d, &e}
+	foreigners := []*Card{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, projectsLabelDBTypes, false, strmangle.SetComplement(projectsLabelPrimaryKeyColumns, projectsLabelColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, cardDBTypes, false, strmangle.SetComplement(cardPrimaryKeyColumns, cardColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -674,130 +753,56 @@ func testLabelToManyAddOpProjectsLabels(t *testing.T) {
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
 
-	foreignersSplitByInsertion := [][]*ProjectsLabel{
-		{&b, &c},
-		{&d, &e},
-	}
-
-	for i, x := range foreignersSplitByInsertion {
-		err = a.AddProjectsLabels(ctx, tx, i != 0, x...)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		first := x[0]
-		second := x[1]
-
-		if a.ID != first.LabelID {
-			t.Error("foreign key was wrong value", a.ID, first.LabelID)
-		}
-		if a.ID != second.LabelID {
-			t.Error("foreign key was wrong value", a.ID, second.LabelID)
-		}
-
-		if first.R.Label != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-		if second.R.Label != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-
-		if a.R.ProjectsLabels[i*2] != first {
-			t.Error("relationship struct slice not set to correct value")
-		}
-		if a.R.ProjectsLabels[i*2+1] != second {
-			t.Error("relationship struct slice not set to correct value")
-		}
-
-		count, err := a.ProjectsLabels().Count(ctx, tx)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if want := int64((i + 1) * 2); count != want {
-			t.Error("want", want, "got", count)
-		}
-	}
-}
-func testLabelToManyAddOpTodosLabels(t *testing.T) {
-	var err error
-
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Label
-	var b, c, d, e TodosLabel
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	foreigners := []*TodosLabel{&b, &c, &d, &e}
-	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, todosLabelDBTypes, false, strmangle.SetComplement(todosLabelPrimaryKeyColumns, todosLabelColumnsWithoutDefault)...); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+	err = a.AddCards(ctx, tx, true, foreigners...)
+	if err != nil {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*TodosLabel{
-		{&b, &c},
-		{&d, &e},
+	count, err := a.Cards().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 4 {
+		t.Error("count was wrong:", count)
 	}
 
-	for i, x := range foreignersSplitByInsertion {
-		err = a.AddTodosLabels(ctx, tx, i != 0, x...)
-		if err != nil {
-			t.Fatal(err)
-		}
+	err = a.RemoveCards(ctx, tx, foreigners[:2]...)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		first := x[0]
-		second := x[1]
+	count, err = a.Cards().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
 
-		if a.ID != first.LabelID {
-			t.Error("foreign key was wrong value", a.ID, first.LabelID)
-		}
-		if a.ID != second.LabelID {
-			t.Error("foreign key was wrong value", a.ID, second.LabelID)
-		}
+	if len(b.R.Labels) != 0 {
+		t.Error("relationship was not removed properly from the slice")
+	}
+	if len(c.R.Labels) != 0 {
+		t.Error("relationship was not removed properly from the slice")
+	}
+	if d.R.Labels[0] != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.Labels[0] != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
 
-		if first.R.Label != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-		if second.R.Label != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
+	if len(a.R.Cards) != 2 {
+		t.Error("should have preserved two relationships")
+	}
 
-		if a.R.TodosLabels[i*2] != first {
-			t.Error("relationship struct slice not set to correct value")
-		}
-		if a.R.TodosLabels[i*2+1] != second {
-			t.Error("relationship struct slice not set to correct value")
-		}
-
-		count, err := a.TodosLabels().Count(ctx, tx)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if want := int64((i + 1) * 2); count != want {
-			t.Error("want", want, "got", count)
-		}
+	// Removal doesn't do a stable deletion for performance so we have to flip the order
+	if a.R.Cards[1] != &d {
+		t.Error("relationship to d should have been preserved")
+	}
+	if a.R.Cards[0] != &e {
+		t.Error("relationship to e should have been preserved")
 	}
 }
 
@@ -875,7 +880,7 @@ func testLabelsSelect(t *testing.T) {
 }
 
 var (
-	labelDBTypes = map[string]string{`ID`: `int`, `Name`: `varchar`, `Description`: `varchar`, `Color`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
+	labelDBTypes = map[string]string{`ID`: `int`, `Name`: `varchar`, `Color`: `int`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
 	_            = bytes.MinRead
 )
 

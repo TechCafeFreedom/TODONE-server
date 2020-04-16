@@ -25,7 +25,7 @@ func main() {
 
 	// APIインスタンスの作成
 	userAPI := InitUserAPI(masterTxManager)
-	projectAPI := InitProjectAPI(masterTxManager)
+	boardAPI := InitBoardAPI(masterTxManager)
 
 	// firebase middlewareの作成
 	firebaseClient := middleware.CreateFirebaseInstance()
@@ -48,19 +48,17 @@ func main() {
 	firebaseAuth := r.Group("")
 	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
 	{
-		firebaseAuth.POST("/user", userAPI.CreateNewUser)
-		firebaseAuth.GET("/user", userAPI.GetUserByPK)
+		firebaseAuth.POST("/users/self", userAPI.CreateNewUser)
+		firebaseAuth.GET("/users/self", userAPI.GetUserProfile)
 	}
-	r.GET("/users", userAPI.GetAllUsers)
 
-	// projectAPI
+	// boardAPI
 	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
 	{
-		firebaseAuth.POST("/project", projectAPI.CreateNewProject)
-		firebaseAuth.GET("/user/projects", projectAPI.GetProjectsByUserID)
+		firebaseAuth.POST("/boards", boardAPI.CreateNewBoard)
+		firebaseAuth.GET("/boards", boardAPI.GetUserBoards)
+		firebaseAuth.GET("/boards/:id", boardAPI.GetBoardDetail)
 	}
-	r.GET("/project", projectAPI.GetProjectByPK)
-	r.GET("/projects", projectAPI.GetAllProjects)
 
 	// port: 8080
 	if err := r.Run(":8080"); err != nil {

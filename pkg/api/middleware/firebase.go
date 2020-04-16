@@ -49,7 +49,7 @@ func (fa *firebaseAuth) MiddlewareFunc() gin.HandlerFunc {
 
 func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// Authorizationヘッダーからjwtトークンを取得
-	var reqHeader reqheader.ProjectGet
+	var reqHeader reqheader.Auth
 	if err := c.BindHeader(&reqHeader); err != nil {
 		c.Error(err)
 	}
@@ -63,5 +63,5 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 		c.Error(err)
 	}
 	// contextにuser_idを格納
-	c.Set("AUTHED_USER_ID", authedUserToken.UID)
+	c.Set("AUTHED_ACCESS_TOKEN", authedUserToken.UID)
 }

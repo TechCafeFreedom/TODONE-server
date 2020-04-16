@@ -6,31 +6,33 @@
 package main
 
 import (
-	"todone/pkg/api/handler/project"
+	"todone/pkg/api/handler/board"
 	"todone/pkg/api/handler/user"
-	project4 "todone/pkg/api/usecase/project"
+	board4 "todone/pkg/api/usecase/board"
 	user4 "todone/pkg/api/usecase/user"
 	"todone/pkg/domain/repository"
-	project3 "todone/pkg/domain/service/project"
+	board3 "todone/pkg/domain/service/board"
 	user3 "todone/pkg/domain/service/user"
-	project2 "todone/pkg/infrastructure/mysql/project"
+	board2 "todone/pkg/infrastructure/mysql/board"
 	user2 "todone/pkg/infrastructure/mysql/user"
 )
 
 // Injectors from wire.go:
-
-func InitProjectAPI(masterTxManager repository.MasterTxManager) project.Server {
-	projectRepository := project2.New(masterTxManager)
-	service := project3.New(projectRepository)
-	interactor := project4.New(masterTxManager, service)
-	server := project.New(interactor)
-	return server
-}
 
 func InitUserAPI(masterTxManager repository.MasterTxManager) user.Server {
 	userRepository := user2.New(masterTxManager)
 	service := user3.New(userRepository)
 	interactor := user4.New(masterTxManager, service)
 	server := user.New(interactor)
+	return server
+}
+
+func InitBoardAPI(masterTxManager repository.MasterTxManager) board.Server {
+	boardRepository := board2.New(masterTxManager)
+	service := board3.New(boardRepository)
+	userRepository := user2.New(masterTxManager)
+	userService := user3.New(userRepository)
+	interactor := board4.New(masterTxManager, service, userService)
+	server := board.New(interactor)
 	return server
 }

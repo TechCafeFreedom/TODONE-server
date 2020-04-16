@@ -12,158 +12,129 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("Boards", testBoards)
+	t.Run("Cards", testCards)
+	t.Run("Kanbans", testKanbans)
 	t.Run("Labels", testLabels)
-	t.Run("Projects", testProjects)
-	t.Run("ProjectsLabels", testProjectsLabels)
-	t.Run("ProjectsTodos", testProjectsTodos)
-	t.Run("Todos", testTodos)
-	t.Run("TodosLabels", testTodosLabels)
 	t.Run("Users", testUsers)
-	t.Run("UsersProjects", testUsersProjects)
+	t.Run("UsersBoards", testUsersBoards)
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("Boards", testBoardsDelete)
+	t.Run("Cards", testCardsDelete)
+	t.Run("Kanbans", testKanbansDelete)
 	t.Run("Labels", testLabelsDelete)
-	t.Run("Projects", testProjectsDelete)
-	t.Run("ProjectsLabels", testProjectsLabelsDelete)
-	t.Run("ProjectsTodos", testProjectsTodosDelete)
-	t.Run("Todos", testTodosDelete)
-	t.Run("TodosLabels", testTodosLabelsDelete)
 	t.Run("Users", testUsersDelete)
-	t.Run("UsersProjects", testUsersProjectsDelete)
+	t.Run("UsersBoards", testUsersBoardsDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("Boards", testBoardsQueryDeleteAll)
+	t.Run("Cards", testCardsQueryDeleteAll)
+	t.Run("Kanbans", testKanbansQueryDeleteAll)
 	t.Run("Labels", testLabelsQueryDeleteAll)
-	t.Run("Projects", testProjectsQueryDeleteAll)
-	t.Run("ProjectsLabels", testProjectsLabelsQueryDeleteAll)
-	t.Run("ProjectsTodos", testProjectsTodosQueryDeleteAll)
-	t.Run("Todos", testTodosQueryDeleteAll)
-	t.Run("TodosLabels", testTodosLabelsQueryDeleteAll)
 	t.Run("Users", testUsersQueryDeleteAll)
-	t.Run("UsersProjects", testUsersProjectsQueryDeleteAll)
+	t.Run("UsersBoards", testUsersBoardsQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("Boards", testBoardsSliceDeleteAll)
+	t.Run("Cards", testCardsSliceDeleteAll)
+	t.Run("Kanbans", testKanbansSliceDeleteAll)
 	t.Run("Labels", testLabelsSliceDeleteAll)
-	t.Run("Projects", testProjectsSliceDeleteAll)
-	t.Run("ProjectsLabels", testProjectsLabelsSliceDeleteAll)
-	t.Run("ProjectsTodos", testProjectsTodosSliceDeleteAll)
-	t.Run("Todos", testTodosSliceDeleteAll)
-	t.Run("TodosLabels", testTodosLabelsSliceDeleteAll)
 	t.Run("Users", testUsersSliceDeleteAll)
-	t.Run("UsersProjects", testUsersProjectsSliceDeleteAll)
+	t.Run("UsersBoards", testUsersBoardsSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
+	t.Run("Boards", testBoardsExists)
+	t.Run("Cards", testCardsExists)
+	t.Run("Kanbans", testKanbansExists)
 	t.Run("Labels", testLabelsExists)
-	t.Run("Projects", testProjectsExists)
-	t.Run("ProjectsLabels", testProjectsLabelsExists)
-	t.Run("ProjectsTodos", testProjectsTodosExists)
-	t.Run("Todos", testTodosExists)
-	t.Run("TodosLabels", testTodosLabelsExists)
 	t.Run("Users", testUsersExists)
-	t.Run("UsersProjects", testUsersProjectsExists)
+	t.Run("UsersBoards", testUsersBoardsExists)
 }
 
 func TestFind(t *testing.T) {
+	t.Run("Boards", testBoardsFind)
+	t.Run("Cards", testCardsFind)
+	t.Run("Kanbans", testKanbansFind)
 	t.Run("Labels", testLabelsFind)
-	t.Run("Projects", testProjectsFind)
-	t.Run("ProjectsLabels", testProjectsLabelsFind)
-	t.Run("ProjectsTodos", testProjectsTodosFind)
-	t.Run("Todos", testTodosFind)
-	t.Run("TodosLabels", testTodosLabelsFind)
 	t.Run("Users", testUsersFind)
-	t.Run("UsersProjects", testUsersProjectsFind)
+	t.Run("UsersBoards", testUsersBoardsFind)
 }
 
 func TestBind(t *testing.T) {
+	t.Run("Boards", testBoardsBind)
+	t.Run("Cards", testCardsBind)
+	t.Run("Kanbans", testKanbansBind)
 	t.Run("Labels", testLabelsBind)
-	t.Run("Projects", testProjectsBind)
-	t.Run("ProjectsLabels", testProjectsLabelsBind)
-	t.Run("ProjectsTodos", testProjectsTodosBind)
-	t.Run("Todos", testTodosBind)
-	t.Run("TodosLabels", testTodosLabelsBind)
 	t.Run("Users", testUsersBind)
-	t.Run("UsersProjects", testUsersProjectsBind)
+	t.Run("UsersBoards", testUsersBoardsBind)
 }
 
 func TestOne(t *testing.T) {
+	t.Run("Boards", testBoardsOne)
+	t.Run("Cards", testCardsOne)
+	t.Run("Kanbans", testKanbansOne)
 	t.Run("Labels", testLabelsOne)
-	t.Run("Projects", testProjectsOne)
-	t.Run("ProjectsLabels", testProjectsLabelsOne)
-	t.Run("ProjectsTodos", testProjectsTodosOne)
-	t.Run("Todos", testTodosOne)
-	t.Run("TodosLabels", testTodosLabelsOne)
 	t.Run("Users", testUsersOne)
-	t.Run("UsersProjects", testUsersProjectsOne)
+	t.Run("UsersBoards", testUsersBoardsOne)
 }
 
 func TestAll(t *testing.T) {
+	t.Run("Boards", testBoardsAll)
+	t.Run("Cards", testCardsAll)
+	t.Run("Kanbans", testKanbansAll)
 	t.Run("Labels", testLabelsAll)
-	t.Run("Projects", testProjectsAll)
-	t.Run("ProjectsLabels", testProjectsLabelsAll)
-	t.Run("ProjectsTodos", testProjectsTodosAll)
-	t.Run("Todos", testTodosAll)
-	t.Run("TodosLabels", testTodosLabelsAll)
 	t.Run("Users", testUsersAll)
-	t.Run("UsersProjects", testUsersProjectsAll)
+	t.Run("UsersBoards", testUsersBoardsAll)
 }
 
 func TestCount(t *testing.T) {
+	t.Run("Boards", testBoardsCount)
+	t.Run("Cards", testCardsCount)
+	t.Run("Kanbans", testKanbansCount)
 	t.Run("Labels", testLabelsCount)
-	t.Run("Projects", testProjectsCount)
-	t.Run("ProjectsLabels", testProjectsLabelsCount)
-	t.Run("ProjectsTodos", testProjectsTodosCount)
-	t.Run("Todos", testTodosCount)
-	t.Run("TodosLabels", testTodosLabelsCount)
 	t.Run("Users", testUsersCount)
-	t.Run("UsersProjects", testUsersProjectsCount)
+	t.Run("UsersBoards", testUsersBoardsCount)
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("Boards", testBoardsHooks)
+	t.Run("Cards", testCardsHooks)
+	t.Run("Kanbans", testKanbansHooks)
 	t.Run("Labels", testLabelsHooks)
-	t.Run("Projects", testProjectsHooks)
-	t.Run("ProjectsLabels", testProjectsLabelsHooks)
-	t.Run("ProjectsTodos", testProjectsTodosHooks)
-	t.Run("Todos", testTodosHooks)
-	t.Run("TodosLabels", testTodosLabelsHooks)
 	t.Run("Users", testUsersHooks)
-	t.Run("UsersProjects", testUsersProjectsHooks)
+	t.Run("UsersBoards", testUsersBoardsHooks)
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("Boards", testBoardsInsert)
+	t.Run("Boards", testBoardsInsertWhitelist)
+	t.Run("Cards", testCardsInsert)
+	t.Run("Cards", testCardsInsertWhitelist)
+	t.Run("Kanbans", testKanbansInsert)
+	t.Run("Kanbans", testKanbansInsertWhitelist)
 	t.Run("Labels", testLabelsInsert)
 	t.Run("Labels", testLabelsInsertWhitelist)
-	t.Run("Projects", testProjectsInsert)
-	t.Run("Projects", testProjectsInsertWhitelist)
-	t.Run("ProjectsLabels", testProjectsLabelsInsert)
-	t.Run("ProjectsLabels", testProjectsLabelsInsertWhitelist)
-	t.Run("ProjectsTodos", testProjectsTodosInsert)
-	t.Run("ProjectsTodos", testProjectsTodosInsertWhitelist)
-	t.Run("Todos", testTodosInsert)
-	t.Run("Todos", testTodosInsertWhitelist)
-	t.Run("TodosLabels", testTodosLabelsInsert)
-	t.Run("TodosLabels", testTodosLabelsInsertWhitelist)
 	t.Run("Users", testUsersInsert)
 	t.Run("Users", testUsersInsertWhitelist)
-	t.Run("UsersProjects", testUsersProjectsInsert)
-	t.Run("UsersProjects", testUsersProjectsInsertWhitelist)
+	t.Run("UsersBoards", testUsersBoardsInsert)
+	t.Run("UsersBoards", testUsersBoardsInsertWhitelist)
 }
 
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
-	t.Run("ProjectToUserUsingUser", testProjectToOneUserUsingUser)
-	t.Run("ProjectsLabelToProjectUsingProject", testProjectsLabelToOneProjectUsingProject)
-	t.Run("ProjectsLabelToLabelUsingLabel", testProjectsLabelToOneLabelUsingLabel)
-	t.Run("ProjectsTodoToProjectUsingProject", testProjectsTodoToOneProjectUsingProject)
-	t.Run("ProjectsTodoToTodoUsingTodo", testProjectsTodoToOneTodoUsingTodo)
-	t.Run("TodoToUserUsingUser", testTodoToOneUserUsingUser)
-	t.Run("TodosLabelToTodoUsingTodo", testTodosLabelToOneTodoUsingTodo)
-	t.Run("TodosLabelToLabelUsingLabel", testTodosLabelToOneLabelUsingLabel)
-	t.Run("UsersProjectToUserUsingUser", testUsersProjectToOneUserUsingUser)
-	t.Run("UsersProjectToProjectUsingProject", testUsersProjectToOneProjectUsingProject)
+	t.Run("BoardToUserUsingUser", testBoardToOneUserUsingUser)
+	t.Run("CardToUserUsingUser", testCardToOneUserUsingUser)
+	t.Run("CardToKanbanUsingKanban", testCardToOneKanbanUsingKanban)
+	t.Run("KanbanToUserUsingUser", testKanbanToOneUserUsingUser)
+	t.Run("KanbanToBoardUsingBoard", testKanbanToOneBoardUsingBoard)
+	t.Run("UsersBoardToUserUsingUser", testUsersBoardToOneUserUsingUser)
+	t.Run("UsersBoardToBoardUsingBoard", testUsersBoardToOneBoardUsingBoard)
 }
 
 // TestOneToOne tests cannot be run in parallel
@@ -173,31 +144,27 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
-	t.Run("LabelToProjectsLabels", testLabelToManyProjectsLabels)
-	t.Run("LabelToTodosLabels", testLabelToManyTodosLabels)
-	t.Run("ProjectToProjectsLabels", testProjectToManyProjectsLabels)
-	t.Run("ProjectToProjectsTodos", testProjectToManyProjectsTodos)
-	t.Run("ProjectToUsersProjects", testProjectToManyUsersProjects)
-	t.Run("TodoToProjectsTodos", testTodoToManyProjectsTodos)
-	t.Run("TodoToTodosLabels", testTodoToManyTodosLabels)
-	t.Run("UserToProjects", testUserToManyProjects)
-	t.Run("UserToTodos", testUserToManyTodos)
-	t.Run("UserToUsersProjects", testUserToManyUsersProjects)
+	t.Run("BoardToKanbans", testBoardToManyKanbans)
+	t.Run("BoardToUsersBoards", testBoardToManyUsersBoards)
+	t.Run("CardToLabels", testCardToManyLabels)
+	t.Run("KanbanToCards", testKanbanToManyCards)
+	t.Run("LabelToCards", testLabelToManyCards)
+	t.Run("UserToBoards", testUserToManyBoards)
+	t.Run("UserToCards", testUserToManyCards)
+	t.Run("UserToKanbans", testUserToManyKanbans)
+	t.Run("UserToUsersBoards", testUserToManyUsersBoards)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
-	t.Run("ProjectToUserUsingProjects", testProjectToOneSetOpUserUsingUser)
-	t.Run("ProjectsLabelToProjectUsingProjectsLabels", testProjectsLabelToOneSetOpProjectUsingProject)
-	t.Run("ProjectsLabelToLabelUsingProjectsLabels", testProjectsLabelToOneSetOpLabelUsingLabel)
-	t.Run("ProjectsTodoToProjectUsingProjectsTodos", testProjectsTodoToOneSetOpProjectUsingProject)
-	t.Run("ProjectsTodoToTodoUsingProjectsTodos", testProjectsTodoToOneSetOpTodoUsingTodo)
-	t.Run("TodoToUserUsingTodos", testTodoToOneSetOpUserUsingUser)
-	t.Run("TodosLabelToTodoUsingTodosLabels", testTodosLabelToOneSetOpTodoUsingTodo)
-	t.Run("TodosLabelToLabelUsingTodosLabels", testTodosLabelToOneSetOpLabelUsingLabel)
-	t.Run("UsersProjectToUserUsingUsersProjects", testUsersProjectToOneSetOpUserUsingUser)
-	t.Run("UsersProjectToProjectUsingUsersProjects", testUsersProjectToOneSetOpProjectUsingProject)
+	t.Run("BoardToUserUsingBoards", testBoardToOneSetOpUserUsingUser)
+	t.Run("CardToUserUsingCards", testCardToOneSetOpUserUsingUser)
+	t.Run("CardToKanbanUsingCards", testCardToOneSetOpKanbanUsingKanban)
+	t.Run("KanbanToUserUsingKanbans", testKanbanToOneSetOpUserUsingUser)
+	t.Run("KanbanToBoardUsingKanbans", testKanbanToOneSetOpBoardUsingBoard)
+	t.Run("UsersBoardToUserUsingUsersBoards", testUsersBoardToOneSetOpUserUsingUser)
+	t.Run("UsersBoardToBoardUsingUsersBoards", testUsersBoardToOneSetOpBoardUsingBoard)
 }
 
 // TestToOneRemove tests cannot be run in parallel
@@ -215,77 +182,72 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
-	t.Run("LabelToProjectsLabels", testLabelToManyAddOpProjectsLabels)
-	t.Run("LabelToTodosLabels", testLabelToManyAddOpTodosLabels)
-	t.Run("ProjectToProjectsLabels", testProjectToManyAddOpProjectsLabels)
-	t.Run("ProjectToProjectsTodos", testProjectToManyAddOpProjectsTodos)
-	t.Run("ProjectToUsersProjects", testProjectToManyAddOpUsersProjects)
-	t.Run("TodoToProjectsTodos", testTodoToManyAddOpProjectsTodos)
-	t.Run("TodoToTodosLabels", testTodoToManyAddOpTodosLabels)
-	t.Run("UserToProjects", testUserToManyAddOpProjects)
-	t.Run("UserToTodos", testUserToManyAddOpTodos)
-	t.Run("UserToUsersProjects", testUserToManyAddOpUsersProjects)
+	t.Run("BoardToKanbans", testBoardToManyAddOpKanbans)
+	t.Run("BoardToUsersBoards", testBoardToManyAddOpUsersBoards)
+	t.Run("CardToLabels", testCardToManyAddOpLabels)
+	t.Run("KanbanToCards", testKanbanToManyAddOpCards)
+	t.Run("LabelToCards", testLabelToManyAddOpCards)
+	t.Run("UserToBoards", testUserToManyAddOpBoards)
+	t.Run("UserToCards", testUserToManyAddOpCards)
+	t.Run("UserToKanbans", testUserToManyAddOpKanbans)
+	t.Run("UserToUsersBoards", testUserToManyAddOpUsersBoards)
 }
 
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToManySet(t *testing.T) {}
+func TestToManySet(t *testing.T) {
+	t.Run("CardToLabels", testCardToManySetOpLabels)
+	t.Run("LabelToCards", testLabelToManySetOpCards)
+}
 
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
-func TestToManyRemove(t *testing.T) {}
+func TestToManyRemove(t *testing.T) {
+	t.Run("CardToLabels", testCardToManyRemoveOpLabels)
+	t.Run("LabelToCards", testLabelToManyRemoveOpCards)
+}
 
 func TestReload(t *testing.T) {
+	t.Run("Boards", testBoardsReload)
+	t.Run("Cards", testCardsReload)
+	t.Run("Kanbans", testKanbansReload)
 	t.Run("Labels", testLabelsReload)
-	t.Run("Projects", testProjectsReload)
-	t.Run("ProjectsLabels", testProjectsLabelsReload)
-	t.Run("ProjectsTodos", testProjectsTodosReload)
-	t.Run("Todos", testTodosReload)
-	t.Run("TodosLabels", testTodosLabelsReload)
 	t.Run("Users", testUsersReload)
-	t.Run("UsersProjects", testUsersProjectsReload)
+	t.Run("UsersBoards", testUsersBoardsReload)
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("Boards", testBoardsReloadAll)
+	t.Run("Cards", testCardsReloadAll)
+	t.Run("Kanbans", testKanbansReloadAll)
 	t.Run("Labels", testLabelsReloadAll)
-	t.Run("Projects", testProjectsReloadAll)
-	t.Run("ProjectsLabels", testProjectsLabelsReloadAll)
-	t.Run("ProjectsTodos", testProjectsTodosReloadAll)
-	t.Run("Todos", testTodosReloadAll)
-	t.Run("TodosLabels", testTodosLabelsReloadAll)
 	t.Run("Users", testUsersReloadAll)
-	t.Run("UsersProjects", testUsersProjectsReloadAll)
+	t.Run("UsersBoards", testUsersBoardsReloadAll)
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("Boards", testBoardsSelect)
+	t.Run("Cards", testCardsSelect)
+	t.Run("Kanbans", testKanbansSelect)
 	t.Run("Labels", testLabelsSelect)
-	t.Run("Projects", testProjectsSelect)
-	t.Run("ProjectsLabels", testProjectsLabelsSelect)
-	t.Run("ProjectsTodos", testProjectsTodosSelect)
-	t.Run("Todos", testTodosSelect)
-	t.Run("TodosLabels", testTodosLabelsSelect)
 	t.Run("Users", testUsersSelect)
-	t.Run("UsersProjects", testUsersProjectsSelect)
+	t.Run("UsersBoards", testUsersBoardsSelect)
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("Boards", testBoardsUpdate)
+	t.Run("Cards", testCardsUpdate)
+	t.Run("Kanbans", testKanbansUpdate)
 	t.Run("Labels", testLabelsUpdate)
-	t.Run("Projects", testProjectsUpdate)
-	t.Run("ProjectsLabels", testProjectsLabelsUpdate)
-	t.Run("ProjectsTodos", testProjectsTodosUpdate)
-	t.Run("Todos", testTodosUpdate)
-	t.Run("TodosLabels", testTodosLabelsUpdate)
 	t.Run("Users", testUsersUpdate)
-	t.Run("UsersProjects", testUsersProjectsUpdate)
+	t.Run("UsersBoards", testUsersBoardsUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("Boards", testBoardsSliceUpdateAll)
+	t.Run("Cards", testCardsSliceUpdateAll)
+	t.Run("Kanbans", testKanbansSliceUpdateAll)
 	t.Run("Labels", testLabelsSliceUpdateAll)
-	t.Run("Projects", testProjectsSliceUpdateAll)
-	t.Run("ProjectsLabels", testProjectsLabelsSliceUpdateAll)
-	t.Run("ProjectsTodos", testProjectsTodosSliceUpdateAll)
-	t.Run("Todos", testTodosSliceUpdateAll)
-	t.Run("TodosLabels", testTodosLabelsSliceUpdateAll)
 	t.Run("Users", testUsersSliceUpdateAll)
-	t.Run("UsersProjects", testUsersProjectsSliceUpdateAll)
+	t.Run("UsersBoards", testUsersBoardsSliceUpdateAll)
 }

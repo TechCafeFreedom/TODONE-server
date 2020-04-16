@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	userID    = "userID"
-	name      = "name"
-	thumbnail = "thumbnail"
+	userID      = 1
+	accessToken = "accessToken"
+	name        = "name"
+	thumbnail   = "thumbnail"
 )
 
 func TestIntereractor_CreateNewUser(t *testing.T) {
@@ -27,33 +28,34 @@ func TestIntereractor_CreateNewUser(t *testing.T) {
 	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().CreateNewUser(ctx, masterTx, userID, name, thumbnail).Return(nil).Times(1)
+	userService.EXPECT().CreateNewUser(ctx, masterTx, accessToken, name, thumbnail).Return(nil).Times(1)
 
 	interactor := New(masterTxManager, userService)
-	err := interactor.CreateNewUser(ctx, userID, name, thumbnail)
+	err := interactor.CreateNewUser(ctx, accessToken, name, thumbnail)
 
 	assert.NoError(t, err)
 }
 
-func TestIntereractor_GetByPK(t *testing.T) {
+func TestIntereractor_GetUserProfile(t *testing.T) {
 	ctx := &gin.Context{}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	existedUser := &model.User{
-		UserID:    userID,
-		Name:      name,
-		Thumbnail: null.StringFrom(thumbnail),
+		ID:          userID,
+		AccessToken: accessToken,
+		Name:        name,
+		Thumbnail:   null.StringFrom(thumbnail),
 	}
 
 	masterTx := repository.NewMockMasterTx()
 	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().GetByPK(ctx, masterTx, userID).Return(existedUser, nil).Times(1)
+	userService.EXPECT().GetByAccessToken(ctx, masterTx, accessToken).Return(existedUser, nil).Times(1)
 
 	interactor := New(masterTxManager, userService)
-	users, err := interactor.GetByPK(ctx, userID)
+	users, err := interactor.GetUserProfile(ctx, accessToken)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, users)
@@ -66,9 +68,10 @@ func TestIntereractor_GetAll(t *testing.T) {
 
 	existedUsers := model.UserSlice{
 		{
-			UserID:    userID,
-			Name:      name,
-			Thumbnail: null.StringFrom(thumbnail),
+			ID:          userID,
+			AccessToken: accessToken,
+			Name:        name,
+			Thumbnail:   null.StringFrom(thumbnail),
 		},
 	}
 

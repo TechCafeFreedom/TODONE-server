@@ -149,7 +149,7 @@ func testUsersExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := UserExists(ctx, tx, o.UserID)
+	e, err := UserExists(ctx, tx, o.ID)
 	if err != nil {
 		t.Errorf("Unable to check if User exists: %s", err)
 	}
@@ -175,7 +175,7 @@ func testUsersFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	userFound, err := FindUser(ctx, tx, o.UserID)
+	userFound, err := FindUser(ctx, tx, o.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,14 +494,14 @@ func testUsersInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testUserToManyProjects(t *testing.T) {
+func testUserToManyBoards(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c Project
+	var b, c Board
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
@@ -512,15 +512,15 @@ func testUserToManyProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, boardDBTypes, false, boardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, projectDBTypes, false, projectColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, boardDBTypes, false, boardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.UserID = a.UserID
-	c.UserID = a.UserID
+	b.UserID = a.ID
+	c.UserID = a.ID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -529,7 +529,7 @@ func testUserToManyProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.Projects().All(ctx, tx)
+	check, err := a.Boards().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -552,18 +552,18 @@ func testUserToManyProjects(t *testing.T) {
 	}
 
 	slice := UserSlice{&a}
-	if err = a.L.LoadProjects(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+	if err = a.L.LoadBoards(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Projects); got != 2 {
+	if got := len(a.R.Boards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.Projects = nil
-	if err = a.L.LoadProjects(ctx, tx, true, &a, nil); err != nil {
+	a.R.Boards = nil
+	if err = a.L.LoadBoards(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Projects); got != 2 {
+	if got := len(a.R.Boards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -572,14 +572,14 @@ func testUserToManyProjects(t *testing.T) {
 	}
 }
 
-func testUserToManyTodos(t *testing.T) {
+func testUserToManyCards(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c Todo
+	var b, c Card
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
@@ -590,15 +590,15 @@ func testUserToManyTodos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, todoDBTypes, false, todoColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, cardDBTypes, false, cardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, todoDBTypes, false, todoColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, cardDBTypes, false, cardColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.UserID = a.UserID
-	c.UserID = a.UserID
+	b.UserID = a.ID
+	c.UserID = a.ID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -607,7 +607,7 @@ func testUserToManyTodos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.Todos().All(ctx, tx)
+	check, err := a.Cards().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -630,18 +630,18 @@ func testUserToManyTodos(t *testing.T) {
 	}
 
 	slice := UserSlice{&a}
-	if err = a.L.LoadTodos(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+	if err = a.L.LoadCards(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Todos); got != 2 {
+	if got := len(a.R.Cards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.Todos = nil
-	if err = a.L.LoadTodos(ctx, tx, true, &a, nil); err != nil {
+	a.R.Cards = nil
+	if err = a.L.LoadCards(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Todos); got != 2 {
+	if got := len(a.R.Cards); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -650,14 +650,14 @@ func testUserToManyTodos(t *testing.T) {
 	}
 }
 
-func testUserToManyUsersProjects(t *testing.T) {
+func testUserToManyKanbans(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c UsersProject
+	var b, c Kanban
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
@@ -668,15 +668,15 @@ func testUserToManyUsersProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, usersProjectDBTypes, false, usersProjectColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, kanbanDBTypes, false, kanbanColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, usersProjectDBTypes, false, usersProjectColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, kanbanDBTypes, false, kanbanColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.UserID = a.UserID
-	c.UserID = a.UserID
+	b.UserID = a.ID
+	c.UserID = a.ID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -685,7 +685,7 @@ func testUserToManyUsersProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	check, err := a.UsersProjects().All(ctx, tx)
+	check, err := a.Kanbans().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -708,18 +708,18 @@ func testUserToManyUsersProjects(t *testing.T) {
 	}
 
 	slice := UserSlice{&a}
-	if err = a.L.LoadUsersProjects(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+	if err = a.L.LoadKanbans(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.UsersProjects); got != 2 {
+	if got := len(a.R.Kanbans); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.UsersProjects = nil
-	if err = a.L.LoadUsersProjects(ctx, tx, true, &a, nil); err != nil {
+	a.R.Kanbans = nil
+	if err = a.L.LoadKanbans(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.UsersProjects); got != 2 {
+	if got := len(a.R.Kanbans); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
@@ -728,7 +728,85 @@ func testUserToManyUsersProjects(t *testing.T) {
 	}
 }
 
-func testUserToManyAddOpProjects(t *testing.T) {
+func testUserToManyUsersBoards(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c UsersBoard
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, true, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, usersBoardDBTypes, false, usersBoardColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, usersBoardDBTypes, false, usersBoardColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.UserID = a.ID
+	c.UserID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := a.UsersBoards().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.UserID == b.UserID {
+			bFound = true
+		}
+		if v.UserID == c.UserID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := UserSlice{&a}
+	if err = a.L.LoadUsersBoards(ctx, tx, false, (*[]*User)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UsersBoards); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.UsersBoards = nil
+	if err = a.L.LoadUsersBoards(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.UsersBoards); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", check)
+	}
+}
+
+func testUserToManyAddOpBoards(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -736,15 +814,15 @@ func testUserToManyAddOpProjects(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c, d, e Project
+	var b, c, d, e Board
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Project{&b, &c, &d, &e}
+	foreigners := []*Board{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, projectDBTypes, false, strmangle.SetComplement(projectPrimaryKeyColumns, projectColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, boardDBTypes, false, strmangle.SetComplement(boardPrimaryKeyColumns, boardColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -759,13 +837,13 @@ func testUserToManyAddOpProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Project{
+	foreignersSplitByInsertion := [][]*Board{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddProjects(ctx, tx, i != 0, x...)
+		err = a.AddBoards(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -773,11 +851,11 @@ func testUserToManyAddOpProjects(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.UserID != first.UserID {
-			t.Error("foreign key was wrong value", a.UserID, first.UserID)
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
 		}
-		if a.UserID != second.UserID {
-			t.Error("foreign key was wrong value", a.UserID, second.UserID)
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
 		}
 
 		if first.R.User != &a {
@@ -787,14 +865,14 @@ func testUserToManyAddOpProjects(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.Projects[i*2] != first {
+		if a.R.Boards[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.Projects[i*2+1] != second {
+		if a.R.Boards[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.Projects().Count(ctx, tx)
+		count, err := a.Boards().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -803,7 +881,7 @@ func testUserToManyAddOpProjects(t *testing.T) {
 		}
 	}
 }
-func testUserToManyAddOpTodos(t *testing.T) {
+func testUserToManyAddOpCards(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -811,15 +889,15 @@ func testUserToManyAddOpTodos(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c, d, e Todo
+	var b, c, d, e Card
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Todo{&b, &c, &d, &e}
+	foreigners := []*Card{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, todoDBTypes, false, strmangle.SetComplement(todoPrimaryKeyColumns, todoColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, cardDBTypes, false, strmangle.SetComplement(cardPrimaryKeyColumns, cardColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -834,13 +912,13 @@ func testUserToManyAddOpTodos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Todo{
+	foreignersSplitByInsertion := [][]*Card{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddTodos(ctx, tx, i != 0, x...)
+		err = a.AddCards(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -848,11 +926,11 @@ func testUserToManyAddOpTodos(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.UserID != first.UserID {
-			t.Error("foreign key was wrong value", a.UserID, first.UserID)
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
 		}
-		if a.UserID != second.UserID {
-			t.Error("foreign key was wrong value", a.UserID, second.UserID)
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
 		}
 
 		if first.R.User != &a {
@@ -862,14 +940,14 @@ func testUserToManyAddOpTodos(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.Todos[i*2] != first {
+		if a.R.Cards[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.Todos[i*2+1] != second {
+		if a.R.Cards[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.Todos().Count(ctx, tx)
+		count, err := a.Cards().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -878,7 +956,7 @@ func testUserToManyAddOpTodos(t *testing.T) {
 		}
 	}
 }
-func testUserToManyAddOpUsersProjects(t *testing.T) {
+func testUserToManyAddOpKanbans(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -886,15 +964,15 @@ func testUserToManyAddOpUsersProjects(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a User
-	var b, c, d, e UsersProject
+	var b, c, d, e Kanban
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*UsersProject{&b, &c, &d, &e}
+	foreigners := []*Kanban{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, usersProjectDBTypes, false, strmangle.SetComplement(usersProjectPrimaryKeyColumns, usersProjectColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, kanbanDBTypes, false, strmangle.SetComplement(kanbanPrimaryKeyColumns, kanbanColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -909,13 +987,13 @@ func testUserToManyAddOpUsersProjects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*UsersProject{
+	foreignersSplitByInsertion := [][]*Kanban{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddUsersProjects(ctx, tx, i != 0, x...)
+		err = a.AddKanbans(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -923,11 +1001,11 @@ func testUserToManyAddOpUsersProjects(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.UserID != first.UserID {
-			t.Error("foreign key was wrong value", a.UserID, first.UserID)
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
 		}
-		if a.UserID != second.UserID {
-			t.Error("foreign key was wrong value", a.UserID, second.UserID)
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
 		}
 
 		if first.R.User != &a {
@@ -937,14 +1015,89 @@ func testUserToManyAddOpUsersProjects(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.UsersProjects[i*2] != first {
+		if a.R.Kanbans[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.UsersProjects[i*2+1] != second {
+		if a.R.Kanbans[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.UsersProjects().Count(ctx, tx)
+		count, err := a.Kanbans().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testUserToManyAddOpUsersBoards(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a User
+	var b, c, d, e UsersBoard
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*UsersBoard{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, usersBoardDBTypes, false, strmangle.SetComplement(usersBoardPrimaryKeyColumns, usersBoardColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*UsersBoard{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddUsersBoards(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.UserID {
+			t.Error("foreign key was wrong value", a.ID, first.UserID)
+		}
+		if a.ID != second.UserID {
+			t.Error("foreign key was wrong value", a.ID, second.UserID)
+		}
+
+		if first.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.User != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.UsersBoards[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.UsersBoards[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.UsersBoards().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1028,7 +1181,7 @@ func testUsersSelect(t *testing.T) {
 }
 
 var (
-	userDBTypes = map[string]string{`UserID`: `varchar`, `Name`: `varchar`, `Thumbnail`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
+	userDBTypes = map[string]string{`ID`: `int`, `AccessToken`: `varchar`, `Name`: `varchar`, `Thumbnail`: `varchar`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
 	_           = bytes.MinRead
 )
 

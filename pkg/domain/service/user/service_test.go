@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	userID    = "userID"
-	name      = "name"
-	thumbnail = "thumbnail"
+	userID      = 1
+	accessToken = "accessToken"
+	name        = "name"
+	thumbnail   = "thumbnail"
 )
 
 func TestService_CreateNewUser(t *testing.T) {
@@ -26,16 +27,16 @@ func TestService_CreateNewUser(t *testing.T) {
 	masterTx := repository.NewMockMasterTx()
 
 	newUser := &model.User{
-		UserID:    userID,
-		Name:      name,
-		Thumbnail: null.StringFrom(thumbnail),
+		AccessToken: accessToken,
+		Name:        name,
+		Thumbnail:   null.StringFrom(thumbnail),
 	}
 
 	userRepository := mock_user.NewMockRepository(ctrl)
 	userRepository.EXPECT().InsertUser(ctx, masterTx, newUser).Return(nil).Times(1)
 
 	service := New(userRepository)
-	err := service.CreateNewUser(ctx, masterTx, userID, name, thumbnail)
+	err := service.CreateNewUser(ctx, masterTx, accessToken, name, thumbnail)
 
 	assert.NoError(t, err)
 }
@@ -48,9 +49,10 @@ func TestService_GetByPK(t *testing.T) {
 	masterTx := repository.NewMockMasterTx()
 
 	existedUser := &model.User{
-		UserID:    userID,
-		Name:      name,
-		Thumbnail: null.StringFrom(thumbnail),
+		ID:          userID,
+		AccessToken: accessToken,
+		Name:        name,
+		Thumbnail:   null.StringFrom(thumbnail),
 	}
 
 	userRepository := mock_user.NewMockRepository(ctrl)
@@ -72,9 +74,10 @@ func TestService_SelectAll(t *testing.T) {
 
 	existedUsers := model.UserSlice{
 		{
-			UserID:    userID,
-			Name:      name,
-			Thumbnail: null.StringFrom(thumbnail),
+			ID:          userID,
+			AccessToken: accessToken,
+			Name:        name,
+			Thumbnail:   null.StringFrom(thumbnail),
 		},
 	}
 

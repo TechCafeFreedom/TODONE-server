@@ -7,7 +7,7 @@ package mock_user
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
-	"todone/pkg/domain/repository"
+	repository "todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -37,21 +37,21 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error {
+func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, userID, name, thumbnail)
+	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, accessToken, name, thumbnail)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewUser indicates an expected call of CreateNewUser
-func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, userID, name, thumbnail interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, accessToken, name, thumbnail interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockService)(nil).CreateNewUser), ctx, masterTx, userID, name, thumbnail)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockService)(nil).CreateNewUser), ctx, masterTx, accessToken, name, thumbnail)
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
+func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*model.User)
@@ -63,6 +63,21 @@ func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, us
 func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockService)(nil).GetByPK), ctx, masterTx, userID)
+}
+
+// GetByAccessToken mocks base method
+func (m *MockService) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByAccessToken", ctx, masterTx, accessToken)
+	ret0, _ := ret[0].(*model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByAccessToken indicates an expected call of GetByAccessToken
+func (mr *MockServiceMockRecorder) GetByAccessToken(ctx, masterTx, accessToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByAccessToken", reflect.TypeOf((*MockService)(nil).GetByAccessToken), ctx, masterTx, accessToken)
 }
 
 // GetAll mocks base method

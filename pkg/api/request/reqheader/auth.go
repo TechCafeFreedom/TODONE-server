@@ -1,5 +1,5 @@
 package reqheader
 
-type ProjectGet struct {
+type Auth struct {
 	Authorization string
 }

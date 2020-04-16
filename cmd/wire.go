@@ -3,27 +3,27 @@
 package main
 
 import (
-	projectHandler "todone/pkg/api/handler/project"
+	boardHandler "todone/pkg/api/handler/board"
 	userHandler "todone/pkg/api/handler/user"
-	projectInteractor "todone/pkg/api/usecase/project"
+	boardInteractor "todone/pkg/api/usecase/board"
 	userInteractor "todone/pkg/api/usecase/user"
 	"todone/pkg/domain/repository"
-	projectSvc "todone/pkg/domain/service/project"
+	boardSvc "todone/pkg/domain/service/board"
 	userSvc "todone/pkg/domain/service/user"
-	projectRepo "todone/pkg/infrastructure/mysql/project"
+	boardRepo "todone/pkg/infrastructure/mysql/board"
 	userRepo "todone/pkg/infrastructure/mysql/user"
 
 	"github.com/google/wire"
 )
 
-func InitProjectAPI(masterTxManager repository.MasterTxManager) projectHandler.Server {
-	wire.Build(projectRepo.New, projectSvc.New, projectInteractor.New, projectHandler.New)
-
-	return projectHandler.Server{}
-}
-
 func InitUserAPI(masterTxManager repository.MasterTxManager) userHandler.Server {
 	wire.Build(userRepo.New, userSvc.New, userInteractor.New, userHandler.New)
 
 	return userHandler.Server{}
+}
+
+func InitBoardAPI(masterTxManager repository.MasterTxManager) boardHandler.Server {
+	wire.Build(boardRepo.New, userRepo.New, userSvc.New, boardSvc.New, boardInteractor.New, boardHandler.New)
+
+	return boardHandler.Server{}
 }

@@ -10,8 +10,9 @@ import (
 )
 
 type Service interface {
-	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error
-	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error)
+	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error
+	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error)
+	GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error)
 	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error)
 }
 
@@ -25,19 +26,27 @@ func New(userRepository user.Repository) Service {
 	}
 }
 
-func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, userID, name, thumbnail string) error {
+func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error {
 	if err := s.userRepository.InsertUser(ctx, masterTx, &model.User{
-		UserID:    userID,
-		Name:      name,
-		Thumbnail: null.StringFrom(thumbnail),
+		AccessToken: accessToken,
+		Name:        name,
+		Thumbnail:   null.StringFrom(thumbnail),
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID string) (*model.User, error) {
+func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
 	userData, err := s.userRepository.SelectByPK(ctx, masterTx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return userData, nil
+}
+
+func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+	userData, err := s.userRepository.SelectByAccessToken(ctx, masterTx, accessToken)
 	if err != nil {
 		return nil, err
 	}

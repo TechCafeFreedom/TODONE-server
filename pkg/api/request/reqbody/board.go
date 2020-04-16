@@ -1,10 +1,10 @@
 package reqbody
 
-type ProjectCreate struct {
+type BoardCreate struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-type ProjectPK struct {
+type BoardPK struct {
 	ID int `json:"id"`
 }
