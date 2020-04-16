@@ -93,7 +93,7 @@ jobs:
 
     # Install modules
     - name: Get dependencies
-      if: ${{ steps.cache-go.outputs.cache-hit }} != 'true'
+      if: steps.cache-go.outputs.cache-hit != 'true'
       run: |
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
