@@ -15,8 +15,6 @@ linters:
         - ineffassign
         - deadcode
         - typecheck
-        - gofmt
-        - goimports
         - golint
         - gocritic
 
@@ -25,6 +23,7 @@ run:
     skip-dirs:
         - "pkg/.*/mock_.*"
         - "pkg/api/handler"
+        - "pkg/api/middleware"
     skip-files:
         - "pkg/api/middleware/jwt.go"
 
