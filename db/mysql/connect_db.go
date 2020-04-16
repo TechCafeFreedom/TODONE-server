@@ -13,6 +13,16 @@ import (
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
+type mysqlConfig struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Protocol string `json:"protocol"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	DBName   string `json:"db"`
+	Instance string `json:"instance"`
+}
+
 // CreateSQLInstance sqlのコネクションを作成
 func CreateSQLInstance() *sql.DB {
 	// create client(secret manager)
@@ -80,14 +90,4 @@ func connectCloudSQL(client *secretmanager.Client, ctx *context.Context) *sql.DB
 		log.Panicf("failed to open sql: %v", err)
 	}
 	return db
-}
-
-type mysqlConfig struct {
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Protocol string `json:"protocol"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	DBName   string `json:"db"`
-	Instance string `json:"instance"`
 }
