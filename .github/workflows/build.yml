@@ -8,6 +8,7 @@ on:
       - '*'
 
 env:
+  # go.sumに変化がない時にキャッシュを更新したい場合は、変更してください
   cache-version: v1
 
 jobs:
@@ -86,9 +87,9 @@ jobs:
       id: cache-go
       with:
         path: ~/go/pkg/mod
-        key: ${{env.cache-version}}-${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        key: ${{ env.cache-version }}-${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-
+          ${{ env.cache-version }}-${{ runner.os }}-go-
 
     # Install modules
     - name: Get dependencies
