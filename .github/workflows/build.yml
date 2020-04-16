@@ -1,4 +1,4 @@
-# Build テスト、ビルドのフローを自動化
+# Build 静的解析、テスト、ビルドのフローを自動化
 # トリガー: 全ブランチに対するPR
 name: Build
 
@@ -44,7 +44,7 @@ jobs:
     needs: [ static-check ]
 
     services:
-      # testにmysqlが必要なので
+      # testにmysqlが必要なので準備
       mysql:
         image: mysql:5.7
         ports:
@@ -77,7 +77,7 @@ jobs:
       run: |
         mysql --protocol=tcp -u root -ppassword todone < ./db/mysql/ddl/ddl.sql
 
-    # cache
+    # Cache
     - name: Cache go module
       uses: actions/cache@v1
       id: cache-go
@@ -87,7 +87,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
-    # install packages
+    # Install modules
     - name: Get dependencies
       if: ${{ steps.cache-go.outputs.cache-hit }} != 'true'
       run: |
@@ -97,14 +97,15 @@ jobs:
             dep ensure
         fi
     
-    # run test
+    # Run test
     - name: Test
       run: go test -v ./...
 
-    # build
+    # Build
     - name: Build
       run: go build -v ./cmd/main.go ./cmd/wire_gen.go 
 
+  # Slackへの通知
   slack-notification:
     name: Slack Notification
     runs-on: ubuntu-latest
@@ -117,6 +118,7 @@ jobs:
       run: |
         echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
     
+    # 成功時
     - name: Slack Notification Success
       if: success()
       uses: rtCamp/action-slack-notify@v2.0.0
@@ -130,6 +132,7 @@ jobs:
         SLACK_USERNAME: GitHub Actions
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
+    # 失敗時
     - name: Slack Notification Failure
       if: failure()
       uses: rtCamp/action-slack-notify@v2.0.0
