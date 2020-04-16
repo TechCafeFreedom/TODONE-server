@@ -38,8 +38,8 @@ jobs:
       # Run lint
       - name: Go Lint
         run: |
-          GO111MODULE=off go get -u golang.org/x/lint/golint
-          ~/go/bin/golint pkg/...
+          GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+          ~/go/bin/golangci-lint run pkg/...
 
   # build test and build
   build:
