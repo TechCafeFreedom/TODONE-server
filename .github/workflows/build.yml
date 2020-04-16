@@ -7,6 +7,9 @@ on:
     branches:
       - '*'
 
+env:
+  cache-version: v1
+
 jobs:
   # static-check: fmt, lint
   static-check:
