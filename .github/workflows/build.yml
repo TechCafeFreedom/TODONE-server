@@ -118,7 +118,22 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # 失敗時
+    # 失敗時 -jobがキャンセルされた時
+    - name: Slack Notification Failure
+      if: cancelled()
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: notify-server
+        SLACK_ICON: https://github.com/actions.png?size=48
+        SLACK_COLOR: '#ff0000'
+        SLACK_TITLE: 'StaticCheck and Build is cancelled!!!'
+        SLACK_MESSAGE: |
+          StaticCheck and Build failure!
+          See more detail to check github.
+        SLACK_USERNAME: GitHub Actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+    # 失敗時 -jobが失敗したとき
     - name: Slack Notification Failure
       if: failure()
       uses: rtCamp/action-slack-notify@v2.0.0
@@ -126,7 +141,7 @@ jobs:
         SLACK_CHANNEL: notify-server
         SLACK_ICON: https://github.com/actions.png?size=48
         SLACK_COLOR: '#ff0000'
-        SLACK_TITLE: 'Build is failure!!!'
+        SLACK_TITLE: 'StaticCheck and Build is failure!!!'
         SLACK_MESSAGE: |
           StaticCheck and Build failure!
           See more detail to check github.
