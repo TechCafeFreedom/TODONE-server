@@ -23,7 +23,7 @@ run:
     skip-dirs:
         - "pkg/.*/mock_.*"
         - "pkg/api/handler"
-        - "pkg/api/middleware"
+        # - "pkg/api/middleware"
     skip-files:
         - "pkg/api/middleware/jwt.go"
 
