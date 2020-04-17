@@ -12,8 +12,22 @@ type UserResponse struct {
 
 type UsersResponse []*UserResponse
 
+func ConvertToUsersResponse(userSlice entity.UserSlice) UsersResponse {
+	res := make(UsersResponse, 0, len(userSlice))
+	for _, userData := range userSlice {
+		res = append(res, ConvertToUserResponse(userData))
+	}
+	return res
+}
+
 func ConvertToUserResponse(userData *entity.User) *UserResponse {
+	// nilチェック
+	if userData == nil {
+		return nil
+	}
+
 	return &UserResponse{
+		ID:        userData.ID,
 		Name:      userData.Name,
 		Thumbnail: userData.Thumbnail,
 	}

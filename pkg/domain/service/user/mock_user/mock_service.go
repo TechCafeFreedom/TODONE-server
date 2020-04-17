@@ -6,7 +6,7 @@ package mock_user
 
 import (
 	reflect "reflect"
-	model "todone/db/mysql/model"
+	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
@@ -51,10 +51,10 @@ func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, accessToken, nam
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
+func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, userID)
-	ret0, _ := ret[0].(*model.User)
+	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -66,10 +66,10 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, userID interface{}) *g
 }
 
 // GetByAccessToken mocks base method
-func (m *MockService) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+func (m *MockService) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByAccessToken", ctx, masterTx, accessToken)
-	ret0, _ := ret[0].(*model.User)
+	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +81,10 @@ func (mr *MockServiceMockRecorder) GetByAccessToken(ctx, masterTx, accessToken i
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
+func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
-	ret0, _ := ret[0].(model.UserSlice)
+	ret0, _ := ret[0].(entity.UserSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

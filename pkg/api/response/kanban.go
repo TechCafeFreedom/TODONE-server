@@ -15,6 +15,11 @@ type KanbanResponse struct {
 type KanbansResponse []*KanbanResponse
 
 func ConvertToKanbansResponse(kanbanSlice entity.KanbanSlice) KanbansResponse {
+	// nilチェック
+	if len(kanbanSlice) == 0 {
+		return nil
+	}
+
 	res := make(KanbansResponse, 0, len(kanbanSlice))
 	for _, kanbanData := range kanbanSlice {
 		res = append(res, &KanbanResponse{

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	userservice "todone/pkg/domain/service/user"
 
@@ -10,8 +10,8 @@ import (
 
 type Interactor interface {
 	CreateNewUser(ctx *gin.Context, accessToken, title, description string) error
-	GetUserProfile(ctx *gin.Context, accessToken string) (*model.User, error)
-	GetAll(ctx *gin.Context) (model.UserSlice, error)
+	GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error)
+	GetAll(ctx *gin.Context) (entity.UserSlice, error)
 }
 
 type intereractor struct {
@@ -40,8 +40,8 @@ func (i *intereractor) CreateNewUser(ctx *gin.Context, accessToken, title, descr
 	return nil
 }
 
-func (i *intereractor) GetUserProfile(ctx *gin.Context, accessToken string) (*model.User, error) {
-	var userData *model.User
+func (i *intereractor) GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error) {
+	var userData *entity.User
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
@@ -58,8 +58,8 @@ func (i *intereractor) GetUserProfile(ctx *gin.Context, accessToken string) (*mo
 	return userData, nil
 }
 
-func (i *intereractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
-	var userSlice model.UserSlice
+func (i *intereractor) GetAll(ctx *gin.Context) (entity.UserSlice, error) {
+	var userSlice entity.UserSlice
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {

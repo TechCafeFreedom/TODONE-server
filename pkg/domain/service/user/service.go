@@ -2,6 +2,7 @@ package user
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 
@@ -11,9 +12,9 @@ import (
 
 type Service interface {
 	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error
-	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error)
-	GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error)
-	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error)
+	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error)
+	GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error)
+	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error)
 }
 
 type service struct {
@@ -37,22 +38,26 @@ func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, 
 	return nil
 }
 
-func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
+func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	userData, err := s.userRepository.SelectByPK(ctx, masterTx, userID)
 	if err != nil {
 		return nil, err
 	}
-	return userData, nil
+	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
 	userData, err := s.userRepository.SelectByAccessToken(ctx, masterTx, accessToken)
 	if err != nil {
 		return nil, err
 	}
-	return userData, nil
+	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
-	return s.userRepository.SelectAll(ctx, masterTx)
+func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
+	userSlice, err := s.userRepository.SelectAll(ctx, masterTx)
+	if err != nil {
+		return nil, err
+	}
+	return entity.ConvertToUserSliceEntity(userSlice), nil
 }

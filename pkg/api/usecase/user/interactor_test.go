@@ -2,14 +2,13 @@ package user
 
 import (
 	"testing"
-	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/service/user/mock_user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/volatiletech/null"
 )
 
 const (
@@ -41,11 +40,10 @@ func TestIntereractor_GetUserProfile(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedUser := &model.User{
-		ID:          userID,
-		AccessToken: accessToken,
-		Name:        name,
-		Thumbnail:   null.StringFrom(thumbnail),
+	existedUser := &entity.User{
+		ID:        userID,
+		Name:      name,
+		Thumbnail: thumbnail,
 	}
 
 	masterTx := repository.NewMockMasterTx()
@@ -66,12 +64,11 @@ func TestIntereractor_GetAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedUsers := model.UserSlice{
+	existedUsers := entity.UserSlice{
 		{
-			ID:          userID,
-			AccessToken: accessToken,
-			Name:        name,
-			Thumbnail:   null.StringFrom(thumbnail),
+			ID:        userID,
+			Name:      name,
+			Thumbnail: thumbnail,
 		},
 	}
 

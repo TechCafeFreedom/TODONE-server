@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"net/http"
-	"todone/db/mysql/model"
 	"todone/pkg/api/request/reqbody"
 	"todone/pkg/api/response"
 	userinteractor "todone/pkg/api/usecase/user"
@@ -48,7 +47,7 @@ func (s *Server) GetUserProfile(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.JSON(http.StatusOK, convertToUserResponse(user))
+	ctx.JSON(http.StatusOK, response.ConvertToUserResponse(user))
 }
 
 func (s *Server) GetAllUsers(ctx *gin.Context) {
@@ -57,23 +56,5 @@ func (s *Server) GetAllUsers(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.JSON(http.StatusOK, convertToUsersResponse(users))
-}
-
-func convertToUserResponse(user *model.User) response.UserResponse {
-	return response.UserResponse{
-		Name:      user.Name,
-		Thumbnail: user.Thumbnail.String,
-	}
-}
-
-func convertToUsersResponse(users model.UserSlice) response.UsersResponse {
-	res := make(response.UsersResponse, 0, len(users))
-	for _, data := range users {
-		res = append(res, &response.UserResponse{
-			Name:      data.Name,
-			Thumbnail: data.Thumbnail.String,
-		})
-	}
-	return res
+	ctx.JSON(http.StatusOK, response.ConvertToUsersResponse(users))
 }

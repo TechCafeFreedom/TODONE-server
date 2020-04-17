@@ -13,6 +13,11 @@ type LabelResponse struct {
 type LabelsResponse []*LabelResponse
 
 func ConvertToLabelsResponse(labelSlice entity.LabelSlice) LabelsResponse {
+	// nilチェック
+	if len(labelSlice) == 0 {
+		return nil
+	}
+
 	res := make(LabelsResponse, 0, len(labelSlice))
 	for _, labelData := range labelSlice {
 		res = append(res, &LabelResponse{

@@ -60,7 +60,10 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx rep
 	if err != nil {
 		return nil, err
 	}
-	boards, err := model.Boards(model.BoardWhere.UserID.EQ(userID)).All(ctx, exec)
+	boards, err := model.Boards(
+		qm.Load(model.BoardRels.User),
+		model.BoardWhere.UserID.EQ(userID),
+	).All(ctx, exec)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,7 @@ package mock_user
 
 import (
 	reflect "reflect"
-	model "todone/db/mysql/model"
+	entity "todone/pkg/domain/entity"
 
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
@@ -50,10 +50,10 @@ func (mr *MockInteractorMockRecorder) CreateNewUser(ctx, accessToken, title, des
 }
 
 // GetUserProfile mocks base method
-func (m *MockInteractor) GetUserProfile(ctx *gin.Context, accessToken string) (*model.User, error) {
+func (m *MockInteractor) GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserProfile", ctx, accessToken)
-	ret0, _ := ret[0].(*model.User)
+	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -65,10 +65,10 @@ func (mr *MockInteractorMockRecorder) GetUserProfile(ctx, accessToken interface{
 }
 
 // GetAll mocks base method
-func (m *MockInteractor) GetAll(ctx *gin.Context) (model.UserSlice, error) {
+func (m *MockInteractor) GetAll(ctx *gin.Context) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx)
-	ret0, _ := ret[0].(model.UserSlice)
+	ret0, _ := ret[0].(entity.UserSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

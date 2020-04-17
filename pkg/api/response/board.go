@@ -24,6 +24,11 @@ type BoardResponse struct {
 type BoardsResponse []*BoardResponse
 
 func ConvertToMembersResponse(memberSlice entity.MemberSlice) MembersResponse {
+	// nilチェック
+	if len(memberSlice) == 0 {
+		return nil
+	}
+
 	res := make(MembersResponse, 0, len(memberSlice))
 	for _, member := range memberSlice {
 		res = append(res, &MemberResponse{
