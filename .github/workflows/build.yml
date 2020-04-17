@@ -107,7 +107,7 @@ jobs:
 
     # Build
     - name: Build
-      run: go build -v ./cmd/main.go ./cmd/wire_gen.go
+      run: go build -v ./cmd
 
   # slackの通知
   slack-notification:
