@@ -27,7 +27,7 @@ func (s *Server) CreateNewBoard(ctx *gin.Context) {
 
 	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
-		ctx.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("access token is not found in context"))
 	}
 
 	if err := s.boardInteractor.CreateNewBoard(ctx, accessToken.(string), reqBody.Title, reqBody.Description); err != nil {
@@ -55,7 +55,7 @@ func (s *Server) GetBoardDetail(ctx *gin.Context) {
 func (s *Server) GetUserBoards(ctx *gin.Context) {
 	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
-		ctx.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("access token is not found in context"))
 	}
 
 	boards, err := s.boardInteractor.GetUserBoards(ctx, accessToken.(string))

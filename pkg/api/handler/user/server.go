@@ -26,7 +26,7 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 
 	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
-		ctx.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("access token is not found in context"))
 	}
 
 	if err := s.userInteractor.CreateNewUser(ctx, accessToken.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
@@ -39,7 +39,7 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 func (s *Server) GetUserProfile(ctx *gin.Context) {
 	userID, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
 	if !ok {
-		ctx.Error(errors.New("userID is not found in context"))
+		ctx.Error(errors.New("access token is not found in context"))
 	}
 
 	user, err := s.userInteractor.GetUserProfile(ctx, userID.(string))
