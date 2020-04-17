@@ -107,7 +107,7 @@ jobs:
 
     # Build
     - name: Build
-      run: go build -v ./cmd
+      run: go build -v -o app ./cmd
 
   # slackの通知
   slack-notification:
