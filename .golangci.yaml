@@ -24,10 +24,9 @@ run:
     timeout: 20m
     skip-dirs:
         - "pkg/.*/mock_.*"
-        - "pkg/api/handler"
+        - "pkg/api/handler" # TODO: エラーハンドリング時に消去する
         - "middleware"
         - "mysql"
-        - "pkg/..."
 
 issues:
     exclude-rules:

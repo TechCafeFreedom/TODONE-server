@@ -69,9 +69,8 @@ func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, 
 
 func (i *intereractor) GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error) {
 	var boardSlice entity.BoardSlice
-	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
 		userData, err := i.userService.GetByAccessToken(ctx, masterTx, accessToken)
 		if err != nil {
