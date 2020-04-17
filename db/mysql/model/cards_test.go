@@ -1097,7 +1097,7 @@ func testCardsSelect(t *testing.T) {
 }
 
 var (
-	cardDBTypes = map[string]string{`ID`: `int`, `UserID`: `int`, `KanbanID`: `int`, `Title`: `varchar`, `Content`: `text`, `Deadline`: `datetime`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
+	cardDBTypes = map[string]string{`ID`: `int`, `UserID`: `int`, `KanbanID`: `int`, `Title`: `varchar`, `Content`: `text`, `Deadline`: `datetime`, `IsArchive`: `tinyint`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
 	_           = bytes.MinRead
 )
 

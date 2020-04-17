@@ -806,6 +806,115 @@ func testLabelToManyRemoveOpCards(t *testing.T) {
 	}
 }
 
+func testLabelToOneBoardUsingBoard(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local Label
+	var foreign Board
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, labelDBTypes, false, labelColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Label struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, boardDBTypes, false, boardColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Board struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	local.BoardID = foreign.ID
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Board().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if check.ID != foreign.ID {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := LabelSlice{&local}
+	if err = local.L.LoadBoard(ctx, tx, false, (*[]*Label)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Board == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Board = nil
+	if err = local.L.LoadBoard(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Board == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testLabelToOneSetOpBoardUsingBoard(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Label
+	var b, c Board
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, boardDBTypes, false, strmangle.SetComplement(boardPrimaryKeyColumns, boardColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, boardDBTypes, false, strmangle.SetComplement(boardPrimaryKeyColumns, boardColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Board{&b, &c} {
+		err = a.SetBoard(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Board != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Labels[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.BoardID != x.ID {
+			t.Error("foreign key was wrong value", a.BoardID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.BoardID))
+		reflect.Indirect(reflect.ValueOf(&a.BoardID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.BoardID != x.ID {
+			t.Error("foreign key was wrong value", a.BoardID, x.ID)
+		}
+	}
+}
+
 func testLabelsReload(t *testing.T) {
 	t.Parallel()
 
@@ -880,7 +989,7 @@ func testLabelsSelect(t *testing.T) {
 }
 
 var (
-	labelDBTypes = map[string]string{`ID`: `int`, `Name`: `varchar`, `Color`: `int`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
+	labelDBTypes = map[string]string{`ID`: `int`, `BoardID`: `int`, `Name`: `varchar`, `Color`: `int`, `CreatedAt`: `datetime`, `UpdatedAt`: `datetime`}
 	_            = bytes.MinRead
 )
 

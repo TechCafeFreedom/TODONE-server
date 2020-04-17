@@ -572,6 +572,84 @@ func testBoardToManyKanbans(t *testing.T) {
 	}
 }
 
+func testBoardToManyLabels(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Board
+	var b, c Label
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, boardDBTypes, true, boardColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Board struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, labelDBTypes, false, labelColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, labelDBTypes, false, labelColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.BoardID = a.ID
+	c.BoardID = a.ID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := a.Labels().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.BoardID == b.BoardID {
+			bFound = true
+		}
+		if v.BoardID == c.BoardID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := BoardSlice{&a}
+	if err = a.L.LoadLabels(ctx, tx, false, (*[]*Board)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Labels); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Labels = nil
+	if err = a.L.LoadLabels(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Labels); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", check)
+	}
+}
+
 func testBoardToManyUsersBoards(t *testing.T) {
 	var err error
 	ctx := context.Background()
@@ -717,6 +795,81 @@ func testBoardToManyAddOpKanbans(t *testing.T) {
 		}
 
 		count, err := a.Kanbans().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testBoardToManyAddOpLabels(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Board
+	var b, c, d, e Label
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, boardDBTypes, false, strmangle.SetComplement(boardPrimaryKeyColumns, boardColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Label{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, labelDBTypes, false, strmangle.SetComplement(labelPrimaryKeyColumns, labelColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Label{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddLabels(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.BoardID {
+			t.Error("foreign key was wrong value", a.ID, first.BoardID)
+		}
+		if a.ID != second.BoardID {
+			t.Error("foreign key was wrong value", a.ID, second.BoardID)
+		}
+
+		if first.R.Board != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Board != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Labels[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Labels[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Labels().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -30,6 +30,7 @@ type Card struct {
 	Title     string      `boil:"title" json:"title" toml:"title" yaml:"title"`
 	Content   null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
 	Deadline  null.Time   `boil:"deadline" json:"deadline,omitempty" toml:"deadline" yaml:"deadline,omitempty"`
+	IsArchive bool        `boil:"is_archive" json:"is_archive" toml:"is_archive" yaml:"is_archive"`
 	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -44,6 +45,7 @@ var CardColumns = struct {
 	Title     string
 	Content   string
 	Deadline  string
+	IsArchive string
 	CreatedAt string
 	UpdatedAt string
 }{
@@ -53,6 +55,7 @@ var CardColumns = struct {
 	Title:     "title",
 	Content:   "content",
 	Deadline:  "deadline",
+	IsArchive: "is_archive",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 }
@@ -82,6 +85,15 @@ func (w whereHelpernull_Time) GTE(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
+type whereHelperbool struct{ field string }
+
+func (w whereHelperbool) EQ(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperbool) NEQ(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperbool) LT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperbool) LTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
 var CardWhere = struct {
 	ID        whereHelperint
 	UserID    whereHelperint
@@ -89,6 +101,7 @@ var CardWhere = struct {
 	Title     whereHelperstring
 	Content   whereHelpernull_String
 	Deadline  whereHelpernull_Time
+	IsArchive whereHelperbool
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
@@ -98,6 +111,7 @@ var CardWhere = struct {
 	Title:     whereHelperstring{field: "`cards`.`title`"},
 	Content:   whereHelpernull_String{field: "`cards`.`content`"},
 	Deadline:  whereHelpernull_Time{field: "`cards`.`deadline`"},
+	IsArchive: whereHelperbool{field: "`cards`.`is_archive`"},
 	CreatedAt: whereHelpertime_Time{field: "`cards`.`created_at`"},
 	UpdatedAt: whereHelpertime_Time{field: "`cards`.`updated_at`"},
 }
@@ -129,9 +143,9 @@ func (*cardR) NewStruct() *cardR {
 type cardL struct{}
 
 var (
-	cardAllColumns            = []string{"id", "user_id", "kanban_id", "title", "content", "deadline", "created_at", "updated_at"}
+	cardAllColumns            = []string{"id", "user_id", "kanban_id", "title", "content", "deadline", "is_archive", "created_at", "updated_at"}
 	cardColumnsWithoutDefault = []string{"user_id", "kanban_id", "title", "content", "deadline"}
-	cardColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
+	cardColumnsWithDefault    = []string{"id", "is_archive", "created_at", "updated_at"}
 	cardPrimaryKeyColumns     = []string{"id"}
 )
 
@@ -723,7 +737,7 @@ func (cardL) LoadLabels(ctx context.Context, e boil.ContextExecutor, singular bo
 		one := new(Label)
 		var localJoinCol int
 
-		err = results.Scan(&one.ID, &one.Name, &one.Color, &one.CreatedAt, &one.UpdatedAt, &localJoinCol)
+		err = results.Scan(&one.ID, &one.BoardID, &one.Name, &one.Color, &one.CreatedAt, &one.UpdatedAt, &localJoinCol)
 		if err != nil {
 			return errors.Wrap(err, "failed to scan eager loaded results for labels")
 		}

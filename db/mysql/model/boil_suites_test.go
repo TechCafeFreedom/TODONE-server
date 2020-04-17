@@ -133,6 +133,7 @@ func TestToOne(t *testing.T) {
 	t.Run("CardToKanbanUsingKanban", testCardToOneKanbanUsingKanban)
 	t.Run("KanbanToUserUsingUser", testKanbanToOneUserUsingUser)
 	t.Run("KanbanToBoardUsingBoard", testKanbanToOneBoardUsingBoard)
+	t.Run("LabelToBoardUsingBoard", testLabelToOneBoardUsingBoard)
 	t.Run("UsersBoardToUserUsingUser", testUsersBoardToOneUserUsingUser)
 	t.Run("UsersBoardToBoardUsingBoard", testUsersBoardToOneBoardUsingBoard)
 }
@@ -145,6 +146,7 @@ func TestOneToOne(t *testing.T) {}
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("BoardToKanbans", testBoardToManyKanbans)
+	t.Run("BoardToLabels", testBoardToManyLabels)
 	t.Run("BoardToUsersBoards", testBoardToManyUsersBoards)
 	t.Run("CardToLabels", testCardToManyLabels)
 	t.Run("KanbanToCards", testKanbanToManyCards)
@@ -163,6 +165,7 @@ func TestToOneSet(t *testing.T) {
 	t.Run("CardToKanbanUsingCards", testCardToOneSetOpKanbanUsingKanban)
 	t.Run("KanbanToUserUsingKanbans", testKanbanToOneSetOpUserUsingUser)
 	t.Run("KanbanToBoardUsingKanbans", testKanbanToOneSetOpBoardUsingBoard)
+	t.Run("LabelToBoardUsingLabels", testLabelToOneSetOpBoardUsingBoard)
 	t.Run("UsersBoardToUserUsingUsersBoards", testUsersBoardToOneSetOpUserUsingUser)
 	t.Run("UsersBoardToBoardUsingUsersBoards", testUsersBoardToOneSetOpBoardUsingBoard)
 }
@@ -183,6 +186,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("BoardToKanbans", testBoardToManyAddOpKanbans)
+	t.Run("BoardToLabels", testBoardToManyAddOpLabels)
 	t.Run("BoardToUsersBoards", testBoardToManyAddOpUsersBoards)
 	t.Run("CardToLabels", testCardToManyAddOpLabels)
 	t.Run("KanbanToCards", testKanbanToManyAddOpCards)

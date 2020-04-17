@@ -1,12 +1,20 @@
 package response
 
-import "time"
+import (
+	"todone/pkg/domain/entity"
+)
 
 type UserResponse struct {
-	Name      string    `json:"name"`
-	Thumbnail string    `json:"thumbnail"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Thumbnail string `json:"thumbnail"`
 }
 
 type UsersResponse []*UserResponse
+
+func ConvertToUserResponse(userData *entity.User) *UserResponse {
+	return &UserResponse{
+		Name:      userData.Name,
+		Thumbnail: userData.Thumbnail,
+	}
+}

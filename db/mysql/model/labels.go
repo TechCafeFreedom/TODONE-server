@@ -24,6 +24,7 @@ import (
 // Label is an object representing the database table.
 type Label struct {
 	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	BoardID   int       `boil:"board_id" json:"board_id" toml:"board_id" yaml:"board_id"`
 	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	Color     int       `boil:"color" json:"color" toml:"color" yaml:"color"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
@@ -35,12 +36,14 @@ type Label struct {
 
 var LabelColumns = struct {
 	ID        string
+	BoardID   string
 	Name      string
 	Color     string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "id",
+	BoardID:   "board_id",
 	Name:      "name",
 	Color:     "color",
 	CreatedAt: "created_at",
@@ -51,12 +54,14 @@ var LabelColumns = struct {
 
 var LabelWhere = struct {
 	ID        whereHelperint
+	BoardID   whereHelperint
 	Name      whereHelperstring
 	Color     whereHelperint
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint{field: "`labels`.`id`"},
+	BoardID:   whereHelperint{field: "`labels`.`board_id`"},
 	Name:      whereHelperstring{field: "`labels`.`name`"},
 	Color:     whereHelperint{field: "`labels`.`color`"},
 	CreatedAt: whereHelpertime_Time{field: "`labels`.`created_at`"},
@@ -65,13 +70,16 @@ var LabelWhere = struct {
 
 // LabelRels is where relationship names are stored.
 var LabelRels = struct {
+	Board string
 	Cards string
 }{
+	Board: "Board",
 	Cards: "Cards",
 }
 
 // labelR is where relationships are stored.
 type labelR struct {
+	Board *Board
 	Cards CardSlice
 }
 
@@ -84,8 +92,8 @@ func (*labelR) NewStruct() *labelR {
 type labelL struct{}
 
 var (
-	labelAllColumns            = []string{"id", "name", "color", "created_at", "updated_at"}
-	labelColumnsWithoutDefault = []string{"name", "color"}
+	labelAllColumns            = []string{"id", "board_id", "name", "color", "created_at", "updated_at"}
+	labelColumnsWithoutDefault = []string{"board_id", "name", "color"}
 	labelColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	labelPrimaryKeyColumns     = []string{"id"}
 )
@@ -365,6 +373,20 @@ func (q labelQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	return count > 0, nil
 }
 
+// Board pointed to by the foreign key.
+func (o *Label) Board(mods ...qm.QueryMod) boardQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("`id` = ?", o.BoardID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Boards(queryMods...)
+	queries.SetFrom(query.Query, "`boards`")
+
+	return query
+}
+
 // Cards retrieves all the card's Cards with an executor.
 func (o *Label) Cards(mods ...qm.QueryMod) cardQuery {
 	var queryMods []qm.QueryMod
@@ -385,6 +407,107 @@ func (o *Label) Cards(mods ...qm.QueryMod) cardQuery {
 	}
 
 	return query
+}
+
+// LoadBoard allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (labelL) LoadBoard(ctx context.Context, e boil.ContextExecutor, singular bool, maybeLabel interface{}, mods queries.Applicator) error {
+	var slice []*Label
+	var object *Label
+
+	if singular {
+		object = maybeLabel.(*Label)
+	} else {
+		slice = *maybeLabel.(*[]*Label)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &labelR{}
+		}
+		args = append(args, object.BoardID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &labelR{}
+			}
+
+			for _, a := range args {
+				if a == obj.BoardID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.BoardID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`boards`), qm.WhereIn(`boards.id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Board")
+	}
+
+	var resultSlice []*Board
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Board")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for boards")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for boards")
+	}
+
+	if len(labelAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Board = foreign
+		if foreign.R == nil {
+			foreign.R = &boardR{}
+		}
+		foreign.R.Labels = append(foreign.R.Labels, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.BoardID == foreign.ID {
+				local.R.Board = foreign
+				if foreign.R == nil {
+					foreign.R = &boardR{}
+				}
+				foreign.R.Labels = append(foreign.R.Labels, local)
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadCards allows an eager lookup of values, cached into the
@@ -448,7 +571,7 @@ func (labelL) LoadCards(ctx context.Context, e boil.ContextExecutor, singular bo
 		one := new(Card)
 		var localJoinCol int
 
-		err = results.Scan(&one.ID, &one.UserID, &one.KanbanID, &one.Title, &one.Content, &one.Deadline, &one.CreatedAt, &one.UpdatedAt, &localJoinCol)
+		err = results.Scan(&one.ID, &one.UserID, &one.KanbanID, &one.Title, &one.Content, &one.Deadline, &one.IsArchive, &one.CreatedAt, &one.UpdatedAt, &localJoinCol)
 		if err != nil {
 			return errors.Wrap(err, "failed to scan eager loaded results for cards")
 		}
@@ -497,6 +620,53 @@ func (labelL) LoadCards(ctx context.Context, e boil.ContextExecutor, singular bo
 				break
 			}
 		}
+	}
+
+	return nil
+}
+
+// SetBoard of the label to the related item.
+// Sets o.R.Board to related.
+// Adds o to related.R.Labels.
+func (o *Label) SetBoard(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Board) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE `labels` SET %s WHERE %s",
+		strmangle.SetParamNames("`", "`", 0, []string{"board_id"}),
+		strmangle.WhereClause("`", "`", 0, labelPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.BoardID = related.ID
+	if o.R == nil {
+		o.R = &labelR{
+			Board: related,
+		}
+	} else {
+		o.R.Board = related
+	}
+
+	if related.R == nil {
+		related.R = &boardR{
+			Labels: LabelSlice{o},
+		}
+	} else {
+		related.R.Labels = append(related.R.Labels, o)
 	}
 
 	return nil

@@ -64,8 +64,6 @@ func convertToUserResponse(user *model.User) response.UserResponse {
 	return response.UserResponse{
 		Name:      user.Name,
 		Thumbnail: user.Thumbnail.String,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
 	}
 }
 
@@ -75,8 +73,6 @@ func convertToUsersResponse(users model.UserSlice) response.UsersResponse {
 		res = append(res, &response.UserResponse{
 			Name:      data.Name,
 			Thumbnail: data.Thumbnail.String,
-			CreatedAt: data.CreatedAt,
-			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	return res

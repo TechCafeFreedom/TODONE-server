@@ -3,6 +3,7 @@ package board
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/service/board/mock_board"
 	"todone/pkg/domain/service/user/mock_user"
@@ -17,6 +18,8 @@ import (
 const (
 	id          = 1
 	userID      = 1
+	userName    = "鈴木"
+	thumbnail   = "http://s3.com/hoge.png"
 	accessToken = "accessToken"
 	title       = "title"
 	description = "description"
@@ -56,11 +59,15 @@ func TestIntereractor_GetByPK(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedBoard := &model.Board{
+	existedBoard := &entity.Board{
 		ID:          id,
-		UserID:      userID,
 		Title:       title,
-		Description: null.StringFrom(description),
+		Description: description,
+		Author: &entity.User{
+			ID:        userID,
+			Name:      userName,
+			Thumbnail: thumbnail,
+		},
 	}
 
 	masterTx := repository.NewMockMasterTx()
@@ -83,12 +90,16 @@ func TestIntereractor_GetByUserID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userBoards := model.BoardSlice{
+	userBoards := entity.BoardSlice{
 		{
 			ID:          id,
-			UserID:      userID,
 			Title:       title,
-			Description: null.StringFrom(description),
+			Description: description,
+			Author: &entity.User{
+				ID:        userID,
+				Name:      userName,
+				Thumbnail: thumbnail,
+			},
 		},
 	}
 
@@ -113,12 +124,16 @@ func TestIntereractor_GetAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedBoards := model.BoardSlice{
+	existedBoards := entity.BoardSlice{
 		{
 			ID:          id,
-			UserID:      userID,
 			Title:       title,
-			Description: null.StringFrom(description),
+			Description: description,
+			Author: &entity.User{
+				ID:        userID,
+				Name:      userName,
+				Thumbnail: thumbnail,
+			},
 		},
 	}
 

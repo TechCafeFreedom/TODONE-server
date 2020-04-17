@@ -1,7 +1,7 @@
 package board
 
 import (
-	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	boardservice "todone/pkg/domain/service/board"
 	userservice "todone/pkg/domain/service/user"
@@ -11,9 +11,9 @@ import (
 
 type Interactor interface {
 	CreateNewBoard(ctx *gin.Context, accessToken string, title, description string) error
-	GetBoardDetail(ctx *gin.Context, id int) (*model.Board, error)
-	GetUserBoards(ctx *gin.Context, accessToken string) (model.BoardSlice, error)
-	GetAll(ctx *gin.Context) (model.BoardSlice, error)
+	GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error)
+	GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error)
+	GetAll(ctx *gin.Context) (entity.BoardSlice, error)
 }
 
 type intereractor struct {
@@ -49,8 +49,8 @@ func (i *intereractor) CreateNewBoard(ctx *gin.Context, accessToken string, titl
 	return nil
 }
 
-func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*model.Board, error) {
-	var boardData *model.Board
+func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error) {
+	var boardData *entity.Board
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
@@ -67,8 +67,8 @@ func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*model.Board, e
 	return boardData, nil
 }
 
-func (i *intereractor) GetUserBoards(ctx *gin.Context, accessToken string) (model.BoardSlice, error) {
-	var boardSlice model.BoardSlice
+func (i *intereractor) GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error) {
+	var boardSlice entity.BoardSlice
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
@@ -90,8 +90,8 @@ func (i *intereractor) GetUserBoards(ctx *gin.Context, accessToken string) (mode
 	return boardSlice, nil
 }
 
-func (i *intereractor) GetAll(ctx *gin.Context) (model.BoardSlice, error) {
-	var boardSlice model.BoardSlice
+func (i *intereractor) GetAll(ctx *gin.Context) (entity.BoardSlice, error) {
+	var boardSlice entity.BoardSlice
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {

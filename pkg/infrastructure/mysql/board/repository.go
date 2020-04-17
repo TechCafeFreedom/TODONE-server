@@ -40,7 +40,13 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx reposit
 	if err != nil {
 		return nil, err
 	}
-	boardData, err := model.FindBoard(ctx, exec, id)
+	boardData, err := model.Boards(
+		qm.Load(model.BoardRels.UsersBoards),
+		qm.Load(model.UsersBoardRels.User),
+		qm.Load(model.BoardRels.Kanbans),
+		qm.Load(model.BoardRels.Labels),
+		model.BoardWhere.ID.EQ(id),
+	).One(ctx, exec)
 	if err != nil {
 		return nil, err
 	}

@@ -2,19 +2,19 @@ package board
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
 
-	"github.com/volatiletech/null"
-
 	"github.com/gin-gonic/gin"
+	"github.com/volatiletech/null"
 )
 
 type Service interface {
 	CreateNewBoard(ctx *gin.Context, masterTx repository.MasterTx, userID int, title, description string) error
-	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Board, error)
-	GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (model.BoardSlice, error)
-	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.BoardSlice, error)
+	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error)
+	GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error)
+	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error)
 }
 
 type service struct {
@@ -38,22 +38,26 @@ func (s *service) CreateNewBoard(ctx *gin.Context, masterTx repository.MasterTx,
 	return nil
 }
 
-func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Board, error) {
+func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	boardData, err := s.boardRepository.SelectByPK(ctx, masterTx, id)
 	if err != nil {
 		return nil, err
 	}
-	return boardData, nil
+	return entity.ConvertToBoardEntity(boardData), nil
 }
 
-func (s *service) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (model.BoardSlice, error) {
-	boards, err := s.boardRepository.SelectByUserID(ctx, masterTx, userID)
+func (s *service) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
+	boardSlice, err := s.boardRepository.SelectByUserID(ctx, masterTx, userID)
 	if err != nil {
 		return nil, err
 	}
-	return boards, nil
+	return entity.ConvertToBoardSliceEntity(boardSlice), nil
 }
 
-func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (model.BoardSlice, error) {
-	return s.boardRepository.SelectAll(ctx, masterTx)
+func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
+	boardSlice, err := s.boardRepository.SelectAll(ctx, masterTx)
+	if err != nil {
+		return nil, err
+	}
+	return entity.ConvertToBoardSliceEntity(boardSlice), nil
 }

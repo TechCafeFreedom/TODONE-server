@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"todone/db/mysql/model"
 	"todone/pkg/api/request/reqbody"
 	"todone/pkg/api/response"
 	boardinteractor "todone/pkg/api/usecase/board"
@@ -50,7 +49,7 @@ func (s *Server) GetBoardDetail(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.JSON(http.StatusOK, convertToBoardResponse(board))
+	ctx.JSON(http.StatusOK, response.ConvertToBoardResponse(board))
 }
 
 func (s *Server) GetUserBoards(ctx *gin.Context) {
@@ -64,7 +63,7 @@ func (s *Server) GetUserBoards(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.JSON(http.StatusOK, convertToBoardsResponse(boards))
+	ctx.JSON(http.StatusOK, response.ConvertToBoardsResponse(boards))
 }
 
 func (s *Server) GetAllBoards(ctx *gin.Context) {
@@ -73,29 +72,5 @@ func (s *Server) GetAllBoards(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	ctx.JSON(http.StatusOK, convertToBoardsResponse(boards))
-}
-
-func convertToBoardResponse(board *model.Board) response.BoardResponse {
-	return response.BoardResponse{
-		ID:          board.ID,
-		Title:       board.Title,
-		Description: board.Description.String,
-		CreatedAt:   board.CreatedAt,
-		UpdatedAt:   board.UpdatedAt,
-	}
-}
-
-func convertToBoardsResponse(boards model.BoardSlice) response.BoardsResponse {
-	res := make(response.BoardsResponse, 0, len(boards))
-	for _, data := range boards {
-		res = append(res, &response.BoardResponse{
-			ID:          data.ID,
-			Title:       data.Title,
-			Description: data.Description.String,
-			CreatedAt:   data.CreatedAt,
-			UpdatedAt:   data.UpdatedAt,
-		})
-	}
-	return res
+	ctx.JSON(http.StatusOK, response.ConvertToBoardsResponse(boards))
 }
