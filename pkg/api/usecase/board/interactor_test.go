@@ -2,13 +2,10 @@ package board
 
 import (
 	"testing"
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/service/board/mock_board"
 	"todone/pkg/domain/service/user/mock_user"
-
-	"github.com/volatiletech/null"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -26,11 +23,10 @@ const (
 )
 
 var (
-	authedUser = &model.User{
-		ID:          userID,
-		AccessToken: accessToken,
-		Name:        "name",
-		Thumbnail:   null.String{},
+	authedUser = &entity.User{
+		ID:        userID,
+		Name:      "name",
+		Thumbnail: "",
 	}
 )
 
