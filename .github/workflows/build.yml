@@ -109,7 +109,7 @@ jobs:
     - name: Build
       run: go build -v ./cmd/main.go ./cmd/wire_gen.go
 
-  # slackの通知戻して。キャンセルを実験したい
+  # slackの通知
   slack-notification:
     name: Slack Notification
     runs-on: ubuntu-latest
@@ -118,7 +118,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # {{ env.WORKFLOW_CONCLUSION }}にsuccess, cancelled, timed_out, failureが入る
+    # {{ env.WORKFLOW_CONCLUSION }}にworkflowの結果を取得
+    # success, cancelled, timed_out, failureが入る
     - uses: technote-space/workflow-conclusion-action@v1
 
     # 失敗時
