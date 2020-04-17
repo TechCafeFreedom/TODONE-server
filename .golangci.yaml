@@ -15,8 +15,6 @@ linters:
         - ineffassign
         - deadcode
         - typecheck
-        - gofmt
-        - goimports
         - golint
         - gocritic
 

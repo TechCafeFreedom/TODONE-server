@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"todone/db/mysql"
 	"todone/pkg/api/middleware"
 	tx "todone/pkg/infrastructure/mysql"
@@ -13,7 +14,7 @@ import (
 func main() {
 	// .envファイルの読み込み
 	if err := godotenv.Load(); err != nil {
-		panic(err)
+		log.Printf("failed to load .env file: %v", err)
 	}
 
 	// DBインスタンスの作成
