@@ -13,11 +13,11 @@ on:
       - 'master'
 
 jobs:
-
+  # deploy gaeへのデプロイ
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    # https://github.com/GoogleCloudPlatform/github-actions/tree/master/setup-gcloud
+
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -34,3 +34,42 @@ jobs:
       - name: GAE deploy
         run: |
           gcloud app deploy app.yaml --quiet
+
+  # slackの通知
+  slack-notification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: technote-space/workflow-conclusion-action@v1
+
+    # 失敗時
+    - name: Slack Notification Failure
+      if: env.WORKFLOW_CONCLUSION == 'failure'
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: notify-server
+        SLACK_ICON: https://github.com/actions.png?size=48
+        SLACK_COLOR: '#ff0000'
+        SLACK_TITLE: 'Deploy is failure!!!'
+        SLACK_MESSAGE: |
+          Deploy failure!
+          See more detail to check github.
+        SLACK_USERNAME: GitHub Actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+    # 成功時
+    - name: Slack Notification Success
+      if: env.WORKFLOW_CONCLUSION == 'success'
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: notify-server
+        SLACK_ICON: https://github.com/actions.png?size=48
+        SLACK_TITLE: 'Deploy success!'
+        SLACK_MESSAGE: |
+          Deploy Success!
+        SLACK_USERNAME: GitHub Actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
