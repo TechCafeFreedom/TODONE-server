@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"todone/pkg/api/middleware"
 	"todone/pkg/api/request/reqbody"
 	"todone/pkg/api/response"
 	boardinteractor "todone/pkg/api/usecase/board"
@@ -25,12 +26,12 @@ func (s *Server) CreateNewBoard(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
+	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
 		ctx.Error(errors.New("access token is not found in context"))
 	}
 
-	if err := s.boardInteractor.CreateNewBoard(ctx, accessToken.(string), reqBody.Title, reqBody.Description); err != nil {
+	if err := s.boardInteractor.CreateNewBoard(ctx, uid.(string), reqBody.Title, reqBody.Description); err != nil {
 		ctx.Error(err)
 	}
 
@@ -53,12 +54,12 @@ func (s *Server) GetBoardDetail(ctx *gin.Context) {
 }
 
 func (s *Server) GetUserBoards(ctx *gin.Context) {
-	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
+	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
 		ctx.Error(errors.New("access token is not found in context"))
 	}
 
-	boards, err := s.boardInteractor.GetUserBoards(ctx, accessToken.(string))
+	boards, err := s.boardInteractor.GetUserBoards(ctx, uid.(string))
 	if err != nil {
 		ctx.Error(err)
 	}

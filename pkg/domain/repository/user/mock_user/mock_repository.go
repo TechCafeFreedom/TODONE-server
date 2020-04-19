@@ -5,13 +5,11 @@
 package mock_user
 
 import (
-	reflect "reflect"
-	model "todone/db/mysql/model"
-	entity "todone/pkg/domain/entity"
-	repository "todone/pkg/domain/repository"
-
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+	entity "todone/pkg/domain/entity"
+	repository "todone/pkg/domain/repository"
 )
 
 // MockRepository is a mock of Repository interface
@@ -38,17 +36,17 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertUser mocks base method
-func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, userData *model.User) error {
+func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertUser", ctx, masterTx, userData)
+	ret := m.ctrl.Call(m, "InsertUser", ctx, masterTx, uid, name, thumbnail)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertUser indicates an expected call of InsertUser
-func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, userData interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, uid, name, thumbnail interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockRepository)(nil).InsertUser), ctx, masterTx, userData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockRepository)(nil).InsertUser), ctx, masterTx, uid, name, thumbnail)
 }
 
 // SelectByPK mocks base method
@@ -66,19 +64,19 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, userID interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByPK", reflect.TypeOf((*MockRepository)(nil).SelectByPK), ctx, masterTx, userID)
 }
 
-// SelectByAccessToken mocks base method
-func (m *MockRepository) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
+// SelectByUID mocks base method
+func (m *MockRepository) SelectByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectByAccessToken", ctx, masterTx, accessToken)
+	ret := m.ctrl.Call(m, "SelectByUID", ctx, masterTx, uid)
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SelectByAccessToken indicates an expected call of SelectByAccessToken
-func (mr *MockRepositoryMockRecorder) SelectByAccessToken(ctx, masterTx, accessToken interface{}) *gomock.Call {
+// SelectByUID indicates an expected call of SelectByUID
+func (mr *MockRepositoryMockRecorder) SelectByUID(ctx, masterTx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByAccessToken", reflect.TypeOf((*MockRepository)(nil).SelectByAccessToken), ctx, masterTx, accessToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectByUID", reflect.TypeOf((*MockRepository)(nil).SelectByUID), ctx, masterTx, uid)
 }
 
 // SelectAll mocks base method

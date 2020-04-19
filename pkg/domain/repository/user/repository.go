@@ -1,7 +1,6 @@
 package user
 
 import (
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 
@@ -9,8 +8,8 @@ import (
 )
 
 type Repository interface {
-	InsertUser(ctx *gin.Context, masterTx repository.MasterTx, userData *model.User) error
+	InsertUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error
 	SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error)
-	SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error)
+	SelectByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error)
 	SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error)
 }

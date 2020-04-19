@@ -1,19 +1,17 @@
 package user
 
 import (
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 
 	"github.com/gin-gonic/gin"
-	"github.com/volatiletech/null"
 )
 
 type Service interface {
-	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error
+	CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error
 	GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error)
-	GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error)
+	GetByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error)
 	GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error)
 }
 
@@ -27,12 +25,8 @@ func New(userRepository user.Repository) Service {
 	}
 }
 
-func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error {
-	if err := s.userRepository.InsertUser(ctx, masterTx, &model.User{
-		AccessToken: accessToken,
-		Name:        name,
-		Thumbnail:   null.StringFrom(thumbnail),
-	}); err != nil {
+func (s *service) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+	if err := s.userRepository.InsertUser(ctx, masterTx, uid, name, thumbnail); err != nil {
 		return err
 	}
 	return nil
@@ -46,8 +40,8 @@ func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID
 	return userData, nil
 }
 
-func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
-	userData, err := s.userRepository.SelectByAccessToken(ctx, masterTx, accessToken)
+func (s *service) GetByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
+	userData, err := s.userRepository.SelectByUID(ctx, masterTx, uid)
 	if err != nil {
 		return nil, err
 	}

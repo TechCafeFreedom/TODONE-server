@@ -1,13 +1,11 @@
 package board
 
 import (
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
 
 	"github.com/gin-gonic/gin"
-	"github.com/volatiletech/null"
 )
 
 type Service interface {
@@ -28,11 +26,7 @@ func New(boardRepository board.Repository) Service {
 }
 
 func (s *service) CreateNewBoard(ctx *gin.Context, masterTx repository.MasterTx, userID int, title, description string) error {
-	if err := s.boardRepository.InsertBoard(ctx, masterTx, &model.Board{
-		UserID:      userID,
-		Title:       title,
-		Description: null.StringFrom(description),
-	}); err != nil {
+	if err := s.boardRepository.InsertBoard(ctx, masterTx, userID, title, description); err != nil {
 		return err
 	}
 	return nil

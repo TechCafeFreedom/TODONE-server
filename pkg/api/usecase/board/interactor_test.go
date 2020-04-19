@@ -17,7 +17,7 @@ const (
 	userID      = 1
 	userName    = "鈴木"
 	thumbnail   = "http://s3.com/hoge.png"
-	accessToken = "accessToken"
+	uid         = "uid"
 	title       = "title"
 	description = "description"
 )
@@ -42,10 +42,10 @@ func TestIntereractor_CreateNewBoard(t *testing.T) {
 	boardService.EXPECT().CreateNewBoard(ctx, masterTx, userID, title, description).Return(nil).Times(1)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().GetByAccessToken(ctx, masterTx, accessToken).Return(authedUser, nil).Times(1)
+	userService.EXPECT().GetByUID(ctx, masterTx, uid).Return(authedUser, nil).Times(1)
 
 	interactor := New(masterTxManager, boardService, userService)
-	err := interactor.CreateNewBoard(ctx, accessToken, title, description)
+	err := interactor.CreateNewBoard(ctx, uid, title, description)
 
 	assert.NoError(t, err)
 }
@@ -106,10 +106,10 @@ func TestIntereractor_GetByUserID(t *testing.T) {
 	boardService.EXPECT().GetByUserID(ctx, masterTx, userID).Return(userBoards, nil).Times(1)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().GetByAccessToken(ctx, masterTx, accessToken).Return(authedUser, nil).Times(1)
+	userService.EXPECT().GetByUID(ctx, masterTx, uid).Return(authedUser, nil).Times(1)
 
 	interactor := New(masterTxManager, boardService, userService)
-	boards, err := interactor.GetUserBoards(ctx, accessToken)
+	boards, err := interactor.GetUserBoards(ctx, uid)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, boards)

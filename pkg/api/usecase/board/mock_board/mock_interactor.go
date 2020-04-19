@@ -36,17 +36,17 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewBoard mocks base method
-func (m *MockInteractor) CreateNewBoard(ctx *gin.Context, accessToken, title, description string) error {
+func (m *MockInteractor) CreateNewBoard(ctx *gin.Context, uid, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewBoard", ctx, accessToken, title, description)
+	ret := m.ctrl.Call(m, "CreateNewBoard", ctx, uid, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewBoard indicates an expected call of CreateNewBoard
-func (mr *MockInteractorMockRecorder) CreateNewBoard(ctx, accessToken, title, description interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) CreateNewBoard(ctx, uid, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewBoard", reflect.TypeOf((*MockInteractor)(nil).CreateNewBoard), ctx, accessToken, title, description)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewBoard", reflect.TypeOf((*MockInteractor)(nil).CreateNewBoard), ctx, uid, title, description)
 }
 
 // GetBoardDetail mocks base method
@@ -65,18 +65,18 @@ func (mr *MockInteractorMockRecorder) GetBoardDetail(ctx, id interface{}) *gomoc
 }
 
 // GetUserBoards mocks base method
-func (m *MockInteractor) GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error) {
+func (m *MockInteractor) GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserBoards", ctx, accessToken)
+	ret := m.ctrl.Call(m, "GetUserBoards", ctx, uid)
 	ret0, _ := ret[0].(entity.BoardSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetUserBoards indicates an expected call of GetUserBoards
-func (mr *MockInteractorMockRecorder) GetUserBoards(ctx, accessToken interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetUserBoards(ctx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserBoards", reflect.TypeOf((*MockInteractor)(nil).GetUserBoards), ctx, accessToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserBoards", reflect.TypeOf((*MockInteractor)(nil).GetUserBoards), ctx, uid)
 }
 
 // GetAll mocks base method

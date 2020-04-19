@@ -8,6 +8,7 @@ import (
 	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
@@ -23,12 +24,18 @@ func New(masterTxManager repository.MasterTxManager) board.Repository {
 }
 
 // プロジェクト作成機能
-func (p *boardRepositoryImpliment) InsertBoard(ctx *gin.Context, masterTx repository.MasterTx, boardData *model.Board) error {
+func (p *boardRepositoryImpliment) InsertBoard(ctx *gin.Context, masterTx repository.MasterTx, userID int, title, description string) error {
+	newBoardData := &model.Board{
+		UserID:      userID,
+		Title:       title,
+		Description: null.StringFrom(description),
+	}
+
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return err
 	}
-	if err := boardData.Insert(ctx, exec, boil.Infer()); err != nil {
+	if err := newBoardData.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 

@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	userID      = 1
-	accessToken = "accessToken"
-	name        = "name"
-	thumbnail   = "thumbnail"
+	userID    = 1
+	uid       = "uid"
+	name      = "name"
+	thumbnail = "thumbnail"
 )
 
 func TestIntereractor_CreateNewUser(t *testing.T) {
@@ -27,10 +27,10 @@ func TestIntereractor_CreateNewUser(t *testing.T) {
 	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().CreateNewUser(ctx, masterTx, accessToken, name, thumbnail).Return(nil).Times(1)
+	userService.EXPECT().CreateNewUser(ctx, masterTx, uid, name, thumbnail).Return(nil).Times(1)
 
 	interactor := New(masterTxManager, userService)
-	err := interactor.CreateNewUser(ctx, accessToken, name, thumbnail)
+	err := interactor.CreateNewUser(ctx, uid, name, thumbnail)
 
 	assert.NoError(t, err)
 }
@@ -50,10 +50,10 @@ func TestIntereractor_GetUserProfile(t *testing.T) {
 	masterTxManager := repository.NewMockMasterTxManager(masterTx)
 
 	userService := mock_user.NewMockService(ctrl)
-	userService.EXPECT().GetByAccessToken(ctx, masterTx, accessToken).Return(existedUser, nil).Times(1)
+	userService.EXPECT().GetByUID(ctx, masterTx, uid).Return(existedUser, nil).Times(1)
 
 	interactor := New(masterTxManager, userService)
-	users, err := interactor.GetUserProfile(ctx, accessToken)
+	users, err := interactor.GetUserProfile(ctx, uid)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, users)

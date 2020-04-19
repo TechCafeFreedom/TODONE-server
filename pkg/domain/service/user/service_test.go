@@ -2,12 +2,9 @@ package user
 
 import (
 	"testing"
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user/mock_user"
-
-	"github.com/volatiletech/null"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -15,10 +12,10 @@ import (
 )
 
 const (
-	userID      = 1
-	accessToken = "accessToken"
-	name        = "name"
-	thumbnail   = "thumbnail"
+	userID    = 1
+	uid       = "uid"
+	name      = "name"
+	thumbnail = "thumbnail"
 )
 
 func TestService_CreateNewUser(t *testing.T) {
@@ -28,17 +25,11 @@ func TestService_CreateNewUser(t *testing.T) {
 
 	masterTx := repository.NewMockMasterTx()
 
-	newUser := &model.User{
-		AccessToken: accessToken,
-		Name:        name,
-		Thumbnail:   null.StringFrom(thumbnail),
-	}
-
 	userRepository := mock_user.NewMockRepository(ctrl)
-	userRepository.EXPECT().InsertUser(ctx, masterTx, newUser).Return(nil).Times(1)
+	userRepository.EXPECT().InsertUser(ctx, masterTx, uid, name, thumbnail).Return(nil).Times(1)
 
 	service := New(userRepository)
-	err := service.CreateNewUser(ctx, masterTx, accessToken, name, thumbnail)
+	err := service.CreateNewUser(ctx, masterTx, uid, name, thumbnail)
 
 	assert.NoError(t, err)
 }

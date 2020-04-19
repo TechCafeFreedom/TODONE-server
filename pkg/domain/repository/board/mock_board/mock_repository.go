@@ -5,13 +5,11 @@
 package mock_board
 
 import (
-	reflect "reflect"
-	model "todone/db/mysql/model"
-	entity "todone/pkg/domain/entity"
-	repository "todone/pkg/domain/repository"
-
 	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+	entity "todone/pkg/domain/entity"
+	repository "todone/pkg/domain/repository"
 )
 
 // MockRepository is a mock of Repository interface
@@ -38,17 +36,17 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertBoard mocks base method
-func (m *MockRepository) InsertBoard(ctx *gin.Context, masterTx repository.MasterTx, boardData *model.Board) error {
+func (m *MockRepository) InsertBoard(ctx *gin.Context, masterTx repository.MasterTx, userID int, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertBoard", ctx, masterTx, boardData)
+	ret := m.ctrl.Call(m, "InsertBoard", ctx, masterTx, userID, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertBoard indicates an expected call of InsertBoard
-func (mr *MockRepositoryMockRecorder) InsertBoard(ctx, masterTx, boardData interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) InsertBoard(ctx, masterTx, userID, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertBoard", reflect.TypeOf((*MockRepository)(nil).InsertBoard), ctx, masterTx, boardData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertBoard", reflect.TypeOf((*MockRepository)(nil).InsertBoard), ctx, masterTx, userID, title, description)
 }
 
 // SelectByPK mocks base method

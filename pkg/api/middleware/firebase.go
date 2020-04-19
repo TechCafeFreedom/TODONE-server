@@ -7,12 +7,11 @@ import (
 	"strings"
 	"todone/pkg/api/request/reqheader"
 
+	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
-
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
@@ -23,6 +22,10 @@ type FirebaseAuth interface {
 type firebaseAuth struct {
 	client *auth.Client
 }
+
+const (
+	AuthCtxKey = "AUTHED_UID"
+)
 
 func CreateFirebaseInstance() FirebaseAuth {
 	ctx := context.Background()
@@ -76,8 +79,8 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 		fmt.Printf("error verifying ID token: %v\n", err)
 		c.Error(err)
 	}
-	// contextにuser_idを格納
-	c.Set("AUTHED_ACCESS_TOKEN", authedUserToken.UID)
+	// contextにuidを格納
+	c.Set(AuthCtxKey, authedUserToken.UID)
 }
 
 // getFirebaseCredentialJSON firebaseの証明書をjsonで取得

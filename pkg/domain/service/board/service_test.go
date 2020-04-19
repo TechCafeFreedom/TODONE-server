@@ -2,12 +2,9 @@ package board
 
 import (
 	"testing"
-	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board/mock_board"
-
-	"github.com/volatiletech/null"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -26,16 +23,10 @@ func TestService_CreateNewUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	newBoard := &model.Board{
-		UserID:      userID,
-		Title:       title,
-		Description: null.StringFrom(description),
-	}
-
 	masterTx := repository.NewMockMasterTx()
 
 	boardRepository := mock_board.NewMockRepository(ctrl)
-	boardRepository.EXPECT().InsertBoard(ctx, masterTx, newBoard).Return(nil).Times(1)
+	boardRepository.EXPECT().InsertBoard(ctx, masterTx, userID, title, description).Return(nil).Times(1)
 
 	service := New(boardRepository)
 	err := service.CreateNewBoard(ctx, masterTx, userID, title, description)

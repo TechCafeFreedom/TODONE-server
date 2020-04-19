@@ -9,8 +9,8 @@ import (
 )
 
 type Interactor interface {
-	CreateNewUser(ctx *gin.Context, accessToken, title, description string) error
-	GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error)
+	CreateNewUser(ctx *gin.Context, uid, title, description string) error
+	GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error)
 	GetAll(ctx *gin.Context) (entity.UserSlice, error)
 }
 
@@ -26,10 +26,10 @@ func New(masterTxManager repository.MasterTxManager, userService userservice.Ser
 	}
 }
 
-func (i *intereractor) CreateNewUser(ctx *gin.Context, accessToken, title, description string) error {
+func (i *intereractor) CreateNewUser(ctx *gin.Context, uid, title, description string) error {
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		// 新規ユーザ作成
-		if err := i.userService.CreateNewUser(ctx, masterTx, accessToken, title, description); err != nil {
+		if err := i.userService.CreateNewUser(ctx, masterTx, uid, title, description); err != nil {
 			return err
 		}
 		return nil
@@ -40,13 +40,13 @@ func (i *intereractor) CreateNewUser(ctx *gin.Context, accessToken, title, descr
 	return nil
 }
 
-func (i *intereractor) GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error) {
+func (i *intereractor) GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error) {
 	var userData *entity.User
 	var err error
 
 	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのプロフィール情報取得
-		userData, err = i.userService.GetByAccessToken(ctx, masterTx, accessToken)
+		userData, err = i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
 			return err
 		}

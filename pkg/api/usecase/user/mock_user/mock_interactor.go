@@ -36,32 +36,32 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockInteractor) CreateNewUser(ctx *gin.Context, accessToken, title, description string) error {
+func (m *MockInteractor) CreateNewUser(ctx *gin.Context, uid, title, description string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewUser", ctx, accessToken, title, description)
+	ret := m.ctrl.Call(m, "CreateNewUser", ctx, uid, title, description)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewUser indicates an expected call of CreateNewUser
-func (mr *MockInteractorMockRecorder) CreateNewUser(ctx, accessToken, title, description interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) CreateNewUser(ctx, uid, title, description interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockInteractor)(nil).CreateNewUser), ctx, accessToken, title, description)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockInteractor)(nil).CreateNewUser), ctx, uid, title, description)
 }
 
 // GetUserProfile mocks base method
-func (m *MockInteractor) GetUserProfile(ctx *gin.Context, accessToken string) (*entity.User, error) {
+func (m *MockInteractor) GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserProfile", ctx, accessToken)
+	ret := m.ctrl.Call(m, "GetUserProfile", ctx, uid)
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetUserProfile indicates an expected call of GetUserProfile
-func (mr *MockInteractorMockRecorder) GetUserProfile(ctx, accessToken interface{}) *gomock.Call {
+func (mr *MockInteractorMockRecorder) GetUserProfile(ctx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserProfile", reflect.TypeOf((*MockInteractor)(nil).GetUserProfile), ctx, accessToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserProfile", reflect.TypeOf((*MockInteractor)(nil).GetUserProfile), ctx, uid)
 }
 
 // GetAll mocks base method

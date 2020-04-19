@@ -37,17 +37,17 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, accessToken, name, thumbnail string) error {
+func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, accessToken, name, thumbnail)
+	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, uid, name, thumbnail)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateNewUser indicates an expected call of CreateNewUser
-func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, accessToken, name, thumbnail interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, uid, name, thumbnail interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockService)(nil).CreateNewUser), ctx, masterTx, accessToken, name, thumbnail)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewUser", reflect.TypeOf((*MockService)(nil).CreateNewUser), ctx, masterTx, uid, name, thumbnail)
 }
 
 // GetByPK mocks base method
@@ -65,19 +65,19 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, userID interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByPK", reflect.TypeOf((*MockService)(nil).GetByPK), ctx, masterTx, userID)
 }
 
-// GetByAccessToken mocks base method
-func (m *MockService) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
+// GetByUID mocks base method
+func (m *MockService) GetByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByAccessToken", ctx, masterTx, accessToken)
+	ret := m.ctrl.Call(m, "GetByUID", ctx, masterTx, uid)
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByAccessToken indicates an expected call of GetByAccessToken
-func (mr *MockServiceMockRecorder) GetByAccessToken(ctx, masterTx, accessToken interface{}) *gomock.Call {
+// GetByUID indicates an expected call of GetByUID
+func (mr *MockServiceMockRecorder) GetByUID(ctx, masterTx, uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByAccessToken", reflect.TypeOf((*MockService)(nil).GetByAccessToken), ctx, masterTx, accessToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUID", reflect.TypeOf((*MockService)(nil).GetByUID), ctx, masterTx, uid)
 }
 
 // GetAll mocks base method

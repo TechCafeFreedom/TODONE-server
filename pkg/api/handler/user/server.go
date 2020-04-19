@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"net/http"
+	"todone/pkg/api/middleware"
 	"todone/pkg/api/request/reqbody"
 	"todone/pkg/api/response"
 	userinteractor "todone/pkg/api/usecase/user"
@@ -24,12 +25,12 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 		ctx.Error(err)
 	}
 
-	accessToken, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
+	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
 		ctx.Error(errors.New("access token is not found in context"))
 	}
 
-	if err := s.userInteractor.CreateNewUser(ctx, accessToken.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
+	if err := s.userInteractor.CreateNewUser(ctx, uid.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
 		ctx.Error(err)
 	}
 
@@ -37,12 +38,12 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 }
 
 func (s *Server) GetUserProfile(ctx *gin.Context) {
-	userID, ok := ctx.Get("AUTHED_ACCESS_TOKEN")
+	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
 		ctx.Error(errors.New("access token is not found in context"))
 	}
 
-	user, err := s.userInteractor.GetUserProfile(ctx, userID.(string))
+	user, err := s.userInteractor.GetUserProfile(ctx, uid.(string))
 	if err != nil {
 		ctx.Error(err)
 	}

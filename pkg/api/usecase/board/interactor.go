@@ -10,9 +10,9 @@ import (
 )
 
 type Interactor interface {
-	CreateNewBoard(ctx *gin.Context, accessToken string, title, description string) error
+	CreateNewBoard(ctx *gin.Context, uid string, title, description string) error
 	GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error)
-	GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error)
+	GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error)
 	GetAll(ctx *gin.Context) (entity.BoardSlice, error)
 }
 
@@ -30,10 +30,10 @@ func New(masterTxManager repository.MasterTxManager, boardService boardservice.S
 	}
 }
 
-func (i *intereractor) CreateNewBoard(ctx *gin.Context, accessToken string, title, description string) error {
+func (i *intereractor) CreateNewBoard(ctx *gin.Context, uid string, title, description string) error {
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
-		userData, err := i.userService.GetByAccessToken(ctx, masterTx, accessToken)
+		userData, err := i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
 			return err
 		}
@@ -67,12 +67,12 @@ func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, 
 	return boardData, nil
 }
 
-func (i *intereractor) GetUserBoards(ctx *gin.Context, accessToken string) (entity.BoardSlice, error) {
+func (i *intereractor) GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error) {
 	var boardSlice entity.BoardSlice
 
 	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
-		userData, err := i.userService.GetByAccessToken(ctx, masterTx, accessToken)
+		userData, err := i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
 			return err
 		}

@@ -8,6 +8,7 @@ import (
 	"todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-gonic/gin"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
@@ -22,12 +23,18 @@ func New(masterTxManager repository.MasterTxManager) user.Repository {
 	}
 }
 
-func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, userData *model.User) error {
+func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+	newUserData := &model.User{
+		UID:       uid,
+		Name:      name,
+		Thumbnail: null.StringFrom(thumbnail),
+	}
+
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return err
 	}
-	if err := userData.Insert(ctx, exec, boil.Infer()); err != nil {
+	if err := newUserData.Insert(ctx, exec, boil.Infer()); err != nil {
 		return err
 	}
 
@@ -47,12 +54,12 @@ func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repositor
 	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
+func (u userRepositoryImpliment) SelectByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
 	}
-	userData, err := model.Users(model.UserWhere.AccessToken.EQ(accessToken)).One(ctx, exec)
+	userData, err := model.Users(model.UserWhere.UID.EQ(uid)).One(ctx, exec)
 	if err != nil {
 		return nil, err
 	}
