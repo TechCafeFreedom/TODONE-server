@@ -2,6 +2,7 @@ package board
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 
 type Repository interface {
 	InsertBoard(ctx *gin.Context, masterTx repository.MasterTx, boardData *model.Board) error
-	SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Board, error)
-	SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (model.BoardSlice, error)
-	SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.BoardSlice, error)
+	SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error)
+	SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error)
+	SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error)
 }

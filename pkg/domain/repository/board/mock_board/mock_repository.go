@@ -7,6 +7,7 @@ package mock_board
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
+	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
@@ -51,10 +52,10 @@ func (mr *MockRepositoryMockRecorder) InsertBoard(ctx, masterTx, boardData inter
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Board, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, id)
-	ret0, _ := ret[0].(*model.Board)
+	ret0, _ := ret[0].(*entity.Board)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -66,10 +67,10 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, id interface{}) 
 }
 
 // SelectByUserID mocks base method
-func (m *MockRepository) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (model.BoardSlice, error) {
+func (m *MockRepository) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByUserID", ctx, masterTx, userID)
-	ret0, _ := ret[0].(model.BoardSlice)
+	ret0, _ := ret[0].(entity.BoardSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +82,10 @@ func (mr *MockRepositoryMockRecorder) SelectByUserID(ctx, masterTx, userID inter
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.BoardSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
-	ret0, _ := ret[0].(model.BoardSlice)
+	ret0, _ := ret[0].(entity.BoardSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

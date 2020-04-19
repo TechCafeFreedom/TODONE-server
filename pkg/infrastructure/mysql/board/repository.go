@@ -2,6 +2,7 @@ package board
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
 	"todone/pkg/infrastructure/mysql"
@@ -35,7 +36,7 @@ func (p *boardRepositoryImpliment) InsertBoard(ctx *gin.Context, masterTx reposi
 }
 
 // プロジェクト取得機能（PK: id）
-func (p *boardRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*model.Board, error) {
+func (p *boardRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -51,11 +52,11 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx reposit
 		return nil, err
 	}
 
-	return boardData, nil
+	return entity.ConvertToBoardEntity(boardData), nil
 }
 
 // ユーザのもつプロジェクト取得機能
-func (p *boardRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (model.BoardSlice, error) {
+func (p *boardRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -68,11 +69,11 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx *gin.Context, masterTx rep
 		return nil, err
 	}
 
-	return boards, nil
+	return entity.ConvertToBoardSliceEntity(boards), nil
 }
 
 // プロジェクト全件取得機能
-func (p *boardRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.BoardSlice, error) {
+func (p *boardRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -83,5 +84,5 @@ func (p *boardRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx reposito
 		return nil, err
 	}
 
-	return boards, nil
+	return entity.ConvertToBoardSliceEntity(boards), nil
 }

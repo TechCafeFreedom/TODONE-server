@@ -3,6 +3,7 @@ package board
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board/mock_board"
 
@@ -47,11 +48,10 @@ func TestService_GetByPK(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedBoard := &model.Board{
+	existedBoard := &entity.Board{
 		ID:          id,
-		UserID:      userID,
 		Title:       title,
-		Description: null.StringFrom(description),
+		Description: description,
 	}
 
 	masterTx := repository.NewMockMasterTx()
@@ -71,12 +71,11 @@ func TestService_GetByUserID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userBoards := model.BoardSlice{
+	userBoards := entity.BoardSlice{
 		{
 			ID:          id,
-			UserID:      userID,
 			Title:       title,
-			Description: null.StringFrom(description),
+			Description: description,
 		},
 	}
 
@@ -97,12 +96,11 @@ func TestService_SelectAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	existedBoards := model.BoardSlice{
+	existedBoards := entity.BoardSlice{
 		{
 			ID:          id,
-			UserID:      userID,
 			Title:       title,
-			Description: null.StringFrom(description),
+			Description: description,
 		},
 	}
 

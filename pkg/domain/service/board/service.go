@@ -43,7 +43,7 @@ func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToBoardEntity(boardData), nil
+	return boardData, nil
 }
 
 func (s *service) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
@@ -51,7 +51,7 @@ func (s *service) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, us
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToBoardSliceEntity(boardSlice), nil
+	return boardSlice, nil
 }
 
 func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
@@ -59,5 +59,5 @@ func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToBoardSliceEntity(boardSlice), nil
+	return boardSlice, nil
 }
