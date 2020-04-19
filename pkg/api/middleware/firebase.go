@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"todone/pkg/api/handler/project"
 	"todone/pkg/api/request/reqheader"
 
+	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
-
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
@@ -22,12 +20,14 @@ type FirebaseAuth interface {
 }
 
 type firebaseAuth struct {
-	server project.Server
 	client *auth.Client
 }
 
-func CreateFirebaseInstance(server project.Server) FirebaseAuth {
+const (
+	AuthCtxKey = "AUTHED_UID"
+)
 
+func CreateFirebaseInstance() FirebaseAuth {
 	ctx := context.Background()
 
 	// get credential of firebase
@@ -54,7 +54,6 @@ func CreateFirebaseInstance(server project.Server) FirebaseAuth {
 	}
 
 	return &firebaseAuth{
-		server: server,
 		client: client,
 	}
 }
@@ -67,7 +66,7 @@ func (fa *firebaseAuth) MiddlewareFunc() gin.HandlerFunc {
 
 func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// Authorizationヘッダーからjwtトークンを取得
-	var reqHeader reqheader.ProjectGet
+	var reqHeader reqheader.Auth
 	if err := c.BindHeader(&reqHeader); err != nil {
 		c.Error(err)
 	}
@@ -80,8 +79,8 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 		fmt.Printf("error verifying ID token: %v\n", err)
 		c.Error(err)
 	}
-	// contextにuser_idを格納
-	c.Set("AUTHED_USER_ID", authedUserToken.UID)
+	// contextにuidを格納
+	c.Set(AuthCtxKey, authedUserToken.UID)
 }
 
 // getFirebaseCredentialJSON firebaseの証明書をjsonで取得

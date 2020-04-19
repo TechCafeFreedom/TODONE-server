@@ -4,6 +4,7 @@ import (
 	"log"
 	"todone/db/mysql"
 	"todone/pkg/api/middleware"
+	tx "todone/pkg/infrastructure/mysql"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,9 +21,15 @@ func main() {
 	dbInstance := mysql.CreateSQLInstance()
 	defer dbInstance.Close()
 
-	// APIインスタンスとmiddlewareインスタンスの作成
-	projectAPI := InitProjectAPI(dbInstance)
-	firebaseClient := middleware.CreateFirebaseInstance(projectAPI)
+	// トランザクションマネージャーの作成
+	masterTxManager := tx.NewDBMasterTxManager(dbInstance)
+
+	// APIインスタンスの作成
+	userAPI := InitUserAPI(masterTxManager)
+	boardAPI := InitBoardAPI(masterTxManager)
+
+	// firebase middlewareの作成
+	firebaseClient := middleware.CreateFirebaseInstance()
 
 	// CORS対応
 	r := gin.Default()
@@ -38,16 +45,24 @@ func main() {
 		})
 	})
 
-	// projectAPI
+	// userAPI
 	firebaseAuth := r.Group("")
 	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
 	{
-		firebaseAuth.POST("/project", projectAPI.CreateNewProject)
-		firebaseAuth.GET("/user/projects", projectAPI.GetProjectsByUserID)
+		firebaseAuth.POST("/users/self", userAPI.CreateNewUser)
+		firebaseAuth.GET("/users/self", userAPI.GetUserProfile)
 	}
-	r.GET("/project", projectAPI.GetProjectByPK)
-	r.GET("/projects", projectAPI.GetAllProjects)
+
+	// boardAPI
+	firebaseAuth.Use(firebaseClient.MiddlewareFunc())
+	{
+		firebaseAuth.POST("/boards", boardAPI.CreateNewBoard)
+		firebaseAuth.GET("/boards", boardAPI.GetUserBoards)
+		firebaseAuth.GET("/boards/:id", boardAPI.GetBoardDetail)
+	}
 
 	// port: 8080
-	r.Run(":8080")
+	if err := r.Run(":8080"); err != nil {
+		panic(err)
+	}
 }

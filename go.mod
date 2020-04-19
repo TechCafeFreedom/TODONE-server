@@ -25,7 +25,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/vattle/sqlboiler v2.5.0+incompatible // indirect
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
-	github.com/volatiletech/null v8.0.0+incompatible // indirect
+	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.7.0+incompatible
 	google.golang.org/api v0.21.0
 	google.golang.org/genproto v0.0.0-20200407120235-9eb9bb161a06

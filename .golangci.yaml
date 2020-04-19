@@ -22,10 +22,9 @@ run:
     timeout: 20m
     skip-dirs:
         - "pkg/.*/mock_.*"
-        - "pkg/api/handler"
-        - "pkg/api/middleware"
-    skip-files:
-        - "pkg/api/middleware/jwt.go"
+        - "pkg/api/handler" # TODO: エラーハンドリング時に消去する
+        - "middleware"
+        - "mysql"
 
 issues:
     exclude-rules:

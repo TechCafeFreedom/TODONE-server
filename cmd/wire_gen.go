@@ -6,20 +6,33 @@
 package main
 
 import (
-	"todone/pkg/api/handler/project"
-	project4 "todone/pkg/api/usecase/project"
-	project3 "todone/pkg/domain/service/project"
-	project2 "todone/pkg/infrastructure/mysql/project"
-
-	"github.com/volatiletech/sqlboiler/boil"
+	"todone/pkg/api/handler/board"
+	"todone/pkg/api/handler/user"
+	board4 "todone/pkg/api/usecase/board"
+	user4 "todone/pkg/api/usecase/user"
+	"todone/pkg/domain/repository"
+	board3 "todone/pkg/domain/service/board"
+	user3 "todone/pkg/domain/service/user"
+	board2 "todone/pkg/infrastructure/mysql/board"
+	user2 "todone/pkg/infrastructure/mysql/user"
 )
 
 // Injectors from wire.go:
 
-func InitProjectAPI(db boil.ContextExecutor) project.Server {
-	repository := project2.New(db)
-	service := project3.New(repository)
-	interactor := project4.New(service)
-	server := project.New(interactor)
+func InitUserAPI(masterTxManager repository.MasterTxManager) user.Server {
+	userRepository := user2.New(masterTxManager)
+	service := user3.New(userRepository)
+	interactor := user4.New(masterTxManager, service)
+	server := user.New(interactor)
+	return server
+}
+
+func InitBoardAPI(masterTxManager repository.MasterTxManager) board.Server {
+	boardRepository := board2.New(masterTxManager)
+	service := board3.New(boardRepository)
+	userRepository := user2.New(masterTxManager)
+	userService := user3.New(userRepository)
+	interactor := board4.New(masterTxManager, service, userService)
+	server := board.New(interactor)
 	return server
 }

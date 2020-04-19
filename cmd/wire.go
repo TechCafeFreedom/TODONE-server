@@ -3,17 +3,27 @@
 package main
 
 import (
-	projectHandler "todone/pkg/api/handler/project"
-	projectInteractor "todone/pkg/api/usecase/project"
-	projectSvc "todone/pkg/domain/service/project"
-	projectRepo "todone/pkg/infrastructure/mysql/project"
+	boardHandler "todone/pkg/api/handler/board"
+	userHandler "todone/pkg/api/handler/user"
+	boardInteractor "todone/pkg/api/usecase/board"
+	userInteractor "todone/pkg/api/usecase/user"
+	"todone/pkg/domain/repository"
+	boardSvc "todone/pkg/domain/service/board"
+	userSvc "todone/pkg/domain/service/user"
+	boardRepo "todone/pkg/infrastructure/mysql/board"
+	userRepo "todone/pkg/infrastructure/mysql/user"
 
 	"github.com/google/wire"
-	"github.com/volatiletech/sqlboiler/boil"
 )
 
-func InitProjectAPI(db boil.ContextExecutor) projectHandler.Server {
-	wire.Build(projectRepo.New, projectSvc.New, projectInteractor.New, projectHandler.New)
+func InitUserAPI(masterTxManager repository.MasterTxManager) userHandler.Server {
+	wire.Build(userRepo.New, userSvc.New, userInteractor.New, userHandler.New)
 
-	return projectHandler.Server{}
+	return userHandler.Server{}
+}
+
+func InitBoardAPI(masterTxManager repository.MasterTxManager) boardHandler.Server {
+	wire.Build(boardRepo.New, userRepo.New, userSvc.New, boardSvc.New, boardInteractor.New, boardHandler.New)
+
+	return boardHandler.Server{}
 }
