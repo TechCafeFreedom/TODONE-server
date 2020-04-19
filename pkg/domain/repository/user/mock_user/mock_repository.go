@@ -7,6 +7,7 @@ package mock_user
 import (
 	reflect "reflect"
 	model "todone/db/mysql/model"
+	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
 
 	gin "github.com/gin-gonic/gin"
@@ -51,10 +52,10 @@ func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, userData interfa
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
+func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, userID)
-	ret0, _ := ret[0].(*model.User)
+	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -66,10 +67,10 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, userID interface
 }
 
 // SelectByAccessToken mocks base method
-func (m *MockRepository) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+func (m *MockRepository) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByAccessToken", ctx, masterTx, accessToken)
-	ret0, _ := ret[0].(*model.User)
+	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +82,10 @@ func (mr *MockRepositoryMockRecorder) SelectByAccessToken(ctx, masterTx, accessT
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
+func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
-	ret0, _ := ret[0].(model.UserSlice)
+	ret0, _ := ret[0].(entity.UserSlice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

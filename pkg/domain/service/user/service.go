@@ -43,7 +43,7 @@ func (s *service) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToUserEntity(userData), nil
+	return userData, nil
 }
 
 func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
@@ -51,7 +51,7 @@ func (s *service) GetByAccessToken(ctx *gin.Context, masterTx repository.MasterT
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToUserEntity(userData), nil
+	return userData, nil
 }
 
 func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
@@ -59,5 +59,5 @@ func (s *service) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity
 	if err != nil {
 		return nil, err
 	}
-	return entity.ConvertToUserSliceEntity(userSlice), nil
+	return userSlice, nil
 }

@@ -3,13 +3,15 @@ package user
 import (
 	"testing"
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user/mock_user"
+
+	"github.com/volatiletech/null"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/volatiletech/null"
 )
 
 const (
@@ -48,11 +50,10 @@ func TestService_GetByPK(t *testing.T) {
 
 	masterTx := repository.NewMockMasterTx()
 
-	existedUser := &model.User{
-		ID:          userID,
-		AccessToken: accessToken,
-		Name:        name,
-		Thumbnail:   null.StringFrom(thumbnail),
+	existedUser := &entity.User{
+		ID:        userID,
+		Name:      name,
+		Thumbnail: thumbnail,
 	}
 
 	userRepository := mock_user.NewMockRepository(ctrl)
@@ -72,12 +73,11 @@ func TestService_SelectAll(t *testing.T) {
 
 	masterTx := repository.NewMockMasterTx()
 
-	existedUsers := model.UserSlice{
+	existedUsers := entity.UserSlice{
 		{
-			ID:          userID,
-			AccessToken: accessToken,
-			Name:        name,
-			Thumbnail:   null.StringFrom(thumbnail),
+			ID:        userID,
+			Name:      name,
+			Thumbnail: thumbnail,
 		},
 	}
 

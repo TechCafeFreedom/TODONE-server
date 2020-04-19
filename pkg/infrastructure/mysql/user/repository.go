@@ -2,6 +2,7 @@ package user
 
 import (
 	"todone/db/mysql/model"
+	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 	"todone/pkg/infrastructure/mysql"
@@ -33,7 +34,7 @@ func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repositor
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*model.User, error) {
+func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -43,10 +44,10 @@ func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repositor
 		return nil, err
 	}
 
-	return userData, nil
+	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*model.User, error) {
+func (u userRepositoryImpliment) SelectByAccessToken(ctx *gin.Context, masterTx repository.MasterTx, accessToken string) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -56,10 +57,10 @@ func (u userRepositoryImpliment) SelectByAccessToken(ctx *gin.Context, masterTx 
 		return nil, err
 	}
 
-	return userData, nil
+	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (model.UserSlice, error) {
+func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -70,5 +71,5 @@ func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository
 		return nil, err
 	}
 
-	return users, nil
+	return entity.ConvertToUserSliceEntity(users), nil
 }
