@@ -5,10 +5,10 @@
 package mock_board
 
 import (
+	"context"
 	reflect "reflect"
 	entity "todone/pkg/domain/entity"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,7 +36,7 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewBoard mocks base method
-func (m *MockInteractor) CreateNewBoard(ctx *gin.Context, uid, title, description string) error {
+func (m *MockInteractor) CreateNewBoard(ctx context.Context, uid, title, description string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewBoard", ctx, uid, title, description)
 	ret0, _ := ret[0].(error)
@@ -50,7 +50,7 @@ func (mr *MockInteractorMockRecorder) CreateNewBoard(ctx, uid, title, descriptio
 }
 
 // GetBoardDetail mocks base method
-func (m *MockInteractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error) {
+func (m *MockInteractor) GetBoardDetail(ctx context.Context, id int) (*entity.Board, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBoardDetail", ctx, id)
 	ret0, _ := ret[0].(*entity.Board)
@@ -65,7 +65,7 @@ func (mr *MockInteractorMockRecorder) GetBoardDetail(ctx, id interface{}) *gomoc
 }
 
 // GetUserBoards mocks base method
-func (m *MockInteractor) GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error) {
+func (m *MockInteractor) GetUserBoards(ctx context.Context, uid string) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserBoards", ctx, uid)
 	ret0, _ := ret[0].(entity.BoardSlice)
@@ -80,7 +80,7 @@ func (mr *MockInteractorMockRecorder) GetUserBoards(ctx, uid interface{}) *gomoc
 }
 
 // GetAll mocks base method
-func (m *MockInteractor) GetAll(ctx *gin.Context) (entity.BoardSlice, error) {
+func (m *MockInteractor) GetAll(ctx context.Context) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx)
 	ret0, _ := ret[0].(entity.BoardSlice)

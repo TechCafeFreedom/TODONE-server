@@ -1,13 +1,13 @@
 package user
 
 import (
+	"context"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 	"todone/pkg/infrastructure/mysql"
 
-	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -23,7 +23,7 @@ func New(masterTxManager repository.MasterTxManager) user.Repository {
 	}
 }
 
-func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+func (u userRepositoryImpliment) InsertUser(ctx context.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	newUserData := &model.User{
 		UID:       uid,
 		Name:      name,
@@ -41,7 +41,7 @@ func (u userRepositoryImpliment) InsertUser(ctx *gin.Context, masterTx repositor
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
+func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (u userRepositoryImpliment) SelectByPK(ctx *gin.Context, masterTx repositor
 	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
+func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (u userRepositoryImpliment) SelectByUID(ctx *gin.Context, masterTx reposito
 	return entity.ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
+func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err

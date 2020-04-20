@@ -5,11 +5,12 @@
 package mock_user
 
 import (
-	gin "github.com/gin-gonic/gin"
-	gomock "github.com/golang/mock/gomock"
+	"context"
 	reflect "reflect"
 	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockRepository is a mock of Repository interface
@@ -36,7 +37,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // InsertUser mocks base method
-func (m *MockRepository) InsertUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+func (m *MockRepository) InsertUser(ctx context.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertUser", ctx, masterTx, uid, name, thumbnail)
 	ret0, _ := ret[0].(error)
@@ -50,7 +51,7 @@ func (mr *MockRepositoryMockRecorder) InsertUser(ctx, masterTx, uid, name, thumb
 }
 
 // SelectByPK mocks base method
-func (m *MockRepository) SelectByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
+func (m *MockRepository) SelectByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*entity.User)
@@ -65,7 +66,7 @@ func (mr *MockRepositoryMockRecorder) SelectByPK(ctx, masterTx, userID interface
 }
 
 // SelectByUID mocks base method
-func (m *MockRepository) SelectByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
+func (m *MockRepository) SelectByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectByUID", ctx, masterTx, uid)
 	ret0, _ := ret[0].(*entity.User)
@@ -80,7 +81,7 @@ func (mr *MockRepositoryMockRecorder) SelectByUID(ctx, masterTx, uid interface{}
 }
 
 // SelectAll mocks base method
-func (m *MockRepository) SelectAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
+func (m *MockRepository) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectAll", ctx, masterTx)
 	ret0, _ := ret[0].(entity.UserSlice)

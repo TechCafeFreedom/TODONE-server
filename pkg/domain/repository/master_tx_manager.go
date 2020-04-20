@@ -1,10 +1,10 @@
 package repository
 
-import "github.com/gin-gonic/gin"
+import "context"
 
 // MasterTxManager トランザクションマネージャ
 type MasterTxManager interface {
-	Transaction(ctx *gin.Context, f func(ctx *gin.Context, masterTx MasterTx) error) error
+	Transaction(ctx context.Context, f func(ctx context.Context, masterTx MasterTx) error) error
 }
 
 // MasterTx トランザクション

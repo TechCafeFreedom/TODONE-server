@@ -1,17 +1,16 @@
 package user
 
 import (
+	"context"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	userservice "todone/pkg/domain/service/user"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Interactor interface {
-	CreateNewUser(ctx *gin.Context, uid, title, description string) error
-	GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error)
-	GetAll(ctx *gin.Context) (entity.UserSlice, error)
+	CreateNewUser(ctx context.Context, uid, title, description string) error
+	GetUserProfile(ctx context.Context, uid string) (*entity.User, error)
+	GetAll(ctx context.Context) (entity.UserSlice, error)
 }
 
 type intereractor struct {
@@ -26,8 +25,8 @@ func New(masterTxManager repository.MasterTxManager, userService userservice.Ser
 	}
 }
 
-func (i *intereractor) CreateNewUser(ctx *gin.Context, uid, title, description string) error {
-	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+func (i *intereractor) CreateNewUser(ctx context.Context, uid, title, description string) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// 新規ユーザ作成
 		if err := i.userService.CreateNewUser(ctx, masterTx, uid, title, description); err != nil {
 			return err
@@ -40,11 +39,11 @@ func (i *intereractor) CreateNewUser(ctx *gin.Context, uid, title, description s
 	return nil
 }
 
-func (i *intereractor) GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error) {
+func (i *intereractor) GetUserProfile(ctx context.Context, uid string) (*entity.User, error) {
 	var userData *entity.User
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのプロフィール情報取得
 		userData, err = i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
@@ -58,11 +57,11 @@ func (i *intereractor) GetUserProfile(ctx *gin.Context, uid string) (*entity.Use
 	return userData, nil
 }
 
-func (i *intereractor) GetAll(ctx *gin.Context) (entity.UserSlice, error) {
+func (i *intereractor) GetAll(ctx context.Context) (entity.UserSlice, error) {
 	var userSlice entity.UserSlice
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// (管理者用)ユーザ全件取得
 		userSlice, err = i.userService.GetAll(ctx, masterTx)
 		if err != nil {

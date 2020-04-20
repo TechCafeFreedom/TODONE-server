@@ -5,11 +5,11 @@
 package mock_board
 
 import (
+	"context"
 	reflect "reflect"
 	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -37,7 +37,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewBoard mocks base method
-func (m *MockService) CreateNewBoard(ctx *gin.Context, masterTx repository.MasterTx, userID int, title, description string) error {
+func (m *MockService) CreateNewBoard(ctx context.Context, masterTx repository.MasterTx, userID int, title, description string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewBoard", ctx, masterTx, userID, title, description)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockServiceMockRecorder) CreateNewBoard(ctx, masterTx, userID, title, 
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
+func (m *MockService) GetByPK(ctx context.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, id)
 	ret0, _ := ret[0].(*entity.Board)
@@ -66,7 +66,7 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, id interface{}) *gomoc
 }
 
 // GetByUserID mocks base method
-func (m *MockService) GetByUserID(ctx *gin.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
+func (m *MockService) GetByUserID(ctx context.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUserID", ctx, masterTx, userID)
 	ret0, _ := ret[0].(entity.BoardSlice)
@@ -81,7 +81,7 @@ func (mr *MockServiceMockRecorder) GetByUserID(ctx, masterTx, userID interface{}
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
+func (m *MockService) GetAll(ctx context.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
 	ret0, _ := ret[0].(entity.BoardSlice)
