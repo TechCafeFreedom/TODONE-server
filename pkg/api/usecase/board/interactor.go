@@ -1,19 +1,18 @@
 package board
 
 import (
+	"context"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	boardservice "todone/pkg/domain/service/board"
 	userservice "todone/pkg/domain/service/user"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Interactor interface {
-	CreateNewBoard(ctx *gin.Context, uid string, title, description string) error
-	GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error)
-	GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error)
-	GetAll(ctx *gin.Context) (entity.BoardSlice, error)
+	CreateNewBoard(ctx context.Context, uid string, title, description string) error
+	GetBoardDetail(ctx context.Context, id int) (*entity.Board, error)
+	GetUserBoards(ctx context.Context, uid string) (entity.BoardSlice, error)
+	GetAll(ctx context.Context) (entity.BoardSlice, error)
 }
 
 type intereractor struct {
@@ -30,8 +29,8 @@ func New(masterTxManager repository.MasterTxManager, boardService boardservice.S
 	}
 }
 
-func (i *intereractor) CreateNewBoard(ctx *gin.Context, uid string, title, description string) error {
-	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+func (i *intereractor) CreateNewBoard(ctx context.Context, uid string, title, description string) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
 		userData, err := i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
@@ -49,11 +48,11 @@ func (i *intereractor) CreateNewBoard(ctx *gin.Context, uid string, title, descr
 	return nil
 }
 
-func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, error) {
+func (i *intereractor) GetBoardDetail(ctx context.Context, id int) (*entity.Board, error) {
 	var boardData *entity.Board
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// ボード詳細情報取得
 		boardData, err = i.boardService.GetByPK(ctx, masterTx, id)
 		if err != nil {
@@ -67,10 +66,10 @@ func (i *intereractor) GetBoardDetail(ctx *gin.Context, id int) (*entity.Board, 
 	return boardData, nil
 }
 
-func (i *intereractor) GetUserBoards(ctx *gin.Context, uid string) (entity.BoardSlice, error) {
+func (i *intereractor) GetUserBoards(ctx context.Context, uid string) (entity.BoardSlice, error) {
 	var boardSlice entity.BoardSlice
 
-	err := i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err := i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
 		userData, err := i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
@@ -89,11 +88,11 @@ func (i *intereractor) GetUserBoards(ctx *gin.Context, uid string) (entity.Board
 	return boardSlice, nil
 }
 
-func (i *intereractor) GetAll(ctx *gin.Context) (entity.BoardSlice, error) {
+func (i *intereractor) GetAll(ctx context.Context) (entity.BoardSlice, error) {
 	var boardSlice entity.BoardSlice
 	var err error
 
-	err = i.masterTxManager.Transaction(ctx, func(ctx *gin.Context, masterTx repository.MasterTx) error {
+	err = i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// (管理者用)ボード全件取得
 		boardSlice, err = i.boardService.GetAll(ctx, masterTx)
 		if err != nil {

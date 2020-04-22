@@ -28,7 +28,7 @@ func (s *Server) CreateNewBoard(ctx *gin.Context) {
 
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		ctx.Error(errors.New("access token is not found in context"))
+		ctx.Error(errors.New("uid is not found in context"))
 	}
 
 	if err := s.boardInteractor.CreateNewBoard(ctx, uid.(string), reqBody.Title, reqBody.Description); err != nil {
@@ -56,7 +56,7 @@ func (s *Server) GetBoardDetail(ctx *gin.Context) {
 func (s *Server) GetUserBoards(ctx *gin.Context) {
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		ctx.Error(errors.New("access token is not found in context"))
+		ctx.Error(errors.New("uid is not found in context"))
 	}
 
 	boards, err := s.boardInteractor.GetUserBoards(ctx, uid.(string))

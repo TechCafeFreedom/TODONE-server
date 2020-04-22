@@ -5,10 +5,10 @@
 package mock_user
 
 import (
+	"context"
 	reflect "reflect"
 	entity "todone/pkg/domain/entity"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,7 +36,7 @@ func (m *MockInteractor) EXPECT() *MockInteractorMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockInteractor) CreateNewUser(ctx *gin.Context, uid, title, description string) error {
+func (m *MockInteractor) CreateNewUser(ctx context.Context, uid, title, description string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewUser", ctx, uid, title, description)
 	ret0, _ := ret[0].(error)
@@ -50,7 +50,7 @@ func (mr *MockInteractorMockRecorder) CreateNewUser(ctx, uid, title, description
 }
 
 // GetUserProfile mocks base method
-func (m *MockInteractor) GetUserProfile(ctx *gin.Context, uid string) (*entity.User, error) {
+func (m *MockInteractor) GetUserProfile(ctx context.Context, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserProfile", ctx, uid)
 	ret0, _ := ret[0].(*entity.User)
@@ -65,7 +65,7 @@ func (mr *MockInteractorMockRecorder) GetUserProfile(ctx, uid interface{}) *gomo
 }
 
 // GetAll mocks base method
-func (m *MockInteractor) GetAll(ctx *gin.Context) (entity.UserSlice, error) {
+func (m *MockInteractor) GetAll(ctx context.Context) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx)
 	ret0, _ := ret[0].(entity.UserSlice)

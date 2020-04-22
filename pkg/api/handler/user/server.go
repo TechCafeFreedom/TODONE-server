@@ -27,7 +27,7 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		ctx.Error(errors.New("access token is not found in context"))
+		ctx.Error(errors.New("uid is not found in context"))
 	}
 
 	if err := s.userInteractor.CreateNewUser(ctx, uid.(string), reqBody.Name, reqBody.Thumbnail); err != nil {
@@ -40,7 +40,7 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 func (s *Server) GetUserProfile(ctx *gin.Context) {
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		ctx.Error(errors.New("access token is not found in context"))
+		ctx.Error(errors.New("uid is not found in context"))
 	}
 
 	user, err := s.userInteractor.GetUserProfile(ctx, uid.(string))

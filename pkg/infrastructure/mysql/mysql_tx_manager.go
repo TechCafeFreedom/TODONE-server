@@ -1,13 +1,13 @@
 package mysql
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"log"
 	"todone/pkg/domain/repository"
 
-	"github.com/gin-gonic/gin"
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
@@ -19,7 +19,7 @@ func NewDBMasterTxManager(db *sql.DB) repository.MasterTxManager {
 	return &dbMasterTxManager{db}
 }
 
-func (m *dbMasterTxManager) Transaction(ctx *gin.Context, f func(ctx *gin.Context, masterTx repository.MasterTx) error) error {
+func (m *dbMasterTxManager) Transaction(ctx context.Context, f func(ctx context.Context, masterTx repository.MasterTx) error) error {
 	tx, err := m.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err

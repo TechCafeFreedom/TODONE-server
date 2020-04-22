@@ -5,11 +5,11 @@
 package mock_user
 
 import (
+	"context"
 	reflect "reflect"
 	entity "todone/pkg/domain/entity"
 	repository "todone/pkg/domain/repository"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -37,7 +37,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateNewUser mocks base method
-func (m *MockService) CreateNewUser(ctx *gin.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+func (m *MockService) CreateNewUser(ctx context.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewUser", ctx, masterTx, uid, name, thumbnail)
 	ret0, _ := ret[0].(error)
@@ -51,7 +51,7 @@ func (mr *MockServiceMockRecorder) CreateNewUser(ctx, masterTx, uid, name, thumb
 }
 
 // GetByPK mocks base method
-func (m *MockService) GetByPK(ctx *gin.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
+func (m *MockService) GetByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByPK", ctx, masterTx, userID)
 	ret0, _ := ret[0].(*entity.User)
@@ -66,7 +66,7 @@ func (mr *MockServiceMockRecorder) GetByPK(ctx, masterTx, userID interface{}) *g
 }
 
 // GetByUID mocks base method
-func (m *MockService) GetByUID(ctx *gin.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
+func (m *MockService) GetByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByUID", ctx, masterTx, uid)
 	ret0, _ := ret[0].(*entity.User)
@@ -81,7 +81,7 @@ func (mr *MockServiceMockRecorder) GetByUID(ctx, masterTx, uid interface{}) *gom
 }
 
 // GetAll mocks base method
-func (m *MockService) GetAll(ctx *gin.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
+func (m *MockService) GetAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, masterTx)
 	ret0, _ := ret[0].(entity.UserSlice)
