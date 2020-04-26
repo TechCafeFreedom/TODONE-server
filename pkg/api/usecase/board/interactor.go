@@ -2,6 +2,7 @@ package board
 
 import (
 	"context"
+	"net/http"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	boardservice "todone/pkg/domain/service/board"
@@ -31,12 +32,22 @@ func New(masterTxManager repository.MasterTxManager, boardService boardservice.S
 }
 
 func (i *intereractor) CreateNewBoard(ctx context.Context, uid string, title, description string) error {
+	// titleの空文字チェック
+	if title == "" {
+		return terrors.Newf(http.StatusBadRequest, "ボードタイトルは必須項目です。", "Board title is required.")
+	}
+
 	err := i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// ログイン済ユーザのID取得
 		userData, err := i.userService.GetByUID(ctx, masterTx, uid)
 		if err != nil {
 			return terrors.Stack(err)
 		}
+		// ユーザ存在チェック
+		if userData == nil || userData.ID <= 0 {
+			return terrors.Newf(http.StatusBadRequest, "ユーザが見つかりませんでした。", "User not found.")
+		}
+
 		// 新規ボードの作成
 		if err := i.boardService.CreateNewBoard(ctx, masterTx, userData.ID, title, description); err != nil {
 			return terrors.Stack(err)

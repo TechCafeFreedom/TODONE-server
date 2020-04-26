@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"net/http"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	userservice "todone/pkg/domain/service/user"
@@ -9,7 +10,7 @@ import (
 )
 
 type Interactor interface {
-	CreateNewUser(ctx context.Context, uid, title, description string) error
+	CreateNewUser(ctx context.Context, uid, name, thumbnail string) error
 	GetUserProfile(ctx context.Context, uid string) (*entity.User, error)
 	GetAll(ctx context.Context) (entity.UserSlice, error)
 }
@@ -26,10 +27,14 @@ func New(masterTxManager repository.MasterTxManager, userService userservice.Ser
 	}
 }
 
-func (i *intereractor) CreateNewUser(ctx context.Context, uid, title, description string) error {
+func (i *intereractor) CreateNewUser(ctx context.Context, uid, name, thumbnail string) error {
+	if uid == "" {
+		return terrors.Newf(http.StatusBadRequest, "uidが空文字になっています。", "UID is required.")
+	}
+
 	err := i.masterTxManager.Transaction(ctx, func(ctx context.Context, masterTx repository.MasterTx) error {
 		// 新規ユーザ作成
-		if err := i.userService.CreateNewUser(ctx, masterTx, uid, title, description); err != nil {
+		if err := i.userService.CreateNewUser(ctx, masterTx, uid, name, thumbnail); err != nil {
 			return terrors.Stack(err)
 		}
 		return nil

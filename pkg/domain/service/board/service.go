@@ -2,7 +2,6 @@ package board
 
 import (
 	"context"
-	"net/http"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
@@ -27,11 +26,6 @@ func New(boardRepository board.Repository) Service {
 }
 
 func (s *service) CreateNewBoard(ctx context.Context, masterTx repository.MasterTx, userID int, title, description string) error {
-	// titleの空文字チェック
-	if title == "" {
-		return terrors.Newf(http.StatusBadRequest, "ボードタイトルは必須項目です。", "Board title is required.")
-	}
-
 	if err := s.boardRepository.InsertBoard(ctx, masterTx, userID, title, description); err != nil {
 		return terrors.Stack(err)
 	}
