@@ -1,7 +1,6 @@
 package terrors
 
 import (
-	"errors"
 	"fmt"
 
 	"golang.org/x/xerrors"
@@ -57,7 +56,7 @@ func Stack(err error) error {
 	var errorCode int
 	var errorMessageJP, errorMessageEN string
 	var todoneError *TodoneError
-	if ok := errors.As(err, &todoneError); ok {
+	if ok := xerrors.As(err, &todoneError); ok {
 		errorCode = todoneError.ErrorCode
 		errorMessageJP = todoneError.ErrorMessageJP
 		errorMessageEN = todoneError.ErrorMessageEN

@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
 	"todone/pkg/terrors"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
 func ErrorHandling() gin.HandlerFunc {
@@ -15,7 +15,7 @@ func ErrorHandling() gin.HandlerFunc {
 		err := c.Errors.Last()
 		if err != nil {
 			var todoneError *terrors.TodoneError
-			if ok := errors.As(err.Err, &todoneError); ok {
+			if ok := xerrors.As(err.Err, &todoneError); ok {
 				c.AbortWithStatusJSON(todoneError.ErrorCode, todoneError)
 				return
 			}
