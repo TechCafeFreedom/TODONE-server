@@ -36,7 +36,7 @@ test: ## testの実行
 
 lint: ## lintの実行
 	# golangci-lintのインストール
-	GO111MODULE=on go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+	GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint
 
 	# pkg配下をチェック。設定は .golangci.yml に記載
 	golangci-lint run
