@@ -7,6 +7,7 @@ import (
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/user"
 	"todone/pkg/infrastructure/mysql"
+	"todone/pkg/terrors"
 
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -32,10 +33,10 @@ func (u userRepositoryImpliment) InsertUser(ctx context.Context, masterTx reposi
 
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 	if err := newUserData.Insert(ctx, exec, boil.Infer()); err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 
 	return nil
@@ -44,11 +45,11 @@ func (u userRepositoryImpliment) InsertUser(ctx context.Context, masterTx reposi
 func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	userData, err := model.FindUser(ctx, exec, userID)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -57,11 +58,11 @@ func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx reposi
 func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	userData, err := model.Users(model.UserWhere.UID.EQ(uid)).One(ctx, exec)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -70,12 +71,12 @@ func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repos
 func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	queries := []qm.QueryMod{}
 	users, err := model.Users(queries...).All(ctx, exec)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToUserSliceEntity(users), nil

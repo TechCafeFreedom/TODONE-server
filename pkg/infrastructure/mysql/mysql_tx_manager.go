@@ -3,10 +3,9 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
-	"log"
+	"net/http"
 	"todone/pkg/domain/repository"
+	"todone/pkg/terrors"
 
 	"github.com/volatiletech/sqlboiler/boil"
 )
@@ -22,14 +21,14 @@ func NewDBMasterTxManager(db *sql.DB) repository.MasterTxManager {
 func (m *dbMasterTxManager) Transaction(ctx context.Context, f func(ctx context.Context, masterTx repository.MasterTx) error) error {
 	tx, err := m.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 	defer func() {
 		// panic
 		if p := recover(); p != nil {
 			e := tx.Rollback()
 			if e != nil {
-				log.Fatal(fmt.Sprintf("failed to MySQL Rollback: %v", e))
+				err = terrors.Wrapf(e, http.StatusInternalServerError, "Mysqlのトランザクションロールバックに失敗しました。", "failed to MySQL Rollback")
 			}
 			panic(p) // re-throw panic after Rollback
 		}
@@ -37,20 +36,18 @@ func (m *dbMasterTxManager) Transaction(ctx context.Context, f func(ctx context.
 		if err != nil {
 			e := tx.Rollback()
 			if e != nil {
-				log.Fatal(fmt.Sprintf("failed to MySQL Rollback: %v", e))
+				err = terrors.Wrapf(e, http.StatusInternalServerError, "Mysqlのトランザクションロールバックに失敗しました。", "failed to MySQL Rollback")
 			}
-			return
 		}
 		// 正常
 		e := tx.Commit()
 		if e != nil {
-			log.Fatal(fmt.Sprintf("failed to MySQL Commit: %v", e))
+			err = terrors.Wrapf(e, http.StatusInternalServerError, "Mysqlのトランザクションコミットに失敗しました。", "failed to MySQL Commit")
 		}
-
 	}()
 	err = f(ctx, &dbMasterTx{tx})
 	if err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 	return nil
 }
@@ -75,7 +72,7 @@ func ExtractTx(masterTx repository.MasterTx) (*sql.Tx, error) {
 	// キャストする
 	tx, ok := masterTx.(*dbMasterTx)
 	if !ok {
-		return nil, errors.New("masterTx cannot cast to dbMasterTx")
+		return nil, terrors.Newf(http.StatusInternalServerError, "masterTxからdbMasterTxへのキャストに失敗しました。", "masterTx cannot cast to dbMasterTx")
 	}
 	return tx.tx, nil
 }

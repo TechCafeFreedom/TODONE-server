@@ -7,6 +7,7 @@ import (
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
 	"todone/pkg/infrastructure/mysql"
+	"todone/pkg/terrors"
 
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -33,10 +34,10 @@ func (p *boardRepositoryImpliment) InsertBoard(ctx context.Context, masterTx rep
 
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 	if err := newBoardData.Insert(ctx, exec, boil.Infer()); err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 
 	return nil
@@ -46,7 +47,7 @@ func (p *boardRepositoryImpliment) InsertBoard(ctx context.Context, masterTx rep
 func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	boardData, err := model.Boards(
 		qm.Load(model.BoardRels.UsersBoards),
@@ -56,7 +57,7 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repo
 		model.BoardWhere.ID.EQ(id),
 	).One(ctx, exec)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToBoardEntity(boardData), nil
@@ -66,14 +67,14 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repo
 func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	boards, err := model.Boards(
 		qm.Load(model.BoardRels.User),
 		model.BoardWhere.UserID.EQ(userID),
 	).All(ctx, exec)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil
@@ -83,12 +84,12 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx 
 func (p *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	queries := []qm.QueryMod{}
 	boards, err := model.Boards(queries...).All(ctx, exec)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil

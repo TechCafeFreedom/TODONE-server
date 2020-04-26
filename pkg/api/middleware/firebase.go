@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 	"todone/pkg/api/request/reqheader"
+	"todone/pkg/terrors"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	firebase "firebase.google.com/go"
@@ -68,16 +70,16 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// Authorizationヘッダーからjwtトークンを取得
 	var reqHeader reqheader.Auth
 	if err := c.BindHeader(&reqHeader); err != nil {
-		c.Error(err)
+		c.AbortWithError(http.StatusBadRequest, terrors.Stack(err))
+		return
 	}
 	jwtToken := strings.Replace(reqHeader.Authorization, "Bearer ", "", 1)
 
 	// JWT の検証
 	authedUserToken, err := fa.client.VerifyIDToken(c, jwtToken)
 	if err != nil {
-		// JWT が無効なら Handler に進まず別処理
-		fmt.Printf("error verifying ID token: %v\n", err)
-		c.Error(err)
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	// contextにuidを格納
 	c.Set(AuthCtxKey, authedUserToken.UID)
