@@ -4,6 +4,13 @@ MOCK_FILE := mock_${SOURCE_FILE}
 MOCK_DIR := ${SOURCE_DIR}mock_$(lastword $(subst /, ,${SOURCE_DIR}))/
 MOCK_TARGET := $(lastword $(subst /, ,${SOURCE_DIR}))
 
+GOLINT_FILE_NAME := golangci-lint
+GOLINT_FILE_PATH := $(shell ls $(GOPATH)/bin | grep ${GOLINT_FILE_NAME})
+
+# gocli-lintパッケージがダウンロード済みであればダウンロードを実行しない
+define golintExist
+    $(ifneq (${GOLINT_FILE_PATH},${GOLINT_FILE_NAME}),GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint)
+endef
 
 help: ## 使い方
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -35,8 +42,8 @@ test: ## testの実行
 	go test -v ./...
 
 lint: ## lintの実行
-	# golangci-lintのインストール
-	GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint
+	# golangci-lintのインストール(既にパッケージがあれば実行されない)
+	${golintExist}
 
 	# pkg配下をチェック。設定は .golangci.yml に記載
 	golangci-lint run
