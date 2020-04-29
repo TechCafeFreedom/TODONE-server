@@ -52,7 +52,8 @@ fmt: ## fmtの実行
 	# goimportsのインストール
 	GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
 
-	# fmt,goimportsの実行
+	# tidy, fmt, goimportsの実行
+	go mod tidy -v
 	gofmt -s -w pkg/
 	goimports -w pkg/
 
