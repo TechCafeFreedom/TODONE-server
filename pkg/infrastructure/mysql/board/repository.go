@@ -7,6 +7,9 @@ import (
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
 	"todone/pkg/infrastructure/mysql"
+	"todone/pkg/infrastructure/mysql/kanban"
+	"todone/pkg/infrastructure/mysql/label"
+	"todone/pkg/infrastructure/mysql/user"
 
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -24,7 +27,7 @@ func New(masterTxManager repository.MasterTxManager) board.Repository {
 }
 
 // プロジェクト作成機能
-func (p *boardRepositoryImpliment) InsertBoard(ctx context.Context, masterTx repository.MasterTx, userID int, title, description string) error {
+func (b *boardRepositoryImpliment) InsertBoard(ctx context.Context, masterTx repository.MasterTx, userID int, title, description string) error {
 	newBoardData := &model.Board{
 		UserID:      userID,
 		Title:       title,
@@ -43,7 +46,7 @@ func (p *boardRepositoryImpliment) InsertBoard(ctx context.Context, masterTx rep
 }
 
 // プロジェクト取得機能（PK: id）
-func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
+func (b *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -59,11 +62,11 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repo
 		return nil, err
 	}
 
-	return entity.ConvertToBoardEntity(boardData), nil
+	return ConvertToBoardEntity(boardData), nil
 }
 
 // ユーザのもつプロジェクト取得機能
-func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
+func (b *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -76,11 +79,11 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx 
 		return nil, err
 	}
 
-	return entity.ConvertToBoardSliceEntity(boards), nil
+	return ConvertToBoardSliceEntity(boards), nil
 }
 
 // プロジェクト全件取得機能
-func (p *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
+func (b *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -91,5 +94,49 @@ func (p *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repos
 		return nil, err
 	}
 
-	return entity.ConvertToBoardSliceEntity(boards), nil
+	return ConvertToBoardSliceEntity(boards), nil
+}
+
+func ConvertToBoardEntity(boardData *model.Board) *entity.Board {
+	// 関連テーブル情報が何もない場合はnilを詰めて返却する
+	if boardData.R == nil {
+		return &entity.Board{
+			ID:          boardData.ID,
+			Title:       boardData.Title,
+			Description: boardData.Description.String,
+		}
+	}
+
+	return &entity.Board{
+		ID:          boardData.ID,
+		Title:       boardData.Title,
+		Description: boardData.Description.String,
+		Author:      user.ConvertToUserEntity(boardData.R.User),
+		Members:     ConvertToMemberSliceEntity(boardData.R.UsersBoards),
+		Kanbans:     kanban.ConvertToKanbanSliceEntity(boardData.R.Kanbans),
+		Labels:      label.ConvertToLabelSliceEntity(boardData.R.Labels),
+	}
+}
+
+func ConvertToBoardSliceEntity(boardSlice model.BoardSlice) entity.BoardSlice {
+	res := make(entity.BoardSlice, 0, len(boardSlice))
+	for _, boardData := range boardSlice {
+		res = append(res, ConvertToBoardEntity(boardData))
+	}
+	return res
+}
+
+func ConvertToMemberEntity(userBoardData *model.UsersBoard) *entity.Member {
+	return &entity.Member{
+		Member: user.ConvertToUserEntity(userBoardData.R.User),
+		Role:   int(userBoardData.Role),
+	}
+}
+
+func ConvertToMemberSliceEntity(userBoardSlice model.UsersBoardSlice) entity.MemberSlice {
+	res := make(entity.MemberSlice, 0, len(userBoardSlice))
+	for _, userBoard := range userBoardSlice {
+		res = append(res, ConvertToMemberEntity(userBoard))
+	}
+	return res
 }

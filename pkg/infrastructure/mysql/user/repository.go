@@ -23,7 +23,7 @@ func New(masterTxManager repository.MasterTxManager) user.Repository {
 	}
 }
 
-func (u userRepositoryImpliment) InsertUser(ctx context.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
+func (u *userRepositoryImpliment) InsertUser(ctx context.Context, masterTx repository.MasterTx, uid, name, thumbnail string) error {
 	newUserData := &model.User{
 		UID:       uid,
 		Name:      name,
@@ -41,7 +41,7 @@ func (u userRepositoryImpliment) InsertUser(ctx context.Context, masterTx reposi
 	return nil
 }
 
-func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
+func (u *userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repository.MasterTx, userID int) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -51,10 +51,10 @@ func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx reposi
 		return nil, err
 	}
 
-	return entity.ConvertToUserEntity(userData), nil
+	return ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
+func (u *userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repository.MasterTx, uid string) (*entity.User, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -64,10 +64,10 @@ func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repos
 		return nil, err
 	}
 
-	return entity.ConvertToUserEntity(userData), nil
+	return ConvertToUserEntity(userData), nil
 }
 
-func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
+func (u *userRepositoryImpliment) SelectAll(ctx context.Context, masterTx repository.MasterTx) (entity.UserSlice, error) {
 	exec, err := mysql.ExtractExecutor(masterTx)
 	if err != nil {
 		return nil, err
@@ -78,5 +78,21 @@ func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx reposit
 		return nil, err
 	}
 
-	return entity.ConvertToUserSliceEntity(users), nil
+	return ConvertToUserSliceEntity(users), nil
+}
+
+func ConvertToUserEntity(userData *model.User) *entity.User {
+	return &entity.User{
+		ID:        userData.ID,
+		Name:      userData.Name,
+		Thumbnail: userData.Thumbnail.String,
+	}
+}
+
+func ConvertToUserSliceEntity(userSlice model.UserSlice) entity.UserSlice {
+	res := make(entity.UserSlice, 0, len(userSlice))
+	for _, userData := range userSlice {
+		res = append(res, ConvertToUserEntity(userData))
+	}
+	return res
 }
