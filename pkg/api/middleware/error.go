@@ -24,6 +24,7 @@ func ErrorHandling() gin.HandlerFunc {
 			log.GetAppLogger().Error(fmt.Sprintf("<error:[%s]\n    %+v>", uid, err.Err))
 		}
 
+		// エラーレスポンスの送信
 		if err != nil {
 			var todoneError *terrors.TodoneError
 			if ok := xerrors.As(err.Err, &todoneError); ok {
