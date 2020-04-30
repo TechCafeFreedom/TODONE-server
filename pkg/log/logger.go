@@ -8,9 +8,9 @@ var appLogger *zap.Logger
 const AppLoggerKey = "AppLogger"
 
 func init() {
-	// TODO デフォルトだと標準エラー出力に吐かれるのでログフォーマットと合わせて調整
 	config := zap.NewProductionConfig()
-	config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
+	config.DisableStacktrace = true // スタックトレースONにしたい場合はfalseにする
 	logger, _ := config.Build()
 	appLogger = logger.Named(AppLoggerKey)
 }
