@@ -37,7 +37,7 @@ func (s *Server) CreateNewBoard(ctx *gin.Context) {
 	}
 
 	if err := s.boardInteractor.CreateNewBoard(ctx, uid.(string), reqBody.Title, reqBody.Description); err != nil {
-		ctx.Error(err)
+		ctx.Error(terrors.Stack(err))
 		return
 	}
 

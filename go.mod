@@ -30,6 +30,7 @@ require (
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.7.0+incompatible
+	go.uber.org/zap v1.10.0
 	golang.org/x/sys v0.0.0-20200420163511-1957bb5e6d1f // indirect
 	golang.org/x/tools v0.0.0-20200425043458-8463f397d07c // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543

@@ -78,7 +78,7 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// JWT の検証
 	authedUserToken, err := fa.client.VerifyIDToken(c, jwtToken)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithError(http.StatusBadRequest, terrors.Stack(err))
 		return
 	}
 	// contextにuidを格納
