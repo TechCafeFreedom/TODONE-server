@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"net/http"
 	"todone/pkg/api/middleware"
 	"todone/pkg/api/request/reqbody"
@@ -29,8 +28,8 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		errMessageJP := fmt.Sprintf("uidはリクエストされたコンテキストから検出されませんでした。ctx: %v", ctx)
-		errMessageEN := fmt.Sprintf("uid is not found in context. ctx: %v", ctx)
+		errMessageJP := "不正なユーザからのアクセスをブロックしました。"
+		errMessageEN := "The content blocked because user is not certified."
 		ctx.Error(terrors.Newf(http.StatusUnauthorized, errMessageJP, errMessageEN))
 		return
 	}
@@ -47,8 +46,8 @@ func (s *Server) CreateNewUser(ctx *gin.Context) {
 func (s *Server) GetUserProfile(ctx *gin.Context) {
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		errMessageJP := fmt.Sprintf("uidはリクエストされたコンテキストから検出されませんでした。ctx: %v", ctx)
-		errMessageEN := fmt.Sprintf("uid is not found in context. ctx: %v", ctx)
+		errMessageJP := "不正なユーザからのアクセスをブロックしました。"
+		errMessageEN := "The content blocked because user is not certified."
 		ctx.Error(terrors.Newf(http.StatusUnauthorized, errMessageJP, errMessageEN))
 		return
 	}
