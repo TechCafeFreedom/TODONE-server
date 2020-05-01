@@ -2068,8 +2068,6 @@ components:
           type: 'integer'
         name:
           type: 'string'
-        description:
-          type: 'string'
         color:
           type: 'integer'
         created_at:
@@ -2080,8 +2078,6 @@ components:
       type: 'object'
       properties:
         name:
-          type: 'string'
-        description:
           type: 'string'
         color:
           type: 'integer'
