@@ -9,9 +9,9 @@ import (
 	"todone/pkg/infrastructure/mysql"
 	"todone/pkg/terrors"
 
-	"github.com/volatiletech/null"
-	"github.com/volatiletech/sqlboiler/boil"
-	"github.com/volatiletech/sqlboiler/queries/qm"
+	"github.com/volatiletech/null/v8"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
 type userRepositoryImpliment struct {
