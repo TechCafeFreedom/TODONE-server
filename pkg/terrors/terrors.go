@@ -2,6 +2,7 @@ package terrors
 
 import (
 	"fmt"
+	"net/http"
 
 	"golang.org/x/xerrors"
 )
@@ -60,6 +61,14 @@ func Stack(err error) error {
 		errorCode = todoneError.ErrorCode
 		errorMessageJP = todoneError.ErrorMessageJP
 		errorMessageEN = todoneError.ErrorMessageEN
+	} else {
+		return &TodoneError{
+			ErrorCode:      http.StatusInternalServerError,
+			ErrorMessageJP: "エラーのコンバート時にエラーが発生しました",
+			ErrorMessageEN: "Error occured at covert to original error",
+			err:            err,
+			frame:          xerrors.Caller(1),
+		}
 	}
 	return &TodoneError{
 		ErrorCode:      errorCode,
