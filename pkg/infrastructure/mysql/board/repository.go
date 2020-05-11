@@ -2,6 +2,9 @@ package board
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
+	"net/http"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
@@ -56,8 +59,12 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repo
 		qm.Load(model.BoardRels.Labels),
 		model.BoardWhere.ID.EQ(id),
 	).One(ctx, exec)
-	if err != nil {
-		return nil, terrors.Stack(err)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("指定されたボードは見つかりませんでした。board_id: %v", id)
+		messageEN := fmt.Sprintf("This ID's board doesn't exists.board_id: %v", id)
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	} else if err != nil {
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToBoardEntity(boardData), nil
@@ -73,8 +80,12 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx 
 		qm.Load(model.BoardRels.User),
 		model.BoardWhere.UserID.EQ(userID),
 	).All(ctx, exec)
-	if err != nil {
-		return nil, terrors.Stack(err)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("ユーザの所有するボードは１件もありませんでした。")
+		messageEN := fmt.Sprintf("User's board doesn't exists.")
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	} else if err != nil {
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil
@@ -88,8 +99,12 @@ func (p *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repos
 	}
 	queries := []qm.QueryMod{}
 	boards, err := model.Boards(queries...).All(ctx, exec)
-	if err != nil {
-		return nil, terrors.Stack(err)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("ボードは１件もありませんでした。")
+		messageEN := fmt.Sprintf("Board doesn't exists.")
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	} else if err != nil {
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil

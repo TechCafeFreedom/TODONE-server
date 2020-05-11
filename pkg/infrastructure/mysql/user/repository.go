@@ -2,6 +2,9 @@ package user
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
+	"net/http"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
@@ -48,8 +51,13 @@ func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx reposi
 		return nil, terrors.Stack(err)
 	}
 	userData, err := model.FindUser(ctx, exec, userID)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("ユーザが見つかりませんでした。ユーザ登録されているか確認してください。")
+		messageEN := fmt.Sprintf("User not found. Please make sure signup.")
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	}
 	if err != nil {
-		return nil, terrors.Stack(err)
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -61,8 +69,13 @@ func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repos
 		return nil, terrors.Stack(err)
 	}
 	userData, err := model.Users(model.UserWhere.UID.EQ(uid)).One(ctx, exec)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("不正なユーザです。")
+		messageEN := fmt.Sprintf("Invalid user.")
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	}
 	if err != nil {
-		return nil, terrors.Stack(err)
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -75,8 +88,13 @@ func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx reposit
 	}
 	queries := []qm.QueryMod{}
 	users, err := model.Users(queries...).All(ctx, exec)
+	if err == sql.ErrNoRows {
+		messageJP := fmt.Sprintf("ユーザは1人も登録されていません。")
+		messageEN := fmt.Sprintf("User doesn't exists.")
+		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+	}
 	if err != nil {
-		return nil, terrors.Stack(err)
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
 	}
 
 	return entity.ConvertToUserSliceEntity(users), nil

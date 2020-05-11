@@ -27,7 +27,6 @@ mockgen: # mockgenの実行
 dbgen: ## sqlboilerによるコード自動生成
 	# sqlboilerのインストール
 	GO111MODULE=off go get -u github.com/volatiletech/sqlboiler
-	GO111MODULE=off go get -u github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql
 
 	# DDL定義を元にコードを自動生成
 	sqlboiler mysql -o db/mysql/model -p model --wipe db/mysql/model
