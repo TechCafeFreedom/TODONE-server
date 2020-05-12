@@ -1,7 +1,6 @@
 package board
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"todone/pkg/api/middleware"
@@ -30,8 +29,8 @@ func (s *Server) CreateNewBoard(ctx *gin.Context) {
 
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		errMessageJP := fmt.Sprintf("uidはリクエストされたコンテキストから検出されませんでした。ctx: %v", ctx)
-		errMessageEN := fmt.Sprintf("uid is not found in context. ctx: %v", ctx)
+		errMessageJP := "不正なユーザからのアクセスをブロックしました。"
+		errMessageEN := "The content blocked because user is not certified."
 		ctx.Error(terrors.Newf(http.StatusUnauthorized, errMessageJP, errMessageEN))
 		return
 	}
@@ -66,8 +65,8 @@ func (s *Server) GetBoardDetail(ctx *gin.Context) {
 func (s *Server) GetUserBoards(ctx *gin.Context) {
 	uid, ok := ctx.Get(middleware.AuthCtxKey)
 	if !ok {
-		errMessageJP := fmt.Sprintf("uidはリクエストされたコンテキストから検出されませんでした。ctx: %v", ctx)
-		errMessageEN := fmt.Sprintf("uid is not found in context. ctx: %v", ctx)
+		errMessageJP := "不正なユーザからのアクセスをブロックしました。"
+		errMessageEN := "The content blocked because user is not certified."
 		ctx.Error(terrors.Newf(http.StatusUnauthorized, errMessageJP, errMessageEN))
 		return
 	}
