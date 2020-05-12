@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
@@ -57,7 +58,8 @@ func (u userRepositoryImpliment) SelectByPK(ctx context.Context, masterTx reposi
 		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
 	}
 	if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -72,10 +74,11 @@ func (u userRepositoryImpliment) SelectByUID(ctx context.Context, masterTx repos
 	if err == sql.ErrNoRows {
 		messageJP := fmt.Sprintf("不正なユーザです。")
 		messageEN := fmt.Sprintf("Invalid user.")
-		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
+		return nil, terrors.Newf(http.StatusUnauthorized, messageJP, messageEN)
 	}
 	if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToUserEntity(userData), nil
@@ -94,7 +97,8 @@ func (u userRepositoryImpliment) SelectAll(ctx context.Context, masterTx reposit
 		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
 	}
 	if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToUserSliceEntity(users), nil

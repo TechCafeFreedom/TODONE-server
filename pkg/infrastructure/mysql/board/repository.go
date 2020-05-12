@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"todone/db/mysql/model"
 	"todone/pkg/domain/entity"
@@ -64,7 +65,8 @@ func (p *boardRepositoryImpliment) SelectByPK(ctx context.Context, masterTx repo
 		messageEN := fmt.Sprintf("This ID's board doesn't exists.board_id: %v", id)
 		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
 	} else if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToBoardEntity(boardData), nil
@@ -85,7 +87,8 @@ func (p *boardRepositoryImpliment) SelectByUserID(ctx context.Context, masterTx 
 		messageEN := fmt.Sprintf("User's board doesn't exists.")
 		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
 	} else if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil
@@ -104,7 +107,8 @@ func (p *boardRepositoryImpliment) SelectAll(ctx context.Context, masterTx repos
 		messageEN := fmt.Sprintf("Board doesn't exists.")
 		return nil, terrors.Newf(http.StatusInternalServerError, messageJP, messageEN)
 	} else if err != nil {
-		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "DBアクセス時にエラーが発生しました。", "Error occured in DB access.")
+		log.Println("Error occred when DB access.")
+		return nil, terrors.Wrapf(err, http.StatusInternalServerError, "サーバでエラーが発生しました。", "Error occured at server.")
 	}
 
 	return entity.ConvertToBoardSliceEntity(boards), nil
