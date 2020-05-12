@@ -5,6 +5,7 @@ import (
 	"todone/pkg/domain/entity"
 	"todone/pkg/domain/repository"
 	"todone/pkg/domain/repository/board"
+	"todone/pkg/terrors"
 )
 
 type Service interface {
@@ -26,7 +27,7 @@ func New(boardRepository board.Repository) Service {
 
 func (s *service) CreateNewBoard(ctx context.Context, masterTx repository.MasterTx, userID int, title, description string) error {
 	if err := s.boardRepository.InsertBoard(ctx, masterTx, userID, title, description); err != nil {
-		return err
+		return terrors.Stack(err)
 	}
 	return nil
 }
@@ -34,7 +35,7 @@ func (s *service) CreateNewBoard(ctx context.Context, masterTx repository.Master
 func (s *service) GetByPK(ctx context.Context, masterTx repository.MasterTx, id int) (*entity.Board, error) {
 	boardData, err := s.boardRepository.SelectByPK(ctx, masterTx, id)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	return boardData, nil
 }
@@ -42,7 +43,7 @@ func (s *service) GetByPK(ctx context.Context, masterTx repository.MasterTx, id 
 func (s *service) GetByUserID(ctx context.Context, masterTx repository.MasterTx, userID int) (entity.BoardSlice, error) {
 	boardSlice, err := s.boardRepository.SelectByUserID(ctx, masterTx, userID)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	return boardSlice, nil
 }
@@ -50,7 +51,7 @@ func (s *service) GetByUserID(ctx context.Context, masterTx repository.MasterTx,
 func (s *service) GetAll(ctx context.Context, masterTx repository.MasterTx) (entity.BoardSlice, error) {
 	boardSlice, err := s.boardRepository.SelectAll(ctx, masterTx)
 	if err != nil {
-		return nil, err
+		return nil, terrors.Stack(err)
 	}
 	return boardSlice, nil
 }

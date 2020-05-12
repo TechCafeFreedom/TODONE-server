@@ -38,6 +38,9 @@ func main() {
 	config.AllowHeaders = []string{"*"}
 	r.Use(cors.New(config))
 
+	// エラー出力用ミドルウェアの使用
+	r.Use(middleware.ErrorHandling())
+
 	// connection testAPI
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
