@@ -29,6 +29,7 @@ require (
 	github.com/volatiletech/sqlboiler v3.7.1+incompatible
 	github.com/volatiletech/sqlboiler/v4 v4.0.1
 	github.com/volatiletech/strmangle v0.0.1
+	go.uber.org/zap v1.10.0
 	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
 	golang.org/x/tools v0.0.0-20200425043458-8463f397d07c // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
