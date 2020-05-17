@@ -3,8 +3,8 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"todone/pkg/log"
 	"todone/pkg/terrors"
+	"todone/pkg/tlog"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/xerrors"
@@ -19,9 +19,9 @@ func ErrorHandling() gin.HandlerFunc {
 		// エラーログ出力
 		uid, ok := c.Get(AuthCtxKey)
 		if !ok {
-			log.GetAppLogger().Error(fmt.Sprintf("<error:[Unknown]\n    %+v>", err.Err))
+			tlog.GetAppLogger().Error(fmt.Sprintf("<error:[Unknown]\n    %+v>", err.Err))
 		} else {
-			log.GetAppLogger().Error(fmt.Sprintf("<error:[%s]\n    %+v>", uid, err.Err))
+			tlog.GetAppLogger().Error(fmt.Sprintf("<error:[%s]\n    %+v>", uid, err.Err))
 		}
 
 		// エラーレスポンスの送信
