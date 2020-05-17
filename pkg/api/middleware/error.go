@@ -19,9 +19,9 @@ func ErrorHandling() gin.HandlerFunc {
 		// エラーログ出力
 		uid, ok := c.Get(AuthCtxKey)
 		if !ok {
-			tlog.GetAppLogger().Error(fmt.Sprintf("<error:[Unknown]\n    %+v>", err.Err))
+			tlog.GetAppLogger().Error(fmt.Sprintf("<[Unknown]:%v>", err.Err))
 		} else {
-			tlog.GetAppLogger().Error(fmt.Sprintf("<error:[%s]\n    %+v>", uid, err.Err))
+			tlog.GetAppLogger().Error(fmt.Sprintf("<[%s]:%v>", uid, err.Err))
 		}
 
 		// エラーレスポンスの送信
@@ -31,7 +31,7 @@ func ErrorHandling() gin.HandlerFunc {
 				c.AbortWithStatusJSON(todoneError.ErrorCode, todoneError)
 				return
 			}
-			c.AbortWithStatusJSON(http.StatusInternalServerError, terrors.Stack(err))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 	}

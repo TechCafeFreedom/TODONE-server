@@ -70,7 +70,7 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// Authorizationヘッダーからjwtトークンを取得
 	var reqHeader reqheader.Auth
 	if err := c.BindHeader(&reqHeader); err != nil {
-		c.AbortWithError(http.StatusBadRequest, terrors.Stack(err))
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	jwtToken := strings.Replace(reqHeader.Authorization, "Bearer ", "", 1)
@@ -78,7 +78,7 @@ func (fa *firebaseAuth) middlewareImpl(c *gin.Context) {
 	// JWT の検証
 	authedUserToken, err := fa.client.VerifyIDToken(c, jwtToken)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, terrors.Stack(err))
+		c.AbortWithError(http.StatusBadRequest, terrors.Wrapf(err, http.StatusUnauthorized, "トークンの有効期限が過ぎています。", "token has expired."))
 		return
 	}
 	// contextにuidを格納
